@@ -21,23 +21,23 @@ namespace Socolin.TestsUtils.JsonComparer
         private readonly IJsonObjectComparer _jsonObjectComparer;
         private readonly IJsonArrayComparer _jsonArrayComparer;
         private readonly IJsonValueComparer _jsonValueComparer;
-        private readonly IJsonCaptureHandler _jsonCaptureHandler;
+        private readonly IJsonSpecialHandler _jsonSpecialHandler;
 
         public static JsonComparer GetDefault(Action<string, JToken> captureHandler = null)
         {
-            return new JsonComparer(new JsonObjectComparer(), new JsonArrayComparer(), new JsonValueComparer(), new JsonCaptureHandler(captureHandler));
+            return new JsonComparer(new JsonObjectComparer(), new JsonArrayComparer(), new JsonValueComparer(), new JsonSpecialHandler(captureHandler));
         }
 
         public JsonComparer(
             IJsonObjectComparer jsonObjectComparer,
             IJsonArrayComparer jsonArrayComparer,
             IJsonValueComparer jsonValueComparer,
-            IJsonCaptureHandler jsonCaptureHandler)
+            IJsonSpecialHandler jsonSpecialHandler)
         {
             _jsonObjectComparer = jsonObjectComparer;
             _jsonArrayComparer = jsonArrayComparer;
             _jsonValueComparer = jsonValueComparer;
-            _jsonCaptureHandler = jsonCaptureHandler;
+            _jsonSpecialHandler = jsonSpecialHandler;
         }
 
         public IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson)
@@ -56,7 +56,7 @@ namespace Socolin.TestsUtils.JsonComparer
         {
             if (expected.Type != actual.Type)
             {
-                var (captureSucceeded, captureErrors) = _jsonCaptureHandler.HandleCapture(expected, actual, path);
+                var (captureSucceeded, captureErrors) = _jsonSpecialHandler.HandleSpecialObject(expected, actual, path);
                 if (captureSucceeded)
                     yield break;
                 if (captureErrors?.Count > 0)

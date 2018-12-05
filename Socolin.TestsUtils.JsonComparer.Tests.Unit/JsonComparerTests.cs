@@ -17,7 +17,7 @@ namespace Socolin.TestsUtils.JsonComparer.Tests.Unit
         private IJsonObjectComparer _jsonObjectComparer;
         private IJsonArrayComparer _jsonArrayComparer;
         private IJsonValueComparer _jsonValueComparer;
-        private IJsonCaptureHandler _jsonCaptureHandler;
+        private IJsonSpecialHandler _jsonSpecialHandler;
         private JsonComparer _jsonComparer;
 
         [SetUp]
@@ -26,10 +26,10 @@ namespace Socolin.TestsUtils.JsonComparer.Tests.Unit
             _jsonObjectComparer = Substitute.For<IJsonObjectComparer>();
             _jsonArrayComparer = Substitute.For<IJsonArrayComparer>();
             _jsonValueComparer = Substitute.For<IJsonValueComparer>();
-            _jsonCaptureHandler = Substitute.For<IJsonCaptureHandler>();
-            _jsonComparer = new JsonComparer(_jsonObjectComparer, _jsonArrayComparer, _jsonValueComparer, _jsonCaptureHandler);
+            _jsonSpecialHandler = Substitute.For<IJsonSpecialHandler>();
+            _jsonComparer = new JsonComparer(_jsonObjectComparer, _jsonArrayComparer, _jsonValueComparer, _jsonSpecialHandler);
 
-            _jsonCaptureHandler.HandleCapture(Arg.Any<JToken>(), Arg.Any<JToken>(), Arg.Any<string>())
+            _jsonSpecialHandler.HandleSpecialObject(Arg.Any<JToken>(), Arg.Any<JToken>(), Arg.Any<string>())
                 .Returns((false, null));
         }
 
@@ -127,7 +127,7 @@ namespace Socolin.TestsUtils.JsonComparer.Tests.Unit
             var expectedJson = JObject.Parse("{}");
             var actualJson = JToken.Parse("42");
 
-            _jsonCaptureHandler.HandleCapture(expectedJson, actualJson, "")
+            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "")
                 .Returns((true, null));
 
             var actualErrors = _jsonComparer.Compare(expectedJson, actualJson);
@@ -141,7 +141,7 @@ namespace Socolin.TestsUtils.JsonComparer.Tests.Unit
             var expectedJson = JObject.Parse("{}");
             var actualJson = JToken.Parse("42");
 
-            _jsonCaptureHandler.HandleCapture(expectedJson, actualJson, "")
+            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "")
                 .Returns((false, new List<JsonCompareError> {new TestJsonCompareError()}));
 
             var actualErrors = _jsonComparer.Compare(expectedJson, actualJson);

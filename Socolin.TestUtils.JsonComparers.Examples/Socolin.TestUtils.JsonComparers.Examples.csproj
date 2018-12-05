@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <OutputType>exe</OutputType>
+        <RootNamespace>Socolin.TestUtils.JsonComparer.Examples</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Socolin.TestsUtils.JsonComparer\Socolin.TestsUtils.JsonComparer.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,29 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using Socolin.TestsUtils.JsonComparer.Errors;
 
 namespace Socolin.TestsUtils.JsonComparer.Handlers
 {
-    public interface IJsonCaptureHandler
+    public interface IJsonSpecialHandler
     {
-        (bool success, IList<JsonCompareError> errors) HandleCapture(JToken expected, JToken actual, string path);
+        (bool success, IList<JsonCompareError> errors) HandleSpecialObject(JToken expected, JToken actual, string path);
     }
 
-    public class JsonCaptureHandler : IJsonCaptureHandler
+    public class JsonSpecialHandler : IJsonSpecialHandler
     {
         private readonly Action<string, JToken> _captureValueHandler;
 
-        public JsonCaptureHandler(Action<string, JToken> handler)
+        public JsonSpecialHandler(Action<string, JToken> handler)
         {
             _captureValueHandler = handler;
         }
 
-        public (bool success, IList<JsonCompareError> errors) HandleCapture(JToken expected, JToken actual, string path)
+        public (bool success, IList<JsonCompareError> errors) HandleSpecialObject(JToken expected, JToken actual, string path)
         {
-            if (!IsCaptureObject(expected))
-                return (false, null);
+            if (IsCaptureObject(expected))
+                return HandleCaptureObject(expected, actual, path);
 
+            if (IsMatchObject(expected))
+                return HandleMatchObject(expected, actual, path);
+
+            return (false, null);
+        }
+
+        private (bool success, IList<JsonCompareError> errors) HandleCaptureObject(JToken expected, JToken actual, string path)
+        {
             var jCaptureObject = ((JObject) expected).Value<JObject>("__capture");
             if (!jCaptureObject.ContainsKey("name"))
                 return (false, new List<JsonCompareError> {new InvalidCaptureObjectCompareError(path, expected, actual, "Missing `name` field on capture object")});
@@ -46,6 +55,24 @@ namespace Socolin.TestsUtils.JsonComparer.Handlers
             return (true, null);
         }
 
+        private (bool success, IList<JsonCompareError> errors) HandleMatchObject(JToken expected, JToken actual, string path)
+        {
+            var jCaptureObject = ((JObject) expected).Value<JObject>("__match");
+            if (jCaptureObject.ContainsKey("regex"))
+            {
+                if (actual.Type != JTokenType.String)
+                    return (false, new List<JsonCompareError> {new InvalidTypeJsonCompareError(path, expected, actual)});
+                var regex = jCaptureObject.Value<string>("regex");
+                var actualValue = actual.Value<string>();
+                if (!Regex.IsMatch(actualValue, regex, RegexOptions.CultureInvariant))
+                    return (false, new List<JsonCompareError> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex)});
+                return (true, null);
+            }
+
+
+            return (false, new List<JsonCompareError> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Missing `regex` field on capture object")});
+        }
+
         private static bool IsCaptureObject(JToken jToken)
         {
             if (jToken.Type != JTokenType.Object)
@@ -53,6 +80,15 @@ namespace Socolin.TestsUtils.JsonComparer.Handlers
             if (!(jToken is JObject expectedJObject))
                 return false;
             return expectedJObject.ContainsKey("__capture");
+        }
+
+        private static bool IsMatchObject(JToken jToken)
+        {
+            if (jToken.Type != JTokenType.Object)
+                return false;
+            if (!(jToken is JObject expectedJObject))
+                return false;
+            return expectedJObject.ContainsKey("__match");
         }
     }
 }

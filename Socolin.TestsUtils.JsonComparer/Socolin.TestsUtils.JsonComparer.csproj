@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>Socolin.TestUtils.JsonComparer</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.1.0</Version>
         <Authors>Bertrand Provost</Authors>
         <Description>An util to compare 2 JSON in tests</Description>
         <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>

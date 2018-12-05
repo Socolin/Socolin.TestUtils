@@ -95,14 +95,14 @@ namespace Socolin.TestsUtils.FakeSmtp
             if (State != SessionState.End)
                 return null;
 
-            var mailParts = _mailData.Split("\r\n\r\n", 2);
+            var mailParts = _mailData.Split(new [] {"\r\n\r\n"}, 2, StringSplitOptions.None);
             var headersPart = mailParts[0];
 
             var mail = new FakeSmtpMail();
 
-            foreach (var headerData in headersPart.Split("\r\n"))
+            foreach (var headerData in headersPart.Split(new [] {"\r\n"}, StringSplitOptions.None))
             {
-                var header = headerData.Split(':', 2);
+                var header = headerData.Split(new [] {':'}, 2);
                 var headerName = header[0].Trim();
                 var headerValue = header[1].Trim();
 
@@ -164,7 +164,7 @@ namespace Socolin.TestsUtils.FakeSmtp
 
                     if (line.StartsWith("EHLO"))
                     {
-                        var clientName = line.Split(' ', 2);
+                        var clientName = line.Split(new [] {' '}, 2);
                         ExtendedSmtp = true;
                         SendLine($"250-smtp.localhost Hello {clientName}");
                         SendLine("250-SIZE 1000000");
@@ -177,7 +177,7 @@ namespace Socolin.TestsUtils.FakeSmtp
                 case SessionState.Login:
                     if (line.StartsWith("AUTH"))
                     {
-                        var authInfo = line.Split(" ");
+                        var authInfo = line.Split(new [] {" "}, StringSplitOptions.None);
                         if (authInfo.Length == 3)
                         {
                             if (authInfo[1] == "login")

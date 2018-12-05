@@ -8,6 +8,8 @@
         <Description>An util to compare 2 JSON in tests</Description>
         <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/Socolin/Socolin.TestUtils</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Copyright>2018</Copyright>
     </PropertyGroup>
 
     <ItemGroup>

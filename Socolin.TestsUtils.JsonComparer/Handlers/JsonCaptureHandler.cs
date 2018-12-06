@@ -66,6 +66,10 @@ namespace Socolin.TestsUtils.JsonComparer.Handlers
                 var actualValue = actual.Value<string>();
                 if (!Regex.IsMatch(actualValue, regex, RegexOptions.CultureInvariant))
                     return (false, new List<JsonCompareError> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex)});
+
+                if (expected.Parent is JProperty parentProperty)
+                    parentProperty.Value = actual.DeepClone();
+
                 return (true, null);
             }
 

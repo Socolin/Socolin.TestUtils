@@ -102,7 +102,6 @@ namespace Socolin.TestsUtils.JsonComparer.Tests.Unit.Handlers
             }
         }
 
-
         [Test]
         public void WhenHandlingCapture_ReplaceExpectedWithActualIfItMatch()
         {
@@ -175,6 +174,17 @@ namespace Socolin.TestsUtils.JsonComparer.Tests.Unit.Handlers
             {
                 success.Should().BeTrue();
             }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_ReplaceExpectedWithActualIfItMatch()
+        {
+            var captureObject = JObject.FromObject(new {parent = new {__match = new {regex = ".+"}}});
+            var actualJson = JObject.FromObject(new {parent = "abc"});
+
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent");
+
+            captureObject.Property("parent").Value.ToObject<string>().Should().Be("abc");
         }
     }
 }

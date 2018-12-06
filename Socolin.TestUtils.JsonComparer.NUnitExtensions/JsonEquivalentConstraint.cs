@@ -5,6 +5,8 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 {
     public class JsonEquivalentConstraint : Constraint
     {
+        private IJsonComparer _jsonComparer;
+
         public JsonEquivalentConstraint(string expected)
             : this(JToken.Parse(expected))
         {
@@ -19,9 +21,16 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
         {
             var actualJToken = actual as JToken ?? JToken.Parse(actual as string);
             var expectedJToken = (JToken) Arguments[0];
-            var errors = JsonComparer.GetDefault().Compare(expectedJToken, actualJToken);
+            var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault();
+            var errors = jsonComparer.Compare(expectedJToken, actualJToken);
             var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors);
             return new JsonEquivalentConstraintResult(this, actual, errors?.Count == 0, message);
+        }
+
+        public JsonEquivalentConstraint WithComparer(IJsonComparer jsonComparer)
+        {
+            _jsonComparer = jsonComparer;
+            return this;
         }
 
         public override string Description { get; protected set; }

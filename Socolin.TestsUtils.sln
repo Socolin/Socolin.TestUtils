@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestsUtils.JsonComp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestsUtils.JsonComparer.Tests.Unit", "Socolin.TestsUtils.JsonComparer.Tests.Unit\Socolin.TestsUtils.JsonComparer.Tests.Unit.csproj", "{955EA99E-110B-46D6-AE43-D7372EEABC7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestUtils.JsonComparers.Examples", "Socolin.TestUtils.JsonComparers.Examples\Socolin.TestUtils.JsonComparers.Examples.csproj", "{74A181C8-ABAB-49E5-B4FC-DA5DBD2D4689}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestsUtils.JsonComparer.Examples", "Socolin.TestsUtils.JsonComparer.Examples\Socolin.TestsUtils.JsonComparer.Examples.csproj", "{74A181C8-ABAB-49E5-B4FC-DA5DBD2D4689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <PackageId>Socolin.TestUtils.JsonComparer.NUnitExtensions</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Bertrand Provost</Authors>
+        <Description>Extensions of NUnit to easily use Socolin.TestUtils.JsonComparer.</Description>
+        <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/Socolin/Socolin.TestUtils</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Copyright>2018</Copyright>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="NUnit" Version="[3.0.0,4.0.0)"/>
+        <PackageReference Include="Socolin.TestUtils.JsonComparer" Version="[1.2.0,2.0.0)"/>
+    </ItemGroup>
+
+</Project>

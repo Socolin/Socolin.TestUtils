@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestsUtils.FakeSmtp", "Socolin.TestsUtils.FakeSmtp\Socolin.TestsUtils.FakeSmtp.csproj", "{2560DFA8-4887-4C5A-B825-90A8E8C52653}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestUtils.FakeSmtp", "Socolin.TestUtils.FakeSmtp\Socolin.TestUtils.FakeSmtp.csproj", "{2560DFA8-4887-4C5A-B825-90A8E8C52653}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestsUtils.JsonComparer", "Socolin.TestsUtils.JsonComparer\Socolin.TestsUtils.JsonComparer.csproj", "{61848801-C3C9-4569-9243-0918B9D0668F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestUtils.JsonComparer", "Socolin.TestUtils.JsonComparer\Socolin.TestUtils.JsonComparer.csproj", "{61848801-C3C9-4569-9243-0918B9D0668F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestsUtils.JsonComparer.Tests.Unit", "Socolin.TestsUtils.JsonComparer.Tests.Unit\Socolin.TestsUtils.JsonComparer.Tests.Unit.csproj", "{955EA99E-110B-46D6-AE43-D7372EEABC7F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestUtils.JsonComparer.Tests.Unit", "Socolin.TestUtils.JsonComparer.Tests.Unit\Socolin.TestUtils.JsonComparer.Tests.Unit.csproj", "{955EA99E-110B-46D6-AE43-D7372EEABC7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestsUtils.JsonComparer.Examples", "Socolin.TestsUtils.JsonComparer.Examples\Socolin.TestsUtils.JsonComparer.Examples.csproj", "{74A181C8-ABAB-49E5-B4FC-DA5DBD2D4689}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestUtils.JsonComparer.Examples", "Socolin.TestUtils.JsonComparer.Examples\Socolin.TestUtils.JsonComparer.Examples.csproj", "{74A181C8-ABAB-49E5-B4FC-DA5DBD2D4689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

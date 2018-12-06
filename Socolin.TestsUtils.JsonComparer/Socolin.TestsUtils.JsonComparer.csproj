@@ -5,7 +5,7 @@
         <PackageId>Socolin.TestUtils.JsonComparer</PackageId>
         <Version>1.1.0</Version>
         <Authors>Bertrand Provost</Authors>
-        <Description>An util to compare 2 JSON in tests</Description>
+        <Description>This library provides a simple way to compare two JSON, with an easily readable output to find what differs.</Description>
         <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/Socolin/Socolin.TestUtils</RepositoryUrl>
         <RepositoryType>git</RepositoryType>

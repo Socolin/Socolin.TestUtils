@@ -17,10 +17,14 @@ namespace Socolin.TestsUtils.JsonComparer
 
         public static string GetReadableMessage(JToken expectedJToken, JToken actualJToken, IEnumerable<IJsonCompareError<JToken>> errors)
         {
+            var compareErrors = errors.ToList();
+            if (compareErrors.Count == 0)
+                return "No differences found";
+
             var sb = new StringBuilder();
 
             sb.AppendLine("Given json does not match expected one: ");
-            foreach (var error in errors)
+            foreach (var error in compareErrors)
                 sb.AppendLine($"  - {error.Path}: {error.Message}");
 
             sb.AppendLine();

@@ -18,7 +18,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
                 ""b"":""abc""
             }";
 
-            Assert.That(actualJson, Is.JsonEquivalent(expectedJson));
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson));
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
             var comparerCalled = false;
             var jsonComparer = JsonComparer.GetDefault((s, token) => { comparerCalled = true; });
 
-            Assert.That(actualJson, Is.JsonEquivalent(expectedJson).WithComparer(jsonComparer));
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithComparer(jsonComparer));
             Assert.That(comparerCalled, Is.True);
         }
     }

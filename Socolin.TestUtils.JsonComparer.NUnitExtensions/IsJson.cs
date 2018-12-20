@@ -2,14 +2,14 @@ using Newtonsoft.Json.Linq;
 
 namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 {
-    public class Is : NUnit.Framework.Is
+    public class IsJson
     {
-        public static JsonEquivalentConstraint JsonEquivalent(string expected)
+        public static JsonEquivalentConstraint EquivalentTo(string expected)
         {
             return new JsonEquivalentConstraint(expected);
         }
 
-        public static JsonEquivalentConstraint JsonEquivalent(JToken expected)
+        public static JsonEquivalentConstraint EquivalentTo(JToken expected)
         {
             return new JsonEquivalentConstraint(expected);
         }

@@ -14,7 +14,7 @@ const string actualJson = @"{
     ""b"":""abc""
 }";
 
-Assert.That(actualJson, Is.JsonEquivalent(expectedJson));
+Assert.That(actualJson, IsJson.EquivalentTo(expectedJson));
 ```
 
 ### Output

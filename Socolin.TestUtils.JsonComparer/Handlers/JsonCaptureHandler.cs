@@ -73,6 +73,19 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 return (true, null);
             }
 
+            if (jCaptureObject.ContainsKey("type"))
+            {
+                var expectedType = jCaptureObject.Value<string>("type");
+                if (!Enum.TryParse(expectedType, true, out JTokenType type))
+                    return (false, new List<JsonCompareError> {new InvalidCaptureObjectCompareError(path, expected, actual, $"Invalid `type`: value '{expectedType}' is not valid, see JTokenType for list of type")});
+                if (type != actual.Type)
+                    return (false, new List<JsonCompareError> {new InvalidTypeJsonCompareError(path, expected, actual)});
+
+                if (expected.Parent is JProperty parentProperty)
+                    parentProperty.Value = actual.DeepClone();
+
+                return (true, null);
+            }
 
             return (false, new List<JsonCompareError> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Missing `regex` field on capture object")});
         }

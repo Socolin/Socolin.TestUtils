@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>Socolin.TestUtils.JsonComparer.NUnitExtensions</PackageId>
-        <Version>1.2.0</Version>
+        <Version>1.3.0</Version>
         <Authors>Bertrand Provost</Authors>
         <Description>Extensions of NUnit to easily use Socolin.TestUtils.JsonComparer.</Description>
         <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>

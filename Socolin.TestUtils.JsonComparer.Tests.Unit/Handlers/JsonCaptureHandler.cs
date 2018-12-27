@@ -186,5 +186,47 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
 
             captureObject.Property("parent").Value.ToObject<string>().Should().Be("abc");
         }
+
+        [Test]
+        public void WhenHandlingMatch_AndTypeIsGiven_SuccessIfTypeIsEqual()
+        {
+            var captureObject = JObject.FromObject(new {__match = new {type = "integer"}});
+            var actualJson = JToken.Parse("42");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "");
+
+            using (new AssertionScope())
+            {
+                success.Should().BeTrue();
+                errors.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndTypeIsGiven_ErrorIfTypeIsDifferent()
+        {
+            var captureObject = JObject.FromObject(new {__match = new {type = "integer"}});
+            var actualJson = JToken.Parse(@"""some-string""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "");
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Should().HaveCount(1);
+                errors.First().Should().BeOfType<InvalidTypeJsonCompareError>();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndTypeIsGiven_ReplaceExpectedWithActualIfItMatch()
+        {
+            var captureObject = JObject.FromObject(new {parent = new {__match = new {type = "string"}}});
+            var actualJson = JObject.FromObject(new {parent = "abc"});
+
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent");
+
+            captureObject.Property("parent").Value.ToObject<string>().Should().Be("abc");
+        }
     }
 }

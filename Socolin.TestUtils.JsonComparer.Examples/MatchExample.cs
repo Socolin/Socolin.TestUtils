@@ -65,5 +65,43 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
         }
+
+        public void Test4()
+        {
+            Console.WriteLine("==== MatchExample.Test4 ==== ");
+            const string expectedJson = @"{
+                ""a"":{
+                    ""__match"":{
+                        ""type"": ""integer""
+                    }
+                },
+                ""b"":""abc""
+            }";
+            const string actualJson = @"{
+                ""a"":42,
+                ""b"":""abc""
+            }";
+            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var errors = jsonComparer.Compare(expectedJson, actualJson);
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+        }
+
+        public void Test5()
+        {
+            Console.WriteLine("==== MatchExample.Test5 ==== ");
+            const string expectedJson = @"{
+                ""date"":{
+                    ""__match"":{
+                        ""regex"": ""^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{7}Z?""
+                    }
+                }
+            }";
+            const string actualJson = @"{
+    			""date"": ""2042-05-04T06:01:06.0000000Z""
+            }";
+            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var errors = jsonComparer.Compare(expectedJson, actualJson);
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+        }
     }
 }

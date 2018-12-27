@@ -42,8 +42,14 @@ namespace Socolin.TestUtils.JsonComparer
 
         public IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson)
         {
-            var expected = JsonConvert.DeserializeObject<JToken>(expectedJson);
-            var actual = JsonConvert.DeserializeObject<JToken>(actualJson);
+            var expected = JsonConvert.DeserializeObject<JToken>(expectedJson, new JsonSerializerSettings
+            {
+                DateParseHandling = DateParseHandling.None
+            });
+            var actual = JsonConvert.DeserializeObject<JToken>(actualJson, new JsonSerializerSettings
+            {
+                DateParseHandling = DateParseHandling.None
+            });
             return Compare(expected, actual);
         }
 

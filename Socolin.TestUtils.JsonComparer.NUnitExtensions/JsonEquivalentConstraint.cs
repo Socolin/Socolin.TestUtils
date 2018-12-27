@@ -1,54 +1,61 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework.Constraints;
 
 namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 {
-    public class JsonEquivalentConstraint : Constraint
-    {
-        private IJsonComparer _jsonComparer;
+	public class JsonEquivalentConstraint : Constraint
+	{
+		private IJsonComparer _jsonComparer;
 
-        public JsonEquivalentConstraint(string expected)
-            : this(JToken.Parse(expected))
-        {
-        }
+		public JsonEquivalentConstraint(string expected)
+			: this(JsonConvert.DeserializeObject<JToken>(expected, new JsonSerializerSettings
+			{
+				DateParseHandling = DateParseHandling.None
+			}))
+		{
+		}
 
-        public JsonEquivalentConstraint(JToken expected)
-            : base(expected)
-        {
-        }
+		public JsonEquivalentConstraint(JToken expected)
+			: base(expected)
+		{
+		}
 
-        public override ConstraintResult ApplyTo<TActual>(TActual actual)
-        {
-            var actualJToken = actual as JToken ?? JToken.Parse(actual as string);
-            var expectedJToken = (JToken) Arguments[0];
-            var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault();
-            var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-            var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors);
-            return new JsonEquivalentConstraintResult(this, actual, errors?.Count == 0, message);
-        }
+		public override ConstraintResult ApplyTo<TActual>(TActual actual)
+		{
+			var actualJToken = actual as JToken ?? JsonConvert.DeserializeObject<JToken>(actual as string, new JsonSerializerSettings
+			{
+				DateParseHandling = DateParseHandling.None
+			});
+			var expectedJToken = (JToken) Arguments[0];
+			var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault();
+			var errors = jsonComparer.Compare(expectedJToken, actualJToken);
+			var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors);
+			return new JsonEquivalentConstraintResult(this, actual, errors?.Count == 0, message);
+		}
 
-        public JsonEquivalentConstraint WithComparer(IJsonComparer jsonComparer)
-        {
-            _jsonComparer = jsonComparer;
-            return this;
-        }
+		public JsonEquivalentConstraint WithComparer(IJsonComparer jsonComparer)
+		{
+			_jsonComparer = jsonComparer;
+			return this;
+		}
 
-        public override string Description { get; protected set; }
+		public override string Description { get; protected set; }
 
-        private class JsonEquivalentConstraintResult : ConstraintResult
-        {
-            private readonly string _message;
+		private class JsonEquivalentConstraintResult : ConstraintResult
+		{
+			private readonly string _message;
 
-            public JsonEquivalentConstraintResult(IConstraint constraint, object actualValue, bool isSuccess, string message)
-                : base(constraint, actualValue, isSuccess)
-            {
-                _message = message;
-            }
+			public JsonEquivalentConstraintResult(IConstraint constraint, object actualValue, bool isSuccess, string message)
+				: base(constraint, actualValue, isSuccess)
+			{
+				_message = message;
+			}
 
-            public override void WriteMessageTo(MessageWriter writer)
-            {
-                writer.WriteLine(_message);
-            }
-        }
-    }
+			public override void WriteMessageTo(MessageWriter writer)
+			{
+				writer.WriteLine(_message);
+			}
+		}
+	}
 }

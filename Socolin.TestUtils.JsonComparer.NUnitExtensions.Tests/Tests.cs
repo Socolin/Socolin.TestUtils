@@ -33,7 +33,24 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
                 ""b"":""abc""
             }";
 
-            Assert.That(actualJson, Is.Not.JsonEquivalent(expectedJson));
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson));
+        }
+
+        [Test]
+        public void TestAssertThatMatchDateWithoutParsingThem()
+        {
+            const string expectedJson = @"{
+                ""date"":{
+                    ""__match"":{
+                        ""regex"": ""^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{7}Z?""
+                    }
+                }
+            }";
+            const string actualJson = @"{
+    			""date"": ""2042-05-04T06:01:06.0000000Z""
+            }";
+
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson));
         }
 
         [Test]

@@ -336,3 +336,98 @@ Given json does not match expected one:
 +  "b": "def"
  }
 ```
+
+## Capture using regex
+
+To match and capture value of field id
+
+
+```json
+{
+  "id": "B6E73AF8-BDB9-41B2-BB77-28575B08A28C"
+}
+```
+
+```json
+{
+  "id": {
+    "__capture": {
+      "name": "some-global-capture-name",
+      "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+    }
+  }
+}
+```
+
+### Example
+
+#### Code
+
+```cs
+var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+    Console.WriteLine($"Captured value: name={captureName} token={token}");
+}));
+
+var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""name"": ""some-global-capture-name"", ""regex"":""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""}}}");
+var actualJson = JToken.Parse(@"{""a"":""B6E73AF8-BDB9-41B2-BB77-28575B08A28C""}");
+
+var errors = jsonComparer.Compare(expectedJson, actualJson);
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+```
+
+#### Output
+
+```
+Captured value: name=some-global-capture-name token=B6E73AF8-BDB9-41B2-BB77-28575B08A28C
+No differences found
+```
+
+
+## Capture using regex capture groups
+
+### Example 1
+
+#### Code
+
+```cs
+var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+    Console.WriteLine($"Captured value: name={captureName} token={token}");
+}));
+
+var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""name"": ""some-global-capture-name"", ""regex"":""(?<localCapture>bcd)""}}, ""b"":""def""}");
+var actualJson = JToken.Parse(@"{""a"":""abcdef"", ""b"":""def""}");
+
+var errors = jsonComparer.Compare(expectedJson, actualJson);
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+```
+
+#### Output
+
+```
+Captured value: name=some-global-capture-name token=abcdef
+Captured value: name=localCapture token=bcd
+No differences found
+```
+
+### Example 2
+
+#### Code
+
+```cs
+var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+    Console.WriteLine($"Captured value: name={captureName} token={token}");
+}));
+
+var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""regex"":""(?<localCapture>bcd)""}}, ""b"":""def""}");
+var actualJson = JToken.Parse(@"{""a"":""abcdef"", ""b"":""def""}");
+
+var errors = jsonComparer.Compare(expectedJson, actualJson);
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+```
+
+#### Output
+
+```
+Captured value: name=localCapture token=bcd
+No differences found
+```

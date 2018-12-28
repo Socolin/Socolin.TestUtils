@@ -34,5 +34,53 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             var errors = jsonComparer.Compare(expectedJson, actualJson);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
         }
+
+        public void Test3()
+        {
+            Console.WriteLine("==== CaptureExample.Test3 ==== ");
+
+            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+                Console.WriteLine($"Captured value: name={captureName} token={token}");
+            }));
+
+            var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""name"": ""some-global-capture-name"", ""regex"":""(?<localCapture>bcd)""}}, ""b"":""def""}");
+            var actualJson = JToken.Parse(@"{""a"":""abcdef"", ""b"":""def""}");
+
+            var errors = jsonComparer.Compare(expectedJson, actualJson);
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+        }
+
+        public void Test4()
+        {
+            Console.WriteLine("==== CaptureExample.Test4 ==== ");
+
+            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+                Console.WriteLine($"Captured value: name={captureName} token={token}");
+            }));
+
+
+            var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""name"": ""some-global-capture-name"", ""regex"":""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""}}}");
+            var actualJson = JToken.Parse(@"{""a"":""B6E73AF8-BDB9-41B2-BB77-28575B08A28C""}");
+
+            var errors = jsonComparer.Compare(expectedJson, actualJson);
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+        }
+
+
+        public void Test5()
+        {
+            Console.WriteLine("==== CaptureExample.Test5 ==== ");
+
+            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+                Console.WriteLine($"Captured value: name={captureName} token={token}");
+            }));
+
+            var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""regex"":""(?<localCapture>bcd)""}}}");
+            var actualJson = JToken.Parse(@"{""a"":""abcdef""}");
+
+            var errors = jsonComparer.Compare(expectedJson, actualJson);
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+        }
+
     }
 }

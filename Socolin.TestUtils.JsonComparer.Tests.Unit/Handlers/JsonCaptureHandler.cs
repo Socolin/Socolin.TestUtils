@@ -38,7 +38,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         }
 
         [Test]
-        public void WhenHandlingCapture_AndCaptureObjectIsMissingNameField_ReturnsError()
+        public void WhenHandlingCapture_AndCaptureObjectUseTypeAndFieldNameIsMissing_ReturnsError()
         {
             var captureObject = JObject.FromObject(new {__capture = new {type = "string"}});
             var actualJson = JToken.Parse("42");
@@ -54,7 +54,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         }
 
         [Test]
-        public void WhenHandlingCapture_AndCaptureObjectIsMissingTypeField_ReturnsError()
+        public void WhenHandlingCapture_AndCaptureObjectIsMissingTypeOrRegexField_ReturnsError()
         {
             var captureObject = JObject.FromObject(new {__capture = new {name = "some-name"}});
             var actualJson = JToken.Parse("42");
@@ -111,6 +111,88 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent");
 
             captureObject.Property("parent").Value.ToObject<int>().Should().Be(42);
+        }
+
+        [Test]
+        public void WhenHandlingCapture_UsingRegex_ReturnsErrorIfRegexDoesNotMatch()
+        {
+            var captureObject = JObject.FromObject(new {__capture = new {name = "some-capture-name", regex = "some-regex"}});
+            var actualJson = JToken.Parse(@"""abc""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "");
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Should().HaveCount(1);
+                errors.First().Should().BeOfType<RegexMismatchMatchJsonCompareError>();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingCapture_UsingRegex_CallAddMethod()
+        {
+            var captureObject = JObject.FromObject(new {__capture = new {name = "some-capture-name", regex = "abc"}});
+            var actualJson = JToken.Parse(@"""abc""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "");
+
+
+            using (new AssertionScope())
+            {
+                success.Should().BeTrue();
+                errors.Should().BeNull();
+            }
+
+            _handler.Received(1)
+                .Invoke("some-capture-name", Arg.Is<JValue>(value => value.Value<string>() == "abc"));
+        }
+
+        [Test]
+        public void WhenHandlingCapture_UsingRegex_UseRegexCaptureGroup_AndCallAddMethodWithGroupName()
+        {
+            var captureObject = JObject.FromObject(new {__capture = new {regex = "(?<someCaptureName>abc)"}});
+            var actualJson = JToken.Parse(@"""abc""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "");
+
+
+            using (new AssertionScope())
+            {
+                success.Should().BeTrue();
+                errors.Should().BeNull();
+            }
+
+            _handler.Received(1)
+                .Invoke("someCaptureName", actualJson);
+        }
+
+        [Test]
+        public void WhenHandlingCapture_UsingRegex_UseRegexCaptureGroup_DoNotCallAddWithGroupIndex()
+        {
+            var captureObject = JObject.FromObject(new {__capture = new {regex = "(?<someCaptureName>abc)"}});
+            var actualJson = JToken.Parse(@"""abc""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "");
+
+
+            using (new AssertionScope())
+            {
+                success.Should().BeTrue();
+                errors.Should().BeNull();
+            }
+
+            _handler.DidNotReceive().Invoke("0", actualJson);
+        }
+        [Test]
+        public void WhenHandlingCapture_UsingRegex_ReplaceExpectedWithActualIfItMatch()
+        {
+            var captureObject = JObject.FromObject(new {parent = new {__capture = new {name = "some-capture-name", regex = "some-regex"}}});
+            var actualJson = JObject.FromObject(new {parent = "some-regex"});
+
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent");
+
+            captureObject.Property("parent").Value.ToObject<string>().Should().Be("some-regex");
         }
 
         [Test]

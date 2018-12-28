@@ -4,5 +4,6 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
     {
         public string Name { get; set; }
         public string Type { get; set; }
+        public string Regex { get; set; }
     }
 }

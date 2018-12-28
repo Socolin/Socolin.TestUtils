@@ -34,10 +34,49 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
         private (bool success, IList<JsonCompareError> errors) HandleCaptureObject(JToken expected, JToken actual, string path)
         {
             var jCaptureObject = ((JObject) expected).Value<JObject>("__capture");
+            if (jCaptureObject.ContainsKey("type"))
+                return HandleCaptureObjectWithType(expected, actual, path, jCaptureObject);
+            if (jCaptureObject.ContainsKey("regex"))
+                return HandleCaptureObjectWithRegex(expected, actual, path, jCaptureObject);
+            return (false, new List<JsonCompareError> {new InvalidCaptureObjectCompareError(path, expected, actual, "Missing `type` or `regex` field on capture object")});
+        }
+
+        private (bool success, IList<JsonCompareError> errors) HandleCaptureObjectWithRegex(JToken expected, JToken actual, string path, JObject jCaptureObject)
+        {
+            var captureObject = jCaptureObject.ToObject<JsonCaptureObject>();
+
+            if (string.IsNullOrEmpty(captureObject.Regex))
+                return (false, new List<JsonCompareError> {new InvalidCaptureObjectCompareError(path, expected, actual, "Empty `regex` field on capture object")});
+
+            if (actual.Type != JTokenType.String)
+                return (false, new List<JsonCompareError> {new InvalidTypeJsonCompareError(path, expected, actual)});
+
+            var regex = new Regex(captureObject.Regex, RegexOptions.CultureInvariant | RegexOptions.Compiled);
+            var match = regex.Match(actual.Value<string>());
+            if (!match.Success)
+                return (false, new List<JsonCompareError> {new RegexMismatchMatchJsonCompareError(path, expected, actual, captureObject.Regex)});
+
+            if (captureObject.Name != null)
+                _captureValueHandler?.Invoke(captureObject.Name, actual);
+
+            var groupNumbers = regex.GetGroupNumbers();
+            foreach (var groupNumber in groupNumbers)
+            {
+                var groupName = regex.GroupNameFromNumber(groupNumber);
+                if (!string.IsNullOrEmpty(groupName) && groupName != groupNumber.ToString())
+                    _captureValueHandler?.Invoke(groupName, JValue.CreateString(match.Groups[groupNumber].Value));
+            }
+
+            if (expected.Parent is JProperty parentProperty)
+                parentProperty.Value = actual.DeepClone();
+
+            return (true, null);
+        }
+
+        private (bool success, IList<JsonCompareError> errors) HandleCaptureObjectWithType(JToken expected, JToken actual, string path, JObject jCaptureObject)
+        {
             if (!jCaptureObject.ContainsKey("name"))
                 return (false, new List<JsonCompareError> {new InvalidCaptureObjectCompareError(path, expected, actual, "Missing `name` field on capture object")});
-            if (!jCaptureObject.ContainsKey("type"))
-                return (false, new List<JsonCompareError> {new InvalidCaptureObjectCompareError(path, expected, actual, "Missing `type` field on capture object")});
 
             var captureObject = jCaptureObject.ToObject<JsonCaptureObject>();
 

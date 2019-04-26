@@ -142,7 +142,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit
             var actualJson = JToken.Parse("42");
 
             _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "")
-                .Returns((false, new List<JsonCompareError> {new TestJsonCompareError()}));
+                .Returns((false, new List<IJsonCompareError<JToken>> {new TestJsonCompareError()}));
 
             var actualErrors = _jsonComparer.Compare(expectedJson, actualJson);
 

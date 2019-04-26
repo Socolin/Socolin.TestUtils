@@ -431,3 +431,106 @@ Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, a
 Captured value: name=localCapture token=bcd
 No differences found
 ```
+
+## Partial compare
+
+If you want to compare a large json, but only test a small set you can use `__partial` object.
+
+For example, in the following json, to compare only the key `compareMe` and ignore `doNotCompareMe1` and `doNotCompareMe2`
+
+```json
+{
+  "compareMe": "something",
+  "doNotCompareMe1": "something",
+  "doNotCompareMe2": "something"
+}
+```
+
+The expected json given to the comparer should be
+
+```json
+{
+  "__partial": {
+    "compareMe": "something"
+  }
+}
+```
+
+### Example
+
+
+#### Example 1
+```cs
+const string expectedJson = @"{
+    ""a"":{
+        ""__partial"":{
+            ""tested"": ""123""
+        }
+    },
+    ""b"":""abc""
+}";
+const string actualJson = @"{
+    ""a"": {
+        ""tested"": ""123"",
+        ""ignored"": ""42""
+    },
+    ""b"":""abc""
+}";
+
+var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+var errors = jsonComparer.Compare(expectedJson, actualJson);
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+```
+
+#### Output
+
+```
+No differences found
+```
+
+#### Example 2
+
+```cs
+
+const string expectedJson = @"{
+    ""a"":{
+        ""__partial"":{
+            ""tested"": ""123"",
+            ""missing"": ""123""
+        }
+    },
+    ""b"":""abc""
+}";
+const string actualJson = @"{
+    ""a"": {
+        ""tested"": ""123"",
+        ""ignored"": ""42""
+    },
+    ""b"":""abc""
+}";
+
+var expectedJToken = JToken.Parse(expectedJson);
+var actualJToken = JToken.Parse(actualJson);
+
+var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+var errors = jsonComparer.Compare(expectedJToken, actualJToken);
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
+```
+
+
+#### Output
+
+```diff
+Given json does not match expected one:
+  - : Missing property `missing`
+
+--- expected
++++ actual
+ {
+   "a": {
+-    "missing": "123",
+     "tested": "123"
+   },
+   "b": "abc"
+ }
+```

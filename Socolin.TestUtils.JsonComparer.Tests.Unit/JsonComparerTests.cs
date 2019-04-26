@@ -27,9 +27,19 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit
             _jsonArrayComparer = Substitute.For<IJsonArrayComparer>();
             _jsonValueComparer = Substitute.For<IJsonValueComparer>();
             _jsonSpecialHandler = Substitute.For<IJsonSpecialHandler>();
-            _jsonComparer = new JsonComparer(_jsonObjectComparer, _jsonArrayComparer, _jsonValueComparer, _jsonSpecialHandler);
+            _jsonComparer = new JsonComparer(
+                _jsonObjectComparer,
+                _jsonArrayComparer,
+                _jsonValueComparer,
+                _jsonSpecialHandler
+            );
 
-            _jsonSpecialHandler.HandleSpecialObject(Arg.Any<JToken>(), Arg.Any<JToken>(), Arg.Any<string>())
+            _jsonSpecialHandler.HandleSpecialObject(
+                    Arg.Any<JToken>(),
+                    Arg.Any<JToken>(),
+                    Arg.Any<string>(),
+                    Arg.Any<IJsonComparer>()
+                )
                 .Returns((false, null));
         }
 
@@ -125,9 +135,9 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit
         public void WhenComparingJsonValue_AndTypeMismatch_AndCaptureSucceed_DoNotReturnsError()
         {
             var expectedJson = JObject.Parse("{}");
-            var actualJson = JToken.Parse("42");
+            var actualJson = JToken.Parse("{}");
 
-            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "")
+            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "", _jsonComparer)
                 .Returns((true, null));
 
             var actualErrors = _jsonComparer.Compare(expectedJson, actualJson);
@@ -139,9 +149,9 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit
         public void WhenComparingJsonValue_AndTypeMismatch_AndCaptureFail_ReturnCaptureErrors()
         {
             var expectedJson = JObject.Parse("{}");
-            var actualJson = JToken.Parse("42");
+            var actualJson = JToken.Parse("{}");
 
-            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "")
+            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "", _jsonComparer)
                 .Returns((false, new List<IJsonCompareError<JToken>> {new TestJsonCompareError()}));
 
             var actualErrors = _jsonComparer.Compare(expectedJson, actualJson);

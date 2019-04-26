@@ -12,6 +12,6 @@ namespace Socolin.TestUtils.JsonComparer.Errors
             _details = details;
         }
 
-        public override string Message => $"Invalid capture object: {_details}";
+        public override string Message => $"Invalid match object: {_details}";
     }
 }

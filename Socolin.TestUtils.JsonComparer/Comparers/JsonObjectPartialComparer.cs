@@ -9,6 +9,21 @@ namespace Socolin.TestUtils.JsonComparer.Comparers
     {
         public IEnumerable<IJsonCompareError<JToken>> Compare(JObject expected, JObject actual, IJsonComparer jsonComparer, string path = "")
         {
+            var ignoredProperties = new List<string>();
+            foreach (var actualProperty in actual.Properties())
+            {
+                var expectedProperty = expected.Property(actualProperty.Name);
+                if (expectedProperty == null)
+                {
+                    ignoredProperties.Add(actualProperty.Name);
+                }
+            }
+
+            foreach (var ignoredPropertyName in ignoredProperties)
+            {
+                actual.Remove(ignoredPropertyName);
+            }
+
             foreach (var expectedProperty in expected.Properties())
             {
                 var actualProperty = actual.Property(expectedProperty.Name);

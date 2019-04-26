@@ -1,32 +1,39 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using Socolin.TestUtils.JsonComparer.Comparers;
 using Socolin.TestUtils.JsonComparer.Errors;
 
 namespace Socolin.TestUtils.JsonComparer.Handlers
 {
     public interface IJsonSpecialHandler
     {
-        (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path);
+        (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer);
     }
 
     public class JsonSpecialHandler : IJsonSpecialHandler
     {
         private readonly Action<string, JToken> _captureValueHandler;
+        private readonly IJsonObjectComparer _jsonObjectPartialComparer;
 
-        public JsonSpecialHandler(Action<string, JToken> handler)
+        public JsonSpecialHandler(Action<string, JToken> handler, IJsonObjectComparer jsonObjectPartialComparer)
         {
             _captureValueHandler = handler;
+            _jsonObjectPartialComparer = jsonObjectPartialComparer;
         }
 
-        public (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path)
+        public (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer)
         {
             if (IsCaptureObject(expected))
                 return HandleCaptureObject(expected, actual, path);
 
             if (IsMatchObject(expected))
                 return HandleMatchObject(expected, actual, path);
+
+            if (IsPartialObject(expected))
+                return HandlePartialObject(expected, actual, path, jsonComparer);
 
             return (false, null);
         }
@@ -116,7 +123,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
             {
                 var expectedType = jCaptureObject.Value<string>("type");
                 if (!Enum.TryParse(expectedType, true, out JTokenType type))
-                    return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, $"Invalid `type`: value '{expectedType}' is not valid, see JTokenType for list of type")});
+                    return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, $"Invalid `type`: value '{expectedType}' is not valid, see JTokenType for list of type")});
                 if (type != actual.Type)
                     return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
 
@@ -128,6 +135,27 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
 
             return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Missing `regex` field on capture object")});
         }
+
+        private (bool success, IList<IJsonCompareError<JToken>> errors) HandlePartialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer)
+        {
+            var jPartialObject = expected.Value<JToken>("__partial");
+
+            if (jPartialObject.Type != JTokenType.Object)
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidPartialObjectCompareError(path, expected, actual, $"Invalid `type` of __partial object. Partial comparison is only supported for JSON Object yet")});
+
+            if (actual.Type != jPartialObject.Type)
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, jPartialObject, actual)});
+
+            var errors = _jsonObjectPartialComparer.Compare(jPartialObject as JObject, actual as JObject, jsonComparer).ToList();
+            if (expected.Parent is JProperty parentProperty)
+                parentProperty.Value = jPartialObject;
+
+            if (errors.Count > 0)
+                return (false, errors);
+
+            return (true, null);
+        }
+
 
         private static bool IsCaptureObject(JToken jToken)
         {
@@ -145,6 +173,15 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
             if (!(jToken is JObject expectedJObject))
                 return false;
             return expectedJObject.ContainsKey("__match");
+        }
+
+        private static bool IsPartialObject(JToken jToken)
+        {
+            if (jToken.Type != JTokenType.Object)
+                return false;
+            if (!(jToken is JObject expectedJObject))
+                return false;
+            return expectedJObject.ContainsKey("__partial");
         }
     }
 }

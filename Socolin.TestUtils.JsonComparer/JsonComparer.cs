@@ -25,7 +25,12 @@ namespace Socolin.TestUtils.JsonComparer
 
         public static JsonComparer GetDefault(Action<string, JToken> captureHandler = null)
         {
-            return new JsonComparer(new JsonObjectComparer(), new JsonArrayComparer(), new JsonValueComparer(), new JsonSpecialHandler(captureHandler));
+            return new JsonComparer(
+                new JsonObjectComparer(),
+                new JsonArrayComparer(),
+                new JsonValueComparer(),
+                new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer())
+            );
         }
 
         public JsonComparer(
@@ -60,18 +65,18 @@ namespace Socolin.TestUtils.JsonComparer
 
         public IEnumerable<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, string path)
         {
+            var (captureSucceeded, captureErrors) = _jsonSpecialHandler.HandleSpecialObject(expected, actual, path, this);
+            if (captureSucceeded)
+                yield break;
+            if (captureErrors?.Count > 0)
+            {
+                foreach (var error in captureErrors)
+                    yield return error;
+                yield break;
+            }
+
             if (expected.Type != actual.Type)
             {
-                var (captureSucceeded, captureErrors) = _jsonSpecialHandler.HandleSpecialObject(expected, actual, path);
-                if (captureSucceeded)
-                    yield break;
-                if (captureErrors?.Count > 0)
-                {
-                    foreach (var error in captureErrors)
-                        yield return error;
-                    yield break;
-                }
-
                 yield return new InvalidTypeJsonCompareError(path, expected, actual);
                 yield break;
             }

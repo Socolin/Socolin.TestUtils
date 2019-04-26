@@ -73,5 +73,25 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Comparers
                 firstError.Should().BeOfType<TestJsonCompareError>();
             }
         }
+
+        [Test]
+        public void WhenComparingObjects_RemoveIgnoredPropertiesFromActual()
+        {
+            var expectedJObject = JObject.FromObject(new {someProperty = 42});
+            var actualJObject = JObject.FromObject(new {someProperty = 42, someIgnoredProperty = 1});
+
+            _jsonComparer.Compare(expectedJObject["someProperty"], actualJObject["someProperty"], "someProperty")
+                .Returns(new List<JsonCompareError> {new TestJsonCompareError()});
+
+            var errors = _jsonObjectComparer.Compare(expectedJObject, actualJObject, _jsonComparer);
+
+            using (new AssertionScope())
+            {
+                var firstError = errors.FirstOrDefault();
+                firstError.Should().NotBeNull();
+                firstError.Should().BeOfType<TestJsonCompareError>();
+                actualJObject.Should().NotContainKey("someIgnoredProperty");
+            }
+        }
     }
 }

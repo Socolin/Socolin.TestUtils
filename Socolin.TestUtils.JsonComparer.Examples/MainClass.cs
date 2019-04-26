@@ -15,6 +15,8 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             new CaptureExample().Test3();
             new CaptureExample().Test4();
             new CaptureExample().Test5();
+            new PartialExample().Test1();
+            new PartialExample().Test2();
         }
     }
 }

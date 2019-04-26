@@ -5,19 +5,10 @@ using Socolin.TestUtils.JsonComparer.Utils;
 
 namespace Socolin.TestUtils.JsonComparer.Comparers
 {
-    public class JsonObjectComparer : IJsonObjectComparer
+    public class JsonObjectPartialComparer : IJsonObjectComparer
     {
         public IEnumerable<IJsonCompareError<JToken>> Compare(JObject expected, JObject actual, IJsonComparer jsonComparer, string path = "")
         {
-            foreach (var actualProperty in actual.Properties())
-            {
-                var expectedProperty = expected.Property(actualProperty.Name);
-                if (expectedProperty == null)
-                {
-                    yield return new UnexpectedPropertyJsonComparerError(path, expected, actual, actualProperty);
-                }
-            }
-
             foreach (var expectedProperty in expected.Properties())
             {
                 var actualProperty = actual.Property(expectedProperty.Name);

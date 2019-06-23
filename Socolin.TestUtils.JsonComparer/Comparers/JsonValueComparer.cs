@@ -32,6 +32,10 @@ namespace Socolin.TestUtils.JsonComparer.Comparers
                     if (expected.Value<int>() == actual.Value<int>())
                         yield break;
                     break;
+                case JTokenType.Date:
+                    if (expected.Value<DateTime>() == actual.Value<DateTime>())
+                        yield break;
+                    break;
                 default:
                     if (expected.Value == actual.Value)
                         yield break;

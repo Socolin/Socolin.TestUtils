@@ -96,6 +96,7 @@ namespace Socolin.TestUtils.JsonComparer
                 case JTokenType.Boolean:
                 case JTokenType.Null:
                 case JTokenType.Undefined:
+                case JTokenType.Date:
                     errors = _jsonValueComparer.Compare(expected as JValue, actual as JValue, path);
                     break;
                 default:

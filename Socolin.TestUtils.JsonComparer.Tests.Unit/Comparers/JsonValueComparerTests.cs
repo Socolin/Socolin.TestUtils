@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -24,6 +25,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Comparers
             new TestCaseData(new JValue(42.2f), new JValue(42.5f)).SetArgDisplayNames("float"),
             new TestCaseData(new JValue("some-string-1"), new JValue("some-string-2")).SetArgDisplayNames("string"),
             new TestCaseData(new JValue(false), new JValue(true)).SetArgDisplayNames("bool"),
+            new TestCaseData(new JValue(new DateTime(2020,10,20,4,8,9)), new JValue(new DateTime(2030,10,20,4,8,9))).SetArgDisplayNames("date"),
         };
 
         [TestCaseSource(nameof(JValues))]
@@ -48,6 +50,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Comparers
             new TestCaseData(new JValue(42.5f), new JValue(42.5f)).SetArgDisplayNames("float"),
             new TestCaseData(new JValue("some-string-1"), new JValue("some-string-1")).SetArgDisplayNames("string"),
             new TestCaseData(new JValue(true), new JValue(true)).SetArgDisplayNames("bool"),
+            new TestCaseData(new JValue(new DateTime(2020,10,20,4,8,9)), new JValue(new DateTime(2020,10,20,4,8,9))).SetArgDisplayNames("date"),
         };
 
         [TestCaseSource(nameof(EqualJValues))]

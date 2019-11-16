@@ -47,9 +47,9 @@ namespace Socolin.TestUtils.FakeSmtp
 
         public void Stop()
         {
+            Running = false;
             _socket?.Shutdown(SocketShutdown.Both);
             _socket?.Close();
-            Running = false;
         }
 
         public void Dispose()
@@ -62,20 +62,30 @@ namespace Socolin.TestUtils.FakeSmtp
         {
             while (Running)
             {
-                using (var clientSocket = _socket.Accept())
+                try
                 {
-                    clientSocket.ReceiveTimeout = 200;
-                    try
+                    using (var clientSocket = _socket.Accept())
                     {
-                        var session = new FakeSmtpSession(clientSocket);
-                        session.ReceiveMail();
-                        var mail = session.GetMail();
-                        Mails.Add(mail);
+                        clientSocket.ReceiveTimeout = 200;
+                        try
+                        {
+                            var session = new FakeSmtpSession(clientSocket);
+                            session.ReceiveMail();
+                            var mail = session.GetMail();
+                            Mails.Add(mail);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
                     }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
+                }
+                catch (SocketException exception)
+                {
+                    if (!Running)
+                        return;
+
+                    throw;
                 }
             }
         }

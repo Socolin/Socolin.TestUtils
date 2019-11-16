@@ -47,13 +47,15 @@ namespace Socolin.TestUtils.FakeSmtp
 
         public void Stop()
         {
-            _socket.Close();
+            _socket?.Shutdown(SocketShutdown.Both);
+            _socket?.Close();
             Running = false;
         }
 
         public void Dispose()
         {
             _socket?.Dispose();
+            _socket = null;
         }
 
         private void Run(object obj)

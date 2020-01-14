@@ -10,6 +10,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             new MatchExample().Test3();
             new MatchExample().Test4();
             new MatchExample().Test5();
+            new MatchExample().Test6();
             new CaptureExample().Test1();
             new CaptureExample().Test2();
             new CaptureExample().Test3();

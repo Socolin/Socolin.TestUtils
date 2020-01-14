@@ -249,6 +249,67 @@ No differences found
 
 -------
 
+## Compare using range
+
+
+It's possible to use a range to compare a numeric value, using a custom object with a property `__match`.
+
+For example, in the following json, to verify the value associated to the key `compareMeInRange` is in a given range
+
+```json
+{
+  "compareMeByType": 42
+}
+```
+
+The expected json given to the comparer should be
+
+
+```json
+{
+  "compareMeInRange": {
+    "__match": {
+      "range": [40, 45]
+    }
+  }
+}
+```
+
+
+### Example
+
+#### Code
+
+```cs
+const string expectedJson = @"{
+    ""a"":{
+        ""__match"":{
+            ""range"": [95, 105]
+        }
+    },
+    ""b"": {
+        ""__match"":{
+            ""range"": [95, 105]
+        }
+    }
+}";
+const string actualJson = @"{
+    ""a"": 95,
+    ""b"": 105
+}";
+var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+var errors = jsonComparer.Compare(expectedJson, actualJson);
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+```
+
+#### Output
+
+```diff
+No differences found
+```
+
+-------
+
 ## Capture a value
 
 It's possible to capture some values when a value is compared with a *capture object*, a callback will be called.

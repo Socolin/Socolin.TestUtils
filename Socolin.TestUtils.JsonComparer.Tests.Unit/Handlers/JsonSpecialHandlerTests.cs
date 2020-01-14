@@ -408,5 +408,80 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
                 partialObject.Value<JObject>("parent").Should().ContainKey("tested");
             }
         }
+
+        [Test]
+        public void WhenHandlingMatch_AndRangeIsGiven_RangeIsNotArray_ReturnError()
+        {
+            var captureObject = JObject.FromObject(new {__match = new {range = "some-regex"}});
+            var actualJson = JToken.Parse("42");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Should().HaveCount(1);
+                errors.First().Should().BeOfType<InvalidMatchObjectJsonCompareError>();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndRangeIsGiven_RangeIsNotArrayOf2Values_ReturnError()
+        {
+            var captureObject = JObject.FromObject(new {__match = new {range = new int[] {1}}});
+            var actualJson = JToken.Parse("42");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Should().HaveCount(1);
+                errors.First().Should().BeOfType<InvalidMatchObjectJsonCompareError>();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndRegexIsGiven_AndActualValueIsNotANumber_ReturnError()
+        {
+            var captureObject = JObject.FromObject(new {__match = new {range = new[] {10, 20}}});
+            var actualJson = JToken.Parse(@"""some-string""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Should().HaveCount(1);
+                errors.First().Should().BeOfType<InvalidTypeJsonCompareError>();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndRangeIsGiven_AndActualValueIsNotInRange_ReturnError()
+        {
+            var captureObject = JObject.FromObject(new {__match = new {range = new[] {1, 4}}});
+            var actualJson = JToken.Parse(@"10");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Should().HaveCount(1);
+                errors.First().Should().BeOfType<ValueOutOfRangeComparerError>();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_WithRange_ReplaceExpectedWithActualIfItMatch()
+        {
+            var captureObject = JObject.FromObject(new {parent = new {__match = new {range = new [] {40, 45}}}});
+            var actualJson = JObject.FromObject(new {parent = 42});
+
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null);
+
+            captureObject.Property("parent").Value.ToObject<int>().Should().Be(42);
+        }
     }
 }

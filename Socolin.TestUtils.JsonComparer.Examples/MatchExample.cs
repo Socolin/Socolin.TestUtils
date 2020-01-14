@@ -103,5 +103,32 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             var errors = jsonComparer.Compare(expectedJson, actualJson);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
         }
+
+        public void Test6()
+        {
+            Console.WriteLine("==== MatchExample.Test6 ==== ");
+            const string expectedJson = @"{
+                ""a"":{
+                    ""__match"":{
+                        ""range"": [95, 105]
+                    }
+                },
+                ""b"": {
+                    ""__match"":{
+                        ""range"": [95, 105]
+                    }
+                }
+            }";
+            const string actualJson = @"{
+                ""a"": 95,
+                ""b"": 105
+            }";
+            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var expectedJToken = JToken.Parse(expectedJson);
+            var actualJToken = JToken.Parse(actualJson);
+            var errors = jsonComparer.Compare(expectedJToken, actualJToken);
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
+        }
+
     }
 }

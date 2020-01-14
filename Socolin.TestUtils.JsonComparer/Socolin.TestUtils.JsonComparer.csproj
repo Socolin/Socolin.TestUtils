@@ -9,7 +9,7 @@
         <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/Socolin/Socolin.TestUtils</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <Copyright>2018</Copyright>
+        <Copyright>2019</Copyright>
     </PropertyGroup>
 
     <ItemGroup>

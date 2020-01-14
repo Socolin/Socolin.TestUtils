@@ -103,12 +103,12 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
 
         private (bool success, IList<IJsonCompareError<JToken>> errors) HandleMatchObject(JToken expected, JToken actual, string path)
         {
-            var jCaptureObject = ((JObject) expected).Value<JObject>("__match");
-            if (jCaptureObject.ContainsKey("regex"))
+            var jMatchObject = ((JObject) expected).Value<JObject>("__match");
+            if (jMatchObject.ContainsKey("regex"))
             {
                 if (actual.Type != JTokenType.String)
                     return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
-                var regex = jCaptureObject.Value<string>("regex");
+                var regex = jMatchObject.Value<string>("regex");
                 var actualValue = actual.Value<string>();
                 if (!Regex.IsMatch(actualValue, regex, RegexOptions.CultureInvariant))
                     return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex)});
@@ -119,9 +119,9 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 return (true, null);
             }
 
-            if (jCaptureObject.ContainsKey("type"))
+            if (jMatchObject.ContainsKey("type"))
             {
-                var expectedType = jCaptureObject.Value<string>("type");
+                var expectedType = jMatchObject.Value<string>("type");
                 if (!Enum.TryParse(expectedType, true, out JTokenType type))
                     return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, $"Invalid `type`: value '{expectedType}' is not valid, see JTokenType for list of type")});
                 if (type != actual.Type)
@@ -133,7 +133,27 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 return (true, null);
             }
 
-            return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Missing `regex` field on capture object")});
+            if (jMatchObject.ContainsKey("range"))
+            {
+                if (actual.Type != JTokenType.Integer && actual.Type != JTokenType.Float)
+                    return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
+                var jRangeArray = jMatchObject.Property("range").Value;
+                if (jRangeArray.Type != JTokenType.Array)
+                    return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Invalid `range`: range should be an array of 2 number [min, max]")});
+                if (((JArray) jRangeArray).Count != 2)
+                    return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Invalid `range`: range should be an array of 2 number [min, max]")});
+                var range = jRangeArray.ToObject<decimal[]>();
+                var actualValue = actual.Value<decimal>();
+                if (actualValue < range[0] || actualValue > range[1])
+                    return (false, new List<IJsonCompareError<JToken>> {new ValueOutOfRangeComparerError(path, expected, actual, range)});
+
+                if (expected.Parent is JProperty parentProperty)
+                    parentProperty.Value = actual.DeepClone();
+
+                return (true, null);
+            }
+
+            return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Missing `regex`, `range` or `type` field on match object")});
         }
 
         private (bool success, IList<IJsonCompareError<JToken>> errors) HandlePartialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer)

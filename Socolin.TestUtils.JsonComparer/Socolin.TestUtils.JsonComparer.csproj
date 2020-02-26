@@ -17,4 +17,8 @@
         <PackageReference Include="NGitDiff" Version="2.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Externals\NGitDiff\NGitDiff\NGitDiff.csproj" />
+    </ItemGroup>
+
 </Project>

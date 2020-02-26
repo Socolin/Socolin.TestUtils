@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit.Diff;
 using Sharpen;
+#pragma warning disable 693
 
 namespace NGit.Diff
 {
@@ -99,7 +100,7 @@ namespace NGit.Diff
 		/// <code>region</code>
 		/// .
 		/// </returns>
-		public static NGit.Diff.Subsequence<S> B<S>(S b, Edit region) where S:Sequence
+        public static NGit.Diff.Subsequence<S> B<S>(S b, Edit region) where S:Sequence
 		{
 			return new NGit.Diff.Subsequence<S>(b, region.beginB, region.endB);
 		}

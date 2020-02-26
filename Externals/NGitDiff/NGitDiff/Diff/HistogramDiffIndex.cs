@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using NGit.Diff;
 using Sharpen;
+#pragma warning disable 164
 
 namespace NGit.Diff
 {
@@ -192,7 +193,7 @@ namespace NGit.Diff
 
 		private bool hasCommon;
 
-		internal HistogramDiffIndex(int maxChainLength, HashedSequenceComparator<S> cmp, 
+		internal HistogramDiffIndex(int maxChainLength, HashedSequenceComparator<S> cmp,
 			HashedSequence<S> a, HashedSequence<S> b, Edit r)
 		{
 			this.maxChainLength = maxChainLength;
@@ -314,7 +315,7 @@ SCAN_break: ;
 					int ae = @as + 1;
 					int be = bs + 1;
 					int rc = RecCnt(rec);
-					while (region.beginA < @as && region.beginB < bs && cmp.Equals(a, @as - 1, b, bs 
+					while (region.beginA < @as && region.beginB < bs && cmp.Equals(a, @as - 1, b, bs
 						- 1))
 					{
 						@as--;
@@ -384,7 +385,9 @@ TRY_LOCATIONS_break: ;
 
 		private static long RecCreate(int next, int ptr, int cnt)
 		{
+            #pragma warning disable CS0675
 			return ((long)next << REC_NEXT_SHIFT) | ((long)ptr << REC_PTR_SHIFT) | cnt;
+            #pragma warning restore CS0675
 		}
 
 		//

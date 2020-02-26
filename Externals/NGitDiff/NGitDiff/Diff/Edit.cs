@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit.Diff;
 using Sharpen;
+#pragma warning disable 108,114
 
 namespace NGit.Diff
 {
@@ -258,7 +259,7 @@ namespace NGit.Diff
 			if (o is NGit.Diff.Edit)
 			{
 				NGit.Diff.Edit e = (NGit.Diff.Edit)o;
-				return this.beginA == e.beginA && this.endA == e.endA && this.beginB == e.beginB 
+				return this.beginA == e.beginA && this.endA == e.endA && this.beginB == e.beginB
 					&& this.endB == e.endB;
 			}
 			return false;

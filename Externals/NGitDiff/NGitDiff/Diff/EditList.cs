@@ -54,7 +54,7 @@ namespace NGit.Diff
 	[System.Serializable]
 	public class EditList : System.Collections.Generic.List<Edit>
 	{
-		private const long serialVersionUID = 1L;
+        private const long serialVersionUID = 1L;
 
 		/// <summary>Construct an edit list containing a single edit.</summary>
 		/// <remarks>Construct an edit list containing a single edit.</remarks>

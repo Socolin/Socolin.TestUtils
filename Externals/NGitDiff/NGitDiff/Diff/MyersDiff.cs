@@ -45,6 +45,8 @@ using System;
 using NGit.Diff;
 using NGit.Util;
 using Sharpen;
+// ReSharper disable InconsistentNaming
+#pragma warning disable 693
 
 namespace NGit.Diff
 {
@@ -185,7 +187,7 @@ namespace NGit.Diff
 		/// 	</param>
 		/// <param name="endB">end of the part of B which should be compared (beginB&lt;=endB&lt;sizeof(B))
 		/// 	</param>
-		protected internal virtual void CalculateEdits(int beginA, int endA, int beginB, 
+		protected internal virtual void CalculateEdits(int beginA, int endA, int beginB,
 			int endB)
 		{
 			Edit edit = middle.Calculate(beginA, endA, beginB, endB);

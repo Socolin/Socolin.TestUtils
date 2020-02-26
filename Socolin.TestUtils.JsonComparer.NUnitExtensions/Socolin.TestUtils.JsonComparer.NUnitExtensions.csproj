@@ -9,7 +9,7 @@
         <PackageLicenseFile>LICENSES.md</PackageLicenseFile>
         <RepositoryUrl>https://github.com/Socolin/Socolin.TestUtils</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <Copyright>2018</Copyright>
+        <Copyright>2020</Copyright>
     </PropertyGroup>
 
     <ItemGroup>

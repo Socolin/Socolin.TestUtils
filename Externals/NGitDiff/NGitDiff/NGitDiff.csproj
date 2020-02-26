@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9179E7D7-19A3-4617-9C72-378619CE84F5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NGitDiff</RootNamespace>
+    <AssemblyName>NGitDiff</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\Support\Key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Diff\DiffAlgorithm.cs" />
+    <Compile Include="Diff\Edit.cs" />
+    <Compile Include="Diff\EditList.cs" />
+    <Compile Include="Diff\HashedSequence.cs" />
+    <Compile Include="Diff\HashedSequenceComparator.cs" />
+    <Compile Include="Diff\HashedSequencePair.cs" />
+    <Compile Include="Diff\HistogramDiff.cs" />
+    <Compile Include="Diff\HistogramDiffIndex.cs" />
+    <Compile Include="Diff\LowLevelDiffAlgorithm.cs" />
+    <Compile Include="Diff\MyersDiff.cs" />
+    <Compile Include="Diff\RawText.cs" />
+    <Compile Include="Diff\RawTextComparator.cs" />
+    <Compile Include="Diff\Sequence.cs" />
+    <Compile Include="Diff\SequenceComparator.cs" />
+    <Compile Include="Diff\Subsequence.cs" />
+    <Compile Include="Diff\SubsequenceComparator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Util\AList.cs" />
+    <Compile Include="Util\Arrays.cs" />
+    <Compile Include="Util\ByteArrayOutputStream.cs" />
+    <Compile Include="Util\ByteBuffer.cs" />
+    <Compile Include="Util\ByteOrder.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Util\CharsetDecoder.cs" />
+    <Compile Include="Util\CodingErrorAction.cs" />
+    <Compile Include="Util\Collections.cs" />
+    <Compile Include="Util\DataConverter.cs" />
+    <Compile Include="Util\DigestOutputStream.cs" />
+    <Compile Include="Util\EnumeratorWrapper.cs" />
+    <Compile Include="Util\Exceptions.cs" />
+    <Compile Include="Util\Extensions.cs" />
+    <Compile Include="Util\FileInputStream.cs" />
+    <Compile Include="Util\FilePath.cs" />
+    <Compile Include="Util\InputStream.cs" />
+    <Compile Include="Util\IntList.cs" />
+    <Compile Include="Util\IOUtil.cs" />
+    <Compile Include="Util\Iterator.cs" />
+    <Compile Include="Util\LongList.cs" />
+    <Compile Include="Util\MessageDigest.cs" />
+    <Compile Include="Util\MessageFormat.cs" />
+    <Compile Include="Util\MutableInteger.cs" />
+    <Compile Include="Util\NullOutputStream.cs" />
+    <Compile Include="Util\OutputStream.cs" />
+    <Compile Include="Util\RawCharUtil.cs" />
+    <Compile Include="Util\RawParseUtils.cs" />
+    <Compile Include="Util\Runtime.cs" />
+    <Compile Include="Util\WrappedSystemStream.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Support\Key.snk">
+      <Link>Key.snk</Link>
+    </None>
+    <None Include="Pack.bat" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>NGitDiff</id>
+    <version>$version$</version>
+    <title>NGitDiff</title>
+    <authors>Pieter van Ginkel</authors>
+    <owners>Pieter van Ginkel</owners>
+    <licenseUrl>https://github.com/pvginkel/NGitDiff/blob/master/NGit.license.txt</licenseUrl>
+    <projectUrl>http://github.com/pvginkel/NGitDiff</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>The diff algorithm from NGit.</description>
+    <copyright>Pieter van Ginkel © 2013</copyright>
+    <tags>diff ngit</tags>
+  </metadata>
+</package>

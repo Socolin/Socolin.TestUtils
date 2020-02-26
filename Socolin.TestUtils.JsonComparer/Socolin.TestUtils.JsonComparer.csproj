@@ -6,7 +6,7 @@
         <Version>1.7.0</Version>
         <Authors>Bertrand Provost</Authors>
         <Description>This library provides a simple way to compare two JSON, with an easily readable output to find what differs.</Description>
-        <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+        <PackageLicenseFile>LICENSES.md</PackageLicenseFile>
         <RepositoryUrl>https://github.com/Socolin/Socolin.TestUtils</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Copyright>2019</Copyright>
@@ -19,6 +19,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Externals\NGitDiff\NGitDiff\NGitDiff.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="LICENSES.md"/>
+        <Content Include="LICENSES.md" PackagePath=".">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>

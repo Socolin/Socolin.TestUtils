@@ -13,12 +13,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-        <PackageReference Include="NGitDiff" Version="2.1.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="11.0.2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Externals\NGitDiff\NGitDiff\NGitDiff.csproj" />
+        <ProjectReference Include="..\Externals\NGitDiff\NGitDiff\NGitDiff.csproj" PrivateAssets="All"/>
     </ItemGroup>
 
     <ItemGroup>

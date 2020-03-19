@@ -3,13 +3,14 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <PackageId>Socolin.TestUtils.JsonComparer</PackageId>
-        <Version>1.7.0</Version>
+        <Version>1.7.1</Version>
         <Authors>Bertrand Provost</Authors>
         <Description>This library provides a simple way to compare two JSON, with an easily readable output to find what differs.</Description>
         <PackageLicenseFile>LICENSES.md</PackageLicenseFile>
         <RepositoryUrl>https://github.com/Socolin/Socolin.TestUtils</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Copyright>2020</Copyright>
+        <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,7 +18,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Externals\NGitDiff\NGitDiff\NGitDiff.csproj" PrivateAssets="All"/>
+        <ProjectReference Include="..\Externals\NGitDiff\NGitDiff\NGitDiff.csproj" PrivateAssets="All" >
+            <IncludeAssets>NGitDiff.dll</IncludeAssets>
+        </ProjectReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -26,5 +29,9 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-
+    <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+        <ItemGroup>
+            <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+        </ItemGroup>
+    </Target>
 </Project>

@@ -7,7 +7,7 @@ namespace Socolin.TestUtils.JsonComparer.Comparers
 {
     public class JsonObjectPartialComparer : IJsonObjectComparer
     {
-        public IEnumerable<IJsonCompareError<JToken>> Compare(JObject expected, JObject actual, IJsonComparer jsonComparer, string path = "")
+        public IEnumerable<IJsonCompareError<JToken>> Compare(JObject expected, JObject actual, IJsonComparer jsonComparer, string path = "", JsonComparisonOptions options = null)
         {
             var ignoredProperties = new List<string>();
             foreach (var actualProperty in actual.Properties())

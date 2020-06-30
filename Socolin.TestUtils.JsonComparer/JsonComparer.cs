@@ -11,9 +11,9 @@ namespace Socolin.TestUtils.JsonComparer
 {
     public interface IJsonComparer
     {
-        IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson);
-        IList<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual);
-        IEnumerable<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, string path);
+        IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson, JsonComparisonOptions options = null);
+        IList<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, JsonComparisonOptions options = null);
+        IEnumerable<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, string path, JsonComparisonOptions options = null);
     }
 
     public class JsonComparer : IJsonComparer
@@ -45,7 +45,7 @@ namespace Socolin.TestUtils.JsonComparer
             _jsonSpecialHandler = jsonSpecialHandler;
         }
 
-        public IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson)
+        public IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson, JsonComparisonOptions options = null)
         {
             var expected = JsonConvert.DeserializeObject<JToken>(expectedJson, new JsonSerializerSettings
             {
@@ -55,15 +55,15 @@ namespace Socolin.TestUtils.JsonComparer
             {
                 DateParseHandling = DateParseHandling.None
             });
-            return Compare(expected, actual);
+            return Compare(expected, actual, options);
         }
 
-        public IList<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual)
+        public IList<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, JsonComparisonOptions options = null)
         {
-            return Compare(expected, actual, "").ToList();
+            return Compare(expected, actual, "", options).ToList();
         }
 
-        public IEnumerable<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, string path)
+        public IEnumerable<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, string path, JsonComparisonOptions options = null)
         {
             var (captureSucceeded, captureErrors) = _jsonSpecialHandler.HandleSpecialObject(expected, actual, path, this);
             if (captureSucceeded)
@@ -85,10 +85,10 @@ namespace Socolin.TestUtils.JsonComparer
             switch (actual.Type)
             {
                 case JTokenType.Object:
-                    errors = _jsonObjectComparer.Compare(expected as JObject, actual as JObject, this, path);
+                    errors = _jsonObjectComparer.Compare(expected as JObject, actual as JObject, this, path, options);
                     break;
                 case JTokenType.Array:
-                    errors = _jsonArrayComparer.Compare(expected as JArray, actual as JArray, this, path);
+                    errors = _jsonArrayComparer.Compare(expected as JArray, actual as JArray, this, path, options);
                     break;
                 case JTokenType.Integer:
                 case JTokenType.Float:
@@ -97,7 +97,7 @@ namespace Socolin.TestUtils.JsonComparer
                 case JTokenType.Null:
                 case JTokenType.Undefined:
                 case JTokenType.Date:
-                    errors = _jsonValueComparer.Compare(expected as JValue, actual as JValue, path);
+                    errors = _jsonValueComparer.Compare(expected as JValue, actual as JValue, path, options);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(actual.Type), actual.Type, "Cannot compare this type");

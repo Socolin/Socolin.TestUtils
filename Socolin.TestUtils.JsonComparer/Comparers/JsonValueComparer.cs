@@ -7,12 +7,12 @@ namespace Socolin.TestUtils.JsonComparer.Comparers
 {
     public interface IJsonValueComparer
     {
-        IEnumerable<IJsonCompareError<JToken>> Compare(JValue expected, JValue actual, string path = "");
+        IEnumerable<IJsonCompareError<JToken>> Compare(JValue expected, JValue actual, string path = "", JsonComparisonOptions options = null);
     }
 
     public class JsonValueComparer : IJsonValueComparer
     {
-        public IEnumerable<IJsonCompareError<JToken>> Compare(JValue expected, JValue actual, string path = "")
+        public IEnumerable<IJsonCompareError<JToken>> Compare(JValue expected, JValue actual, string path = "", JsonComparisonOptions options = null)
         {
             switch (expected.Type)
             {

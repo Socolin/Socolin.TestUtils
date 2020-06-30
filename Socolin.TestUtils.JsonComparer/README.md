@@ -596,3 +596,94 @@ Given json does not match expected one:
    "b": "abc"
  }
 ```
+
+## Ignoring properties
+
+During comparison it's possible to ignore some fields. For that you need to give a function that will be called
+for each field to know if they need to be ignored or not, like in the following example.
+
+Ignored fields are removed from the `JObject`s so when the diff is displayed using `GetReadableMessage` the ignored
+field are not polluting the output
+
+### Example
+
+#### Example 1
+
+```cs
+const string expectedJson = @"{
+    ""a"":{
+        ""b"": ""ignore-me-12"",
+        ""notInActual"": ""ignore-me-12"",
+        ""c"": ""compare-me"",
+    },
+    ""d"": ""compare-me""
+}";
+const string actualJson = @"{
+    ""a"":{
+        ""b"": ""ignore-me-45"",
+        ""notInExpected"": ""ignore-me-45"",
+        ""c"": ""compare-me"",
+    },
+    ""d"": ""compare-me""
+}";
+
+var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+var expectedJToken = JToken.Parse(expectedJson);
+var actualJToken = JToken.Parse(actualJson);
+var errors = jsonComparer.Compare(expectedJToken, actualJToken, new JsonComparisonOptions
+{
+    IgnoreFields = (fieldPath, fieldName) => fieldPath == "a.b" || fieldName == "notInExpected" || fieldName == "a.notInActual"
+});
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
+```
+
+#### Example 2
+
+```cs
+const string expectedJson = @"{
+    ""a"":{
+        ""b"": ""ignore-me-12"",
+        ""notInActual"": ""ignore-me-12"",
+        ""c"": ""compare-me"",
+    },
+    ""d"": ""compare-me""
+}";
+const string actualJson = @"{
+    ""a"":{
+        ""b"": ""ignore-me-45"",
+        ""notInExpected"": ""ignore-me-45"",
+        ""c"": ""compare-me"",
+    },
+    ""d"": ""compare-me""
+}";
+
+var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+var expectedJToken = JToken.Parse(expectedJson);
+var actualJToken = JToken.Parse(actualJson);
+var errors = jsonComparer.Compare(expectedJToken, actualJToken, new JsonComparisonOptions
+{
+    IgnoreFields = (fieldPath, fieldName) => fieldName == "notInExpected"
+                                             || fieldName == "notInActual"
+});
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
+```
+
+```
+No differences found
+```
+
+```diff
+Given json does not match expected one:
+  - a.b: Invalid value, expected 'ignore-me-12' but found 'ignore-me-45'
+
+--- expected
++++ actual
+ {
+   "a": {
+-    "b": "ignore-me-12",
++    "b": "ignore-me-45",
+     "c": "compare-me"
+   },
+   "d": "compare-me"
+ }
+```

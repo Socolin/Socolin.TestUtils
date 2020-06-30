@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Reflection.Metadata.Ecma335;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
@@ -64,6 +65,25 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
 
             Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithComparer(jsonComparer));
             Assert.That(comparerCalled, Is.True);
+        }
+
+
+        [Test]
+        public void TestAssertThatWithOptions()
+        {
+            const string expectedJson = @"{
+                ""a"":1,
+                ""b"":""abc""
+            }";
+            const string actualJson = @"{
+                ""a"":42,
+                ""b"":""abc""
+            }";
+
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithOptions(new JsonComparisonOptions
+            {
+                IgnoreFields = (fieldPath, fieldName) => fieldName == "a"
+            }));
         }
     }
 }

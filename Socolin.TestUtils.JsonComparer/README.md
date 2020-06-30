@@ -5,6 +5,7 @@ This library provides a simple way to compare two [JSON](https://www.json.org/),
 Features:
   - Compare JSON and returns a list of errors.
   - Compare a value using a regex
+  - Compare a number to match a range
   - Capture a value
 
 NuGet: https://www.nuget.org/packages/Socolin.TestUtils.JsonComparer/

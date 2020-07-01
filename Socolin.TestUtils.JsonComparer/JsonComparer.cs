@@ -65,7 +65,7 @@ namespace Socolin.TestUtils.JsonComparer
 
         public IEnumerable<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, string path, JsonComparisonOptions options = null)
         {
-            var (captureSucceeded, captureErrors) = _jsonSpecialHandler.HandleSpecialObject(expected, actual, path, this);
+            var (captureSucceeded, captureErrors) = _jsonSpecialHandler.HandleSpecialObject(expected, actual, path, this, options);
             if (captureSucceeded)
                 yield break;
             if (captureErrors?.Count > 0)

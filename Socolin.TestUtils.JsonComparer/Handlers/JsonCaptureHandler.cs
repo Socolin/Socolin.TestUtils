@@ -10,7 +10,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
 {
     public interface IJsonSpecialHandler
     {
-        (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer);
+        (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer, JsonComparisonOptions options);
     }
 
     public class JsonSpecialHandler : IJsonSpecialHandler
@@ -24,7 +24,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
             _jsonObjectPartialComparer = jsonObjectPartialComparer;
         }
 
-        public (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer)
+        public (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer, JsonComparisonOptions options)
         {
             if (IsCaptureObject(expected))
                 return HandleCaptureObject(expected, actual, path);
@@ -33,7 +33,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 return HandleMatchObject(expected, actual, path);
 
             if (IsPartialObject(expected))
-                return HandlePartialObject(expected, actual, path, jsonComparer);
+                return HandlePartialObject(expected, actual, path, jsonComparer, options);
 
             return (false, null);
         }
@@ -156,7 +156,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
             return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Missing `regex`, `range` or `type` field on match object")});
         }
 
-        private (bool success, IList<IJsonCompareError<JToken>> errors) HandlePartialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer)
+        private (bool success, IList<IJsonCompareError<JToken>> errors) HandlePartialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer, JsonComparisonOptions options)
         {
             var jPartialObject = expected.Value<JToken>("__partial");
 
@@ -166,7 +166,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
             if (actual.Type != jPartialObject.Type)
                 return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, jPartialObject, actual)});
 
-            var errors = _jsonObjectPartialComparer.Compare(jPartialObject as JObject, actual as JObject, jsonComparer).ToList();
+            var errors = _jsonObjectPartialComparer.Compare(jPartialObject as JObject, actual as JObject, jsonComparer, options: options).ToList();
             if (expected.Parent is JProperty parentProperty)
                 parentProperty.Value = jPartialObject;
 

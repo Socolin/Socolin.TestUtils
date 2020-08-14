@@ -19,7 +19,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
                 ""b"":""abc""
             }";
 
-            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson));
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
                 ""b"":""abc""
             }";
 
-            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson));
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
     			""date"": ""2042-05-04T06:01:06.0000000Z""
             }";
 
-            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson));
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
         }
 
         [Test]

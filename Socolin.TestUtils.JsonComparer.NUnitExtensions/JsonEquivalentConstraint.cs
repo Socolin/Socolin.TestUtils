@@ -8,6 +8,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 	{
 		private IJsonComparer _jsonComparer;
 		private JsonComparisonOptions _options;
+		private bool _useColor;
 
 		public JsonEquivalentConstraint(string expected)
 			: this(JsonConvert.DeserializeObject<JToken>(expected, new JsonSerializerSettings
@@ -31,7 +32,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 			var expectedJToken = (JToken) Arguments[0];
 			var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault();
 			var errors = jsonComparer.Compare(expectedJToken, actualJToken, _options);
-			var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors);
+			var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, _useColor);
 			return new JsonEquivalentConstraintResult(this, actual, errors?.Count == 0, message);
 		}
 
@@ -44,6 +45,12 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 		public JsonEquivalentConstraint WithOptions(JsonComparisonOptions options)
 		{
 			_options = options;
+			return this;
+		}
+
+		public JsonEquivalentConstraint WithColoredOutput(bool useColor = true)
+		{
+			_useColor = useColor;
 			return this;
 		}
 

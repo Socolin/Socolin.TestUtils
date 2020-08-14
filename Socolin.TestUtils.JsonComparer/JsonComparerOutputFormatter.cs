@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,12 +11,25 @@ namespace Socolin.TestUtils.JsonComparer
 {
     public class JsonComparerOutputFormatter
     {
-        public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors)
+        private class Colors
         {
-            return GetReadableMessage(JToken.Parse(expectedJson), JToken.Parse(actualJson), errors);
+            private const string EscapeCode = "\u001b";
+            public static readonly string RESET = $"{EscapeCode}[0m";
+            public static readonly string RED = $"{EscapeCode}[31m";
+            public static readonly string GREEN = $"{EscapeCode}[32m";
+            public static readonly string YELLOW = $"{EscapeCode}[33m";
+            public static readonly string BLUE = $"{EscapeCode}[34m";
+            public static readonly string MAGENTA = $"{EscapeCode}[35m";
+            public static readonly string CYAN = $"{EscapeCode}[36m";
+            public static readonly string WHITE = $"{EscapeCode}[37m";
         }
 
-        public static string GetReadableMessage(JToken expectedJToken, JToken actualJToken, IEnumerable<IJsonCompareError<JToken>> errors)
+        public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors, bool useColor = false)
+        {
+            return GetReadableMessage(JToken.Parse(expectedJson), JToken.Parse(actualJson), errors, useColor);
+        }
+
+        public static string GetReadableMessage(JToken expectedJToken, JToken actualJToken, IEnumerable<IJsonCompareError<JToken>> errors, bool useColor = false)
         {
             var compareErrors = errors.ToList();
             if (compareErrors.Count == 0)
@@ -28,16 +42,20 @@ namespace Socolin.TestUtils.JsonComparer
                 sb.AppendLine($"  - {error.Path}: {error.Message}");
 
             sb.AppendLine();
+            if (useColor) sb.Append(Colors.RED);
             sb.AppendLine("--- expected");
+            if (useColor) sb.Append(Colors.GREEN);
             sb.AppendLine("+++ actual");
-            WriteUnifiedDiffBetweenJson(sb, expectedJToken, actualJToken);
+            if (useColor) sb.Append(Colors.RESET);
+
+            WriteUnifiedDiffBetweenJson(sb, expectedJToken, actualJToken, useColor);
             sb.AppendLine();
             sb.AppendLine();
 
             return sb.ToString();
         }
 
-        private static void WriteUnifiedDiffBetweenJson(StringBuilder sb, JToken expectedJToken, JToken actualJToken)
+        private static void WriteUnifiedDiffBetweenJson(StringBuilder sb, JToken expectedJToken, JToken actualJToken, bool useColor)
         {
             NormalizeForTextDiffJson(expectedJToken);
             NormalizeForTextDiffJson(actualJToken);
@@ -64,16 +82,19 @@ namespace Socolin.TestUtils.JsonComparer
                 {
                     while (a < difference.GetEndA())
                     {
+                        if (useColor) sb.Append(Colors.RED);
                         sb.AppendLine("-" + expectedLines[a]);
                         a++;
                     }
 
                     while (b < difference.GetEndB())
                     {
+                        if (useColor) sb.Append(Colors.GREEN);
                         sb.AppendLine("+" + actualLines[b]);
                         b++;
                     }
 
+                    if (useColor) sb.Append(Colors.RESET);
                     i++;
                     difference = i < differences.Count ? differences[i] : null;
                 }

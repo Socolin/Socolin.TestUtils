@@ -23,3 +23,18 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal Socolin.TestUtils.JsonComparer.Tests.Unit
+    - name: Publish JsonComparer
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Socolin.TestUtils.JsonComparer/Socolin.TestUtils.JsonComparer.csproj 
+        INCLUDE_SYMBOLS: true
+    - name: Publish JsonComparer.NUnitExtensions
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Socolin.TestUtils.JsonComparer.NUnitExtensions/Socolin.TestUtils.JsonComparer.NUnitExtensions.csproj 
+        INCLUDE_SYMBOLS: true
+    - name: Publish FakeSmtp
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: SoSocolin.TestUtils.FakeSmtp/Socolin.TestUtils.FakeSmtp.csproj 
+        INCLUDE_SYMBOLS: true

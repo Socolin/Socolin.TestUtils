@@ -28,13 +28,16 @@ jobs:
       with:
         PROJECT_FILE_PATH: Socolin.TestUtils.JsonComparer/Socolin.TestUtils.JsonComparer.csproj 
         INCLUDE_SYMBOLS: true
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
     - name: Publish JsonComparer.NUnitExtensions
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Socolin.TestUtils.JsonComparer.NUnitExtensions/Socolin.TestUtils.JsonComparer.NUnitExtensions.csproj 
         INCLUDE_SYMBOLS: true
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
     - name: Publish FakeSmtp
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Socolin.TestUtils.FakeSmtp/Socolin.TestUtils.FakeSmtp.csproj 
         INCLUDE_SYMBOLS: true
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}

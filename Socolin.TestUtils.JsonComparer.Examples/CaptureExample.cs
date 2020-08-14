@@ -9,7 +9,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
         {
             Console.WriteLine("==== CaptureExample.Test1 ==== ");
 
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+            var jsonComparer = JsonComparer.GetDefault(((captureName, token) => {
                 Console.WriteLine($"Captured value: name={captureName} token={token}");
             }));
 
@@ -24,7 +24,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
         {
             Console.WriteLine("==== CaptureExample.Test2 ==== ");
 
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+            var jsonComparer = JsonComparer.GetDefault(((captureName, token) => {
                 Console.WriteLine($"Captured value: name={captureName} token={token}");
             }));
 
@@ -39,7 +39,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
         {
             Console.WriteLine("==== CaptureExample.Test3 ==== ");
 
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+            var jsonComparer = JsonComparer.GetDefault(((captureName, token) => {
                 Console.WriteLine($"Captured value: name={captureName} token={token}");
             }));
 
@@ -54,7 +54,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
         {
             Console.WriteLine("==== CaptureExample.Test4 ==== ");
 
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+            var jsonComparer = JsonComparer.GetDefault(((captureName, token) => {
                 Console.WriteLine($"Captured value: name={captureName} token={token}");
             }));
 
@@ -71,7 +71,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
         {
             Console.WriteLine("==== CaptureExample.Test5 ==== ");
 
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
+            var jsonComparer = JsonComparer.GetDefault(((captureName, token) => {
                 Console.WriteLine($"Captured value: name={captureName} token={token}");
             }));
 

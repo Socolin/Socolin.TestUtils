@@ -1,5 +1,4 @@
 ﻿using System;
-using Socolin.TestUtils.JsonComparer;
 
 namespace Socolin.TestUtils.JsonComparer.Examples
 {
@@ -16,7 +15,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""a"":42,
                 ""b"":""abc""
             }";
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
         }

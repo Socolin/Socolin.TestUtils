@@ -1,6 +1,5 @@
 using System;
 using Newtonsoft.Json.Linq;
-using Socolin.TestUtils.JsonComparer;
 
 namespace Socolin.TestUtils.JsonComparer.Examples
 {
@@ -21,7 +20,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""a"":""42"",
                 ""b"":""abc""
             }";
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
         }
@@ -41,7 +40,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""a"":""abc"",
                 ""b"":""abc""
             }";
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
         }
@@ -61,7 +60,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""a"":""abc"",
                 ""b"":""def""
             }");
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
         }
@@ -81,7 +80,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""a"":42,
                 ""b"":""abc""
             }";
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
         }
@@ -99,7 +98,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             const string actualJson = @"{
     			""date"": ""2042-05-04T06:01:06.0000000Z""
             }";
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
         }
@@ -123,7 +122,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""a"": 95,
                 ""b"": 105
             }";
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var expectedJToken = JToken.Parse(expectedJson);
             var actualJToken = JToken.Parse(actualJson);
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);

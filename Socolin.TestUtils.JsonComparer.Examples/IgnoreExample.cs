@@ -25,7 +25,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""d"": ""compare-me""
             }";
 
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var expectedJToken = JToken.Parse(expectedJson);
             var actualJToken = JToken.Parse(actualJson);
             var errors = jsonComparer.Compare(expectedJToken, actualJToken, new JsonComparisonOptions
@@ -58,7 +58,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""d"": ""compare-me""
             }";
 
-            var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
+            var jsonComparer = JsonComparer.GetDefault();
             var expectedJToken = JToken.Parse(expectedJson);
             var actualJToken = JToken.Parse(actualJson);
             var errors = jsonComparer.Compare(expectedJToken, actualJToken, new JsonComparisonOptions

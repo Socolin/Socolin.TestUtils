@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,11 +16,13 @@ namespace Socolin.TestUtils.JsonComparer
             public static readonly string RESET = $"{EscapeCode}[0m";
             public static readonly string RED = $"{EscapeCode}[31m";
             public static readonly string GREEN = $"{EscapeCode}[32m";
+            // ReSharper disable UnusedMember.Local
             public static readonly string YELLOW = $"{EscapeCode}[33m";
             public static readonly string BLUE = $"{EscapeCode}[34m";
             public static readonly string MAGENTA = $"{EscapeCode}[35m";
             public static readonly string CYAN = $"{EscapeCode}[36m";
             public static readonly string WHITE = $"{EscapeCode}[37m";
+            // ReSharper restore UnusedMember.Local
         }
 
         public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors, bool useColor = false)

@@ -80,7 +80,7 @@ namespace Socolin.TestUtils.FakeSmtp
                         }
                     }
                 }
-                catch (SocketException exception)
+                catch (SocketException)
                 {
                     if (!Running)
                         return;

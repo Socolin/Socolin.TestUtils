@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests

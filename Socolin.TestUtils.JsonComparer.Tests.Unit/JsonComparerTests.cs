@@ -38,7 +38,8 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit
                     Arg.Any<JToken>(),
                     Arg.Any<JToken>(),
                     Arg.Any<string>(),
-                    Arg.Any<IJsonComparer>()
+                    Arg.Any<IJsonComparer>(),
+                    new JsonComparisonOptions()
                 )
                 .Returns((false, null));
         }
@@ -137,7 +138,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit
             var expectedJson = JObject.Parse("{}");
             var actualJson = JToken.Parse("{}");
 
-            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "", _jsonComparer)
+            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "", _jsonComparer, new JsonComparisonOptions())
                 .Returns((true, null));
 
             var actualErrors = _jsonComparer.Compare(expectedJson, actualJson);
@@ -150,11 +151,12 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit
         {
             var expectedJson = JObject.Parse("{}");
             var actualJson = JToken.Parse("{}");
+            var jsonComparisonOptions = new JsonComparisonOptions();
 
-            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "", _jsonComparer)
+            _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "", _jsonComparer, jsonComparisonOptions)
                 .Returns((false, new List<IJsonCompareError<JToken>> {new TestJsonCompareError()}));
 
-            var actualErrors = _jsonComparer.Compare(expectedJson, actualJson);
+            var actualErrors = _jsonComparer.Compare(expectedJson, actualJson, jsonComparisonOptions);
 
             using (new AssertionScope())
             {

@@ -33,7 +33,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var expectedJson = JToken.Parse(@"{""some-key"":""some-value""}");
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(expectedJson, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -48,7 +48,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {type = "string"}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -64,7 +64,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {name = "some-name"}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -80,7 +80,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {name = "some-capture-name", type = "string"}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -96,7 +96,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {name = "some-capture-name", type = "integer"}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -113,7 +113,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {parent = new {__capture = new {name = "some-capture-name", type = "integer"}}});
             var actualJson = JObject.FromObject(new {parent = 42});
 
-            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null);
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
             captureObject.Property("parent").Value.ToObject<int>().Should().Be(42);
         }
@@ -124,7 +124,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {name = "some-capture-name", regex = "some-regex"}});
             var actualJson = JToken.Parse(@"""abc""");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -140,7 +140,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {name = "some-capture-name", regex = "abc"}});
             var actualJson = JToken.Parse(@"""abc""");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
 
             using (new AssertionScope())
@@ -159,7 +159,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {regex = "(?<someCaptureName>abc)"}});
             var actualJson = JToken.Parse(@"""abc""");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
 
             using (new AssertionScope())
@@ -178,7 +178,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {regex = "(?<someCaptureName>abc)"}});
             var actualJson = JToken.Parse(@"""abc""");
 
-            var (success, errors) =  _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) =  _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
 
             using (new AssertionScope())
@@ -195,7 +195,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {parent = new {__capture = new {name = "some-capture-name", regex = "some-regex"}}});
             var actualJson = JObject.FromObject(new {parent = "some-regex"});
 
-            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null);
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
             captureObject.Property("parent").Value.ToObject<string>().Should().Be("some-regex");
         }
@@ -206,7 +206,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -222,7 +222,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {regex = "some-regex"}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -238,7 +238,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {regex = "invalid-regex"}});
             var actualJson = JToken.Parse(@"""some-string""");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -255,7 +255,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {regex = "some-string"}});
             var actualJson = JToken.Parse(@"""some-string""");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, _) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -269,7 +269,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {parent = new {__match = new {regex = ".+"}}});
             var actualJson = JObject.FromObject(new {parent = "abc"});
 
-            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null);
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
             captureObject.Property("parent").Value.ToObject<string>().Should().Be("abc");
         }
@@ -280,7 +280,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {type = "integer"}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -295,7 +295,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {type = "integer"}});
             var actualJson = JToken.Parse(@"""some-string""");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -311,7 +311,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {parent = new {__match = new {type = "string"}}});
             var actualJson = JObject.FromObject(new {parent = "abc"});
 
-            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null);
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
             captureObject.Property("parent").Value.ToObject<string>().Should().Be("abc");
         }
@@ -326,7 +326,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             _partialComparer.Compare(partialObject.Value<JObject>("__partial"), actualJson, jsonComparer)
                 .Returns(new List<IJsonCompareError<JToken>>());
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -342,11 +342,12 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var partialObject = JObject.FromObject(new {__partial = new {tested = "123"}});
             var actualJson = JObject.FromObject(new {tested = "123", ignored = "456"});
             var expectedErrors = new List<IJsonCompareError<JToken>> { new TestJsonCompareError()};
+            var jsonComparisonOptions = new JsonComparisonOptions();
 
-            _partialComparer.Compare(partialObject.Value<JObject>("__partial"), actualJson, jsonComparer)
+            _partialComparer.Compare(partialObject.Value<JObject>("__partial"), actualJson, jsonComparer, "", jsonComparisonOptions)
                 .Returns(expectedErrors);
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer, jsonComparisonOptions);
 
             using (new AssertionScope())
             {
@@ -363,7 +364,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var partialObject = JObject.FromObject(new {__partial = new[] {1, 2, 3}});
             var actualJson = JArray.FromObject(new [] {1, 2, 3, 4, 5});
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -380,7 +381,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var partialObject = JObject.FromObject(new {__partial = new {tested = "123"}});
             var actualJson = JArray.FromObject(new [] {1, 2, 3});
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -401,7 +402,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             _partialComparer.Compare(partialObject.Value<JObject>("__partial"), actualJson, jsonComparer)
                 .Returns(new List<IJsonCompareError<JToken>>());
 
-            _jsonSpecialHandler.HandleSpecialObject(partialObject.Value<JObject>("parent"), actualJson.Value<JObject>("parent"), "", jsonComparer);
+            _jsonSpecialHandler.HandleSpecialObject(partialObject.Value<JObject>("parent"), actualJson.Value<JObject>("parent"), "", jsonComparer, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -415,7 +416,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {range = "some-regex"}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -428,10 +429,10 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         [Test]
         public void WhenHandlingMatch_AndRangeIsGiven_RangeIsNotArrayOf2Values_ReturnError()
         {
-            var captureObject = JObject.FromObject(new {__match = new {range = new int[] {1}}});
+            var captureObject = JObject.FromObject(new {__match = new {range = new[] {1}}});
             var actualJson = JToken.Parse("42");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -447,7 +448,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {range = new[] {10, 20}}});
             var actualJson = JToken.Parse(@"""some-string""");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -463,7 +464,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__match = new {range = new[] {1, 4}}});
             var actualJson = JToken.Parse(@"10");
 
-            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null);
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
             using (new AssertionScope())
             {
@@ -479,7 +480,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {parent = new {__match = new {range = new [] {40, 45}}}});
             var actualJson = JObject.FromObject(new {parent = 42});
 
-            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null);
+            _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
             captureObject.Property("parent").Value.ToObject<int>().Should().Be(42);
         }

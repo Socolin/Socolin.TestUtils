@@ -1,5 +1,7 @@
 Extensions of NUnit to easily use Socolin.TestUtils.JsonComparer
 
+NuGet: https://www.nuget.org/packages/Socolin.TestUtils.JsonComparer.NUnitExtensions/
+
 ## Usage
 
 ### Code

@@ -9,6 +9,7 @@ using Socolin.TestUtils.JsonComparer.Comparers;
 using Socolin.TestUtils.JsonComparer.Errors;
 using Socolin.TestUtils.JsonComparer.Handlers;
 using Socolin.TestUtils.JsonComparer.Tests.Unit.Errors;
+using Socolin.TestUtils.JsonComparer.Utils;
 
 namespace Socolin.TestUtils.JsonComparer.Tests.Unit
 {
@@ -31,7 +32,8 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit
                 _jsonObjectComparer,
                 _jsonArrayComparer,
                 _jsonValueComparer,
-                _jsonSpecialHandler
+                _jsonSpecialHandler,
+                new JsonDeserializerWithNiceError()
             );
 
             _jsonSpecialHandler.HandleSpecialObject(

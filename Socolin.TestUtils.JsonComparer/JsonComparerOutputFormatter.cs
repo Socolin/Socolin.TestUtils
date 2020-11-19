@@ -5,26 +5,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NGit.Diff;
 using Socolin.TestUtils.JsonComparer.Errors;
+using Socolin.TestUtils.JsonComparer.Utils;
 
 namespace Socolin.TestUtils.JsonComparer
 {
     public class JsonComparerOutputFormatter
     {
-        private class Colors
-        {
-            private const string EscapeCode = "\u001b";
-            public static readonly string RESET = $"{EscapeCode}[0m";
-            public static readonly string RED = $"{EscapeCode}[31m";
-            public static readonly string GREEN = $"{EscapeCode}[32m";
-            // ReSharper disable UnusedMember.Local
-            public static readonly string YELLOW = $"{EscapeCode}[33m";
-            public static readonly string BLUE = $"{EscapeCode}[34m";
-            public static readonly string MAGENTA = $"{EscapeCode}[35m";
-            public static readonly string CYAN = $"{EscapeCode}[36m";
-            public static readonly string WHITE = $"{EscapeCode}[37m";
-            // ReSharper restore UnusedMember.Local
-        }
-
         public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors, bool useColor = false)
         {
             return GetReadableMessage(JToken.Parse(expectedJson), JToken.Parse(actualJson), errors, useColor);
@@ -43,11 +29,11 @@ namespace Socolin.TestUtils.JsonComparer
                 sb.AppendLine($"  - {error.Path}: {error.Message}");
 
             sb.AppendLine();
-            if (useColor) sb.Append(Colors.RED);
+            if (useColor) sb.Append(AnsiConsoleColors.RED);
             sb.AppendLine("--- expected");
-            if (useColor) sb.Append(Colors.GREEN);
+            if (useColor) sb.Append(AnsiConsoleColors.GREEN);
             sb.AppendLine("+++ actual");
-            if (useColor) sb.Append(Colors.RESET);
+            if (useColor) sb.Append(AnsiConsoleColors.RESET);
 
             WriteUnifiedDiffBetweenJson(sb, expectedJToken, actualJToken, useColor);
             sb.AppendLine();
@@ -83,19 +69,19 @@ namespace Socolin.TestUtils.JsonComparer
                 {
                     while (a < difference.GetEndA())
                     {
-                        if (useColor) sb.Append(Colors.RED);
+                        if (useColor) sb.Append(AnsiConsoleColors.RED);
                         sb.AppendLine("-" + expectedLines[a]);
                         a++;
                     }
 
                     while (b < difference.GetEndB())
                     {
-                        if (useColor) sb.Append(Colors.GREEN);
+                        if (useColor) sb.Append(AnsiConsoleColors.GREEN);
                         sb.AppendLine("+" + actualLines[b]);
                         b++;
                     }
 
-                    if (useColor) sb.Append(Colors.RESET);
+                    if (useColor) sb.Append(AnsiConsoleColors.RESET);
                     i++;
                     difference = i < differences.Count ? differences[i] : null;
                 }

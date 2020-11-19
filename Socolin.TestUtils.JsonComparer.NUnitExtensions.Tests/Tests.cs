@@ -84,5 +84,21 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
                 IgnoreFields = (fieldPath, fieldName) => fieldName == "a"
             }));
         }
+
+        [Test]
+        public void TestInvalidJsonColor()
+        {
+            const string expectedJson = @"{
+                ""a"":1
+                ""b"":""abc""
+            }";
+            const string actualJson = @"{
+                ""a"":42,
+                ""b"":""abc""
+            }";
+
+            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
+        }
+
     }
 }

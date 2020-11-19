@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework.Constraints;
+using Socolin.TestUtils.JsonComparer.Utils;
 
 namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 {
@@ -11,10 +13,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 		private bool _useColor;
 
 		public JsonEquivalentConstraint(string expected)
-			: this(JsonConvert.DeserializeObject<JToken>(expected, new JsonSerializerSettings
-			{
-				DateParseHandling = DateParseHandling.None
-			}))
+			: base(expected)
 		{
 		}
 
@@ -25,12 +24,22 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 
 		public override ConstraintResult ApplyTo<TActual>(TActual actual)
 		{
-			var actualJToken = actual as JToken ?? JsonConvert.DeserializeObject<JToken>(actual as string, new JsonSerializerSettings
+			var actualJToken = actual as JToken ?? JsonDeserializerErrorFormatterHelper.DeserializeWithNiceErrorMessage<JToken>(actual as string, new JsonSerializerSettings
 			{
 				DateParseHandling = DateParseHandling.None
-			});
-			var expectedJToken = (JToken) Arguments[0];
-			var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault();
+			}, _useColor);
+
+			if (!(Arguments[0] is JToken expectedJToken))
+			{
+				if (!(Arguments[0] is string))
+					throw new ArgumentException("Invalid Arguments[0]");
+				expectedJToken = JsonDeserializerErrorFormatterHelper.DeserializeWithNiceErrorMessage<JToken>(Arguments[0] as string, new JsonSerializerSettings
+				{
+					DateParseHandling = DateParseHandling.None
+				}, _useColor);
+			}
+
+			var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault(useColor: _useColor);
 			var errors = jsonComparer.Compare(expectedJToken, actualJToken, _options);
 			var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, _useColor);
 			return new JsonEquivalentConstraintResult(this, actual, errors?.Count == 0, message);

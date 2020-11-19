@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using Socolin.TestUtils.JsonComparer.Comparers;
 using Socolin.TestUtils.JsonComparer.Errors;
 using Socolin.TestUtils.JsonComparer.Handlers;
+using Socolin.TestUtils.JsonComparer.Utils;
 
 namespace Socolin.TestUtils.JsonComparer
 {
@@ -22,14 +23,16 @@ namespace Socolin.TestUtils.JsonComparer
         private readonly IJsonArrayComparer _jsonArrayComparer;
         private readonly IJsonValueComparer _jsonValueComparer;
         private readonly IJsonSpecialHandler _jsonSpecialHandler;
+        private readonly IJsonDeserializer _jsonDeserializer;
 
-        public static JsonComparer GetDefault(Action<string, JToken> captureHandler = null)
+        public static JsonComparer GetDefault(Action<string, JToken> captureHandler = null, bool useColor = false)
         {
             return new JsonComparer(
                 new JsonObjectComparer(),
                 new JsonArrayComparer(),
                 new JsonValueComparer(),
-                new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer())
+                new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer()),
+                new JsonDeserializerWithNiceError(useColor)
             );
         }
 
@@ -37,21 +40,24 @@ namespace Socolin.TestUtils.JsonComparer
             IJsonObjectComparer jsonObjectComparer,
             IJsonArrayComparer jsonArrayComparer,
             IJsonValueComparer jsonValueComparer,
-            IJsonSpecialHandler jsonSpecialHandler)
+            IJsonSpecialHandler jsonSpecialHandler,
+            IJsonDeserializer jsonDeserializer
+        )
         {
             _jsonObjectComparer = jsonObjectComparer;
             _jsonArrayComparer = jsonArrayComparer;
             _jsonValueComparer = jsonValueComparer;
             _jsonSpecialHandler = jsonSpecialHandler;
+            _jsonDeserializer = jsonDeserializer;
         }
 
         public IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson, JsonComparisonOptions options = null)
         {
-            var expected = JsonConvert.DeserializeObject<JToken>(expectedJson, new JsonSerializerSettings
+            var expected = _jsonDeserializer.Deserialize<JToken>(expectedJson, new JsonSerializerSettings
             {
                 DateParseHandling = DateParseHandling.None
             });
-            var actual = JsonConvert.DeserializeObject<JToken>(actualJson, new JsonSerializerSettings
+            var actual = _jsonDeserializer.Deserialize<JToken>(actualJson, new JsonSerializerSettings
             {
                 DateParseHandling = DateParseHandling.None
             });

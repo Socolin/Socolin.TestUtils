@@ -20,6 +20,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             new PartialExample().Test2();
             new IgnoreExample().Test1();
             new IgnoreExample().Test2();
+            new InvalidJsonExample().Test1();
         }
     }
 }

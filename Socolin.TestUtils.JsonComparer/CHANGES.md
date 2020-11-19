@@ -1,3 +1,7 @@
+## 1.10
+
+- When given json is invalid, throw an exception that include the json that show what the error is instead of describing it
+
 ## 1.9
 
 - Output is now colorful ! (Compatible with Rider test runner). Set `useColor` parameter to `true` or with the NUnit extension, just add `.WithColoredOutput()`

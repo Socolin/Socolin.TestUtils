@@ -1,5 +1,7 @@
 # Json Comparer
 
+[![Nuget](https://img.shields.io/nuget/v/Socolin.TestUtils.JsonComparer)](https://www.nuget.org/packages/Socolin.RabbitMQ.Client)
+
 This library provides a simple way to compare two [JSON](https://www.json.org/), with an easily readable output to find what differs.
 
 Features:

@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
@@ -16,7 +17,7 @@ namespace Socolin.TestUtils.JsonComparer.Utils
             }
             catch (JsonReaderException ex)
             {
-                var splitJson = json!.Split('\r', '\n');
+                var splitJson = json!.Split(new[] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
                 var jsonWithErrorMarker = BuildJsonWithErrorMarker(ex, splitJson, useColor);
 
                 throw new InvalidJsonException($"Invalid JSON found. At line {ex.LineNumber} at position: {ex.LinePosition}" +

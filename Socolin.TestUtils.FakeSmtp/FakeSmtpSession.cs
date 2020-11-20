@@ -32,7 +32,20 @@ namespace Socolin.TestUtils.FakeSmtp
 
         private int LoadMoreData()
         {
-            var count = _clientSocket.Receive(_rawBuffer);
+            int count;
+            try
+            {
+                count = _clientSocket.Receive(_rawBuffer);
+            }
+            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+            {
+                return 0;
+            }
+            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.Disconnecting)
+            {
+                return 0;
+            }
+
             if (count == 0)
             {
                 _clientSocket.Close();

@@ -1,3 +1,7 @@
+## 1.10.2
+
+- Enable [sourcelink](https://github.com/dotnet/sourcelink)
+
 ## 1.10
 
 - When given json is invalid, throw an exception that include the json that show what the error is instead of describing it

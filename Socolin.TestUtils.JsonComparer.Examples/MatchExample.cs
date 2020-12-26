@@ -22,7 +22,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, true));
         }
 
         public void Test2()
@@ -42,7 +42,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, true));
         }
 
         public void Test3()
@@ -62,7 +62,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }");
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, true));
         }
 
         public void Test4()
@@ -82,7 +82,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, true));
         }
 
         public void Test5()
@@ -100,7 +100,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, true));
         }
 
         public void Test6()
@@ -126,8 +126,45 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             var expectedJToken = JToken.Parse(expectedJson);
             var actualJToken = JToken.Parse(actualJson);
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, true));
         }
 
+        public void Test7()
+        {
+            Console.WriteLine("==== MatchExample.Test7 ==== ");
+            var expectedJToken = JToken.Parse(@"{
+                ""a"":{
+                    ""__match"":{
+                        ""value"": ""Hello\nWorld"",
+                        ""ignoredCharacters"": ""\r""
+                    }
+                }
+            }");
+            var actualJToken = JToken.Parse(@"{
+                ""a"":""Hello\r\nWorld""
+            }");
+            var jsonComparer = JsonComparer.GetDefault();
+            var errors = jsonComparer.Compare(expectedJToken, actualJToken);
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, true));
+        }
+
+        public void Test8()
+        {
+            Console.WriteLine("==== MatchExample.Test8 ==== ");
+            var expectedJToken = JToken.Parse(@"{
+                ""a"":{
+                    ""__match"":{
+                        ""value"": ""Hello\nWorld"",
+                        ""ignoredCharacters"": ""\n""
+                    }
+                }
+            }");
+            var actualJToken = JToken.Parse(@"{
+                ""a"":""Hello\r\nWorld""
+            }");
+            var jsonComparer = JsonComparer.GetDefault();
+            var errors = jsonComparer.Compare(expectedJToken, actualJToken);
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, true));
+        }
     }
 }

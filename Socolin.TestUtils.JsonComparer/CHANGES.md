@@ -1,9 +1,43 @@
+## 1.11
+
+- Add new `__match` version that allow to compare string while ignoring some characters (useful for stuff like `\r\n` `\n` for test running on linux and windows)
+
+<table>
+<tr><td>Actual</td><td>Expected</td></tr>
+<tr><td>
+
+
+```json
+{
+    "a": "Hello\r\nWorld"
+}
+```
+
+</td>
+<td>
+
+```json
+{
+    "a": {"__match":{
+        "value": "Hello\nWorld",
+        "ignoredCharacters": "\r"
+    }}
+}
+```
+
+</td></tr>
+<tr><td colspan="2">
+No differences found
+</td></tr>
+</table>
+
+
 ## 1.10.2
 
 - Enable [sourcelink](https://github.com/dotnet/sourcelink)
 
 ## 1.10
-
+_
 - When given json is invalid, throw an exception that include the json that show what the error is instead of describing it
 
 ## 1.9

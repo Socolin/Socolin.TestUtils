@@ -153,6 +153,35 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 return (true, null);
             }
 
+            if (jMatchObject.ContainsKey("ignoredCharacters"))
+            {
+                if (actual.Type != JTokenType.String)
+                    return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
+
+                var expectedValue = jMatchObject.Value<string>("value");
+                var ignoredCharacters = jMatchObject.Value<string>("ignoredCharacters");
+                for (var i = expectedValue.Length - 1; i >= 0; i--)
+                {
+                    if (ignoredCharacters.Contains(expectedValue[i]))
+                        expectedValue = expectedValue.Remove(i, 1);
+                }
+
+                var actualValue = actual.Value<string>();
+                for (var i = actualValue.Length - 1; i >= 0; i--)
+                {
+                    if (ignoredCharacters.Contains(actualValue[i]))
+                        actualValue = actualValue.Remove(i, 1);
+                }
+
+                if (actualValue != expectedValue)
+                    return (false, new List<IJsonCompareError<JToken>> {new InvalidValueJsonCompareError(path, new JValue(expectedValue), actual as JValue)});
+
+                if (expected.Parent is JProperty parentProperty)
+                    parentProperty.Value = actual.DeepClone();
+
+                return (true, null);
+            }
+
             return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Missing `regex`, `range` or `type` field on match object")});
         }
 

@@ -484,5 +484,33 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
 
             captureObject.Property("parent").Value.ToObject<int>().Should().Be(42);
         }
+
+        [Test]
+        [TestCase("abc\r\ndef", "\r", "abc\ndef", true)]
+        [TestCase("abc\r\ndef", "\r", "abc\nde\rf", true)]
+        [TestCase("abc", "abc", "aaabbbccc", true)]
+        [TestCase("abc", "abc", "", true)]
+        [TestCase("", "abc", "abcaaa", true)]
+        [TestCase("", "e", "", true)]
+        [TestCase("eee", "e", "qqqq", false)]
+        [TestCase("abc", "", "def", false)]
+        public void WhenHandlingMatch_AndStingIgnoreIsGiven_CompareStringIgnoringThoseCharacters(string actual, string ignore, string expected, bool expectedSuccess)
+        {
+            var captureObject = JObject.FromObject(new {__match = new {ignoredCharacters = ignore, value = expected}});
+            var actualJson = JToken.Parse($@"""{actual}""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
+
+            using (new AssertionScope())
+            {
+                success.Should().Be(expectedSuccess);
+                if (!expectedSuccess)
+                {
+                    errors.Should().HaveCount(1);
+                    errors.First().Should().BeOfType<InvalidValueJsonCompareError>();
+                }
+            }
+        }
+
     }
 }

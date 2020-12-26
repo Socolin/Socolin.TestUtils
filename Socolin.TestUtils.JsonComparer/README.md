@@ -8,6 +8,8 @@ Features:
   - Compare JSON and returns a list of errors.
   - Compare a value using a regex
   - Compare a number to match a range
+  - Compare a value ignoring some fields
+  - Compare partial objects
   - Capture a value
 
 NuGet: https://www.nuget.org/packages/Socolin.TestUtils.JsonComparer/
@@ -31,7 +33,7 @@ const string actualJson = @"{
 }";
 var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
 var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, useColor: true));
 ```
 
 #### Output
@@ -51,140 +53,87 @@ Given json does not match expected one:
 
 -------
 
+## Special compare with `__match`
 
-## Compare using regex
+It's possible to compare a field with an "approximate" value using regex, range or other fuzzy compare method ([more example](doc/match.md)).
 
-It's possible to compare strings with a regex, using a custom object with a property `__match`.
+This is done using a special object `__match` like this
 
-For example, in the following json, to compare the key `compareMeWithARegex` with the `[a-z]+`
-
-```json
-{
-  "compareMeWithARegex": "something"
-}
-```
-
-The expected json given to the comparer should be
-
+<table>
+<tr><td>
 
 ```json
 {
-  "compareMeWithARegex": {
-    "__match": {
-      "regex": "[a-z]+"
-    }
-  }
+    "field": "something"
 }
 ```
 
+</td>
+<td>
 
-### Example 1
-
-#### Code
-
-```cs
-Console.WriteLine("==== MatchExample.Test1 ==== ");
-const string expectedJson = @"{
-    ""a"":{
-        ""__match"":{
-            ""regex"": ""\\d+""
-        }
-    },
-    ""b"":""abc""
-}";
-const string actualJson = @"{
-    ""a"":""42"",
-    ""b"":""abc""
-}";
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+```json
+{
+  "field": {"__match": {
+    "regex": "[a-z]+"
+  }}
+}
 ```
 
-#### Output
+</td></tr>
+</table>
 
-```diff
-No differences found
-```
-
-### Example 2
-
-#### Code
-
-
-```cs
-const string expectedJson = @"{
-    ""a"":{
-        ""__match"":{
-            ""regex"": ""\\d+""
-        }
-    },
-    ""b"":""abc""
-}";
-const string actualJson = @"{
-    ""a"":""abc"",
-    ""b"":""abc""
-}";
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-```
-
-#### Output
-
-```diff
-Given json does not match expected one:
-  - a: Invalid value, 'abc' should match regex '\d+'
-
---- expected
-+++ actual
- {
--  "a": {
--    "__match": {
--      "regex": "\\d+"
--    }
--  },
-+  "a": "abc",
-   "b": "abc"
- }
-```
-
+You can find more detailed `__match` [example here](doc/match.md)
 
 ### Note
 
-If there is any errors, to improve the readability of the output, the *match objects* are replaced by their matching value in the expectedJToken.
+When using `Compare(JToken expected, JToken actual)` if there is any errors, to improve the readability of the output, the *match objects* are replaced by their matching value in the expectedJToken.
+
+This is **NOT** done when using `Compare(string expectedJson, string actualJson)`
 
 #### Example
 
-##### Code
+So when comparing with those 2 json
+
+<table>
+<tr><td>Actual</td><td>Expected</td></tr>
+<tr>
+<td>
+
+```json
+{
+  "a": "abc",
+  "b": "def"
+}
+```
+</td>
+<td>
+
+```json
+{
+  "a":{ "__match":{
+    "regex": ".+"
+  }},
+  "b":"abc"
+}
+```
+
+</td>
+</tr>
+</table>
+
+With this code
 
 ```cs
-var expectedJToken = JToken.Parse(@"{
-    ""a"":{
-        ""__match"":{
-            ""regex"": "".+""
-        }
-    },
-    ""b"":""abc""
-}");
-var actualJToken = JToken.Parse(@"{
-    ""a"":""abc"",
-    ""b"":""def""
-}");
+var expectedJToken = JToken.Parse(expecteJsonAsString);
+var actualJToken = JToken.Parse(actualJsonAsString);
 var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
 var errors = jsonComparer.Compare(expectedJToken, actualJToken);
 Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
 ```
 
-##### Output
+Then the output will be 
 
 ```diff
-Captured value: name=some-name token=42
-Given json does not match expected one:
-  - b: Invalid value, expected 'abc' but found 'def'
-
---- expected
-+++ actual
  {
    "a": 42,
 -  "b": "abc"
@@ -192,126 +141,19 @@ Given json does not match expected one:
  }
 ```
 
--------
-
-## Compare using type
-
-
-It's possible to compare object and expect to be of a certain type, without looking at the value, using a custom object with a property `__match`.
-
-For example, in the following json, to verify the value associated to the key `compareMeByType`  is an integer
-
-```json
-{
-  "compareMeByType": 42
-}
-```
-
-The expected json given to the comparer should be
-
-
-```json
-{
-  "compareMeByType": {
-    "__match": {
-      "type": "integer"
-    }
-  }
-}
-```
-
-
-### Example
-
-#### Code
-
-```cs
-Console.WriteLine("==== MatchExample.Test4 ==== ");
-const string expectedJson = @"{
-    ""a"":{
-        ""__match"":{
-            ""type"": ""integer""
-        }
-    },
-    ""b"":""abc""
-}";
-const string actualJson = @"{
-    ""a"":42,
-    ""b"":""abc""
-}";
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-```
-
-#### Output
+Instead of this
 
 ```diff
-No differences found
+ {
++  "a": 42,
+-  "a":{
+-  "__match":{
+-    "regex": ".+"
+-  }
+-  "b": "abc"
++  "b": "def"
+ }
 ```
-
--------
-
-## Compare using range
-
-
-It's possible to use a range to compare a numeric value, using a custom object with a property `__match`.
-
-For example, in the following json, to verify the value associated to the key `compareMeInRange` is in a given range
-
-```json
-{
-  "compareMeByType": 42
-}
-```
-
-The expected json given to the comparer should be
-
-
-```json
-{
-  "compareMeInRange": {
-    "__match": {
-      "range": [40, 45]
-    }
-  }
-}
-```
-
-
-### Example
-
-#### Code
-
-```cs
-const string expectedJson = @"{
-    ""a"":{
-        ""__match"":{
-            ""range"": [95, 105]
-        }
-    },
-    ""b"": {
-        ""__match"":{
-            ""range"": [95, 105]
-        }
-    }
-}";
-const string actualJson = @"{
-    ""a"": 95,
-    ""b"": 105
-}";
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-```
-
-#### Output
-
-```diff
-No differences found
-```
-
--------
 
 ## Capture a value
 
@@ -319,188 +161,21 @@ It's possible to capture some values when a value is compared with a *capture ob
 
 This can be used in functional testing to easily capture a value from a JSON and then use this value later.
 
-For example to compare and extract the `id` field of the following JSON
+See [this documentation](doc/capture.md)
 
-```json
-{
-  "id": 4
-}
-```
-
-You should use the following *capture object*
-
-```json
-{
-  "id": {
-    "__capture": {
-      "name": "someCaptureName",
-      "type": "integer"
-    }
-  }
-}
-```
-
-### Example
-
-#### Code
-
-```cs
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
-  Console.WriteLine($"Captured value: name={captureName} token={token}");
-}));
-
-
-const string expectedJson = @"{""a"":{""__capture"":{""name"": ""some-name"", ""type"":""integer""}}, ""b"":""abc""}";
-const string actualJson = @"{""a"":42, ""b"":""abc""}";
-
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-```
-
-### Output
-
-```
-Captured value: name=some-name token=42
-No differences found
-```
-
-### Note
-
-If there is any errors, to improve the readability of the output, the capture objects are replaced by their matching value in the expectedJToken.
-
-#### Example
-
-##### Code
-
-```cs
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
-  Console.WriteLine($"Captured value: name={captureName} token={token}");
-}));
-
-const string expectedJson = @"{""a"":{""__capture"":{""name"": ""some-name"", ""type"":""integer""}}, ""b"":""abc""}";
-const string actualJson = @"{""a"":42, ""b"":""def""}";
-
-
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-```
-
-##### Output
-
-```diff
-Captured value: name=some-name token=42
-Given json does not match expected one:
-  - b: Invalid value, expected 'abc' but found 'def'
-
---- expected
-+++ actual
- {
-   "a": 42,
--  "b": "abc"
-+  "b": "def"
- }
-```
-
-## Capture using regex
-
-To match and capture value of field id
-
-
-```json
-{
-  "id": "B6E73AF8-BDB9-41B2-BB77-28575B08A28C"
-}
-```
-
-```json
-{
-  "id": {
-    "__capture": {
-      "name": "some-global-capture-name",
-      "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-    }
-  }
-}
-```
-
-### Example
-
-#### Code
-
-```cs
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
-    Console.WriteLine($"Captured value: name={captureName} token={token}");
-}));
-
-var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""name"": ""some-global-capture-name"", ""regex"":""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""}}}");
-var actualJson = JToken.Parse(@"{""a"":""B6E73AF8-BDB9-41B2-BB77-28575B08A28C""}");
-
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-```
-
-#### Output
-
-```
-Captured value: name=some-global-capture-name token=B6E73AF8-BDB9-41B2-BB77-28575B08A28C
-No differences found
-```
-
-
-## Capture using regex capture groups
-
-### Example 1
-
-#### Code
-
-```cs
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
-    Console.WriteLine($"Captured value: name={captureName} token={token}");
-}));
-
-var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""name"": ""some-global-capture-name"", ""regex"":""(?<localCapture>bcd)""}}, ""b"":""def""}");
-var actualJson = JToken.Parse(@"{""a"":""abcdef"", ""b"":""def""}");
-
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-```
-
-#### Output
-
-```
-Captured value: name=some-global-capture-name token=abcdef
-Captured value: name=localCapture token=bcd
-No differences found
-```
-
-### Example 2
-
-#### Code
-
-```cs
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault(((captureName, token) => {
-    Console.WriteLine($"Captured value: name={captureName} token={token}");
-}));
-
-var expectedJson = JToken.Parse(@"{""a"":{""__capture"":{""regex"":""(?<localCapture>bcd)""}}, ""b"":""def""}");
-var actualJson = JToken.Parse(@"{""a"":""abcdef"", ""b"":""def""}");
-
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-```
-
-#### Output
-
-```
-Captured value: name=localCapture token=bcd
-No differences found
-```
 
 ## Partial compare
 
 If you want to compare a large json, but only test a small set you can use `__partial` object.
 
 For example, in the following json, to compare only the key `compareMe` and ignore `doNotCompareMe1` and `doNotCompareMe2`
+
+### Example 1
+
+<table>
+<tr><td>Actual</td><td>Expected</td></tr>
+<tr>
+<td>
 
 ```json
 {
@@ -509,8 +184,8 @@ For example, in the following json, to compare only the key `compareMe` and igno
   "doNotCompareMe2": "something"
 }
 ```
-
-The expected json given to the comparer should be
+</td>
+<td>
 
 ```json
 {
@@ -520,69 +195,47 @@ The expected json given to the comparer should be
 }
 ```
 
-### Example
+</td>
+</tr>
+</table>
+
+### Example 2
 
 
-#### Example 1
-```cs
-const string expectedJson = @"{
-    ""a"":{
-        ""__partial"":{
-            ""tested"": ""123""
-        }
-    },
-    ""b"":""abc""
-}";
-const string actualJson = @"{
-    ""a"": {
-        ""tested"": ""123"",
-        ""ignored"": ""42""
-    },
-    ""b"":""abc""
-}";
+<table>
+<tr><td>Actual</td><td>Expected</td></tr>
+<tr>
+<td>
 
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
-var errors = jsonComparer.Compare(expectedJson, actualJson);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+```json
+{
+  "a": {
+    "tested": "123",
+    "ignored": "42"
+  },
+  "b":"abc"
+}
+```
+</td>
+<td>
+
+```json
+{
+  "a":{
+    "__partial":{
+      "tested": "123",
+      "missing": "123"
+    }
+  },
+  "b":"abc"
+}
 ```
 
-#### Output
+</td>
+</tr>
+<tr>
+<td colspan="2">
 
-```
-No differences found
-```
-
-#### Example 2
-
-```cs
-
-const string expectedJson = @"{
-    ""a"":{
-        ""__partial"":{
-            ""tested"": ""123"",
-            ""missing"": ""123""
-        }
-    },
-    ""b"":""abc""
-}";
-const string actualJson = @"{
-    ""a"": {
-        ""tested"": ""123"",
-        ""ignored"": ""42""
-    },
-    ""b"":""abc""
-}";
-
-var expectedJToken = JToken.Parse(expectedJson);
-var actualJToken = JToken.Parse(actualJson);
-
-var jsonComparer = TestUtils.JsonComparer.JsonComparer.GetDefault();
-var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
-```
-
-
-#### Output
 
 ```diff
 Given json does not match expected one:
@@ -598,6 +251,11 @@ Given json does not match expected one:
    "b": "abc"
  }
 ```
+
+</td>
+</tr>
+</table>
+
 
 ## Ignoring properties
 

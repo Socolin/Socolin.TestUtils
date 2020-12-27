@@ -20,6 +20,9 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             new CaptureExample().Test5();
             new PartialExample().Test1();
             new PartialExample().Test2();
+            new PartialArrayExample().Test1();
+            new PartialArrayExample().Test2();
+            new PartialArrayExample().Test3();
             new IgnoreExample().Test1();
             new IgnoreExample().Test2();
             new InvalidJsonExample().Test1();

@@ -18,13 +18,16 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         private JsonSpecialHandler _jsonSpecialHandler;
         private Action<string, JToken> _handler;
         private IJsonObjectComparer _partialComparer;
+        private IPartialArrayHandler _partialArrayHandler;
 
         [SetUp]
         public void SetUp()
         {
             _handler = Substitute.For<Action<string, JToken>>();
             _partialComparer = Substitute.For<IJsonObjectComparer>();
-            _jsonSpecialHandler = new JsonSpecialHandler(_handler, _partialComparer);
+            _partialArrayHandler = Substitute.For<IPartialArrayHandler>();
+
+            _jsonSpecialHandler = new JsonSpecialHandler(_handler, _partialComparer, _partialArrayHandler);
         }
 
         [Test]

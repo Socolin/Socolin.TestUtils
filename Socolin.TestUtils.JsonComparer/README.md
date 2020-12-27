@@ -166,96 +166,9 @@ See [this documentation](doc/capture.md)
 
 ## Partial compare
 
-If you want to compare a large json, but only test a small set you can use `__partial` object.
+If you want to compare a large json, but only test a small set you can use `__partial` or `__partialArray` object.
 
-For example, in the following json, to compare only the key `compareMe` and ignore `doNotCompareMe1` and `doNotCompareMe2`
-
-### Example 1
-
-<table>
-<tr><td>Actual</td><td>Expected</td></tr>
-<tr>
-<td>
-
-```json
-{
-  "compareMe": "something",
-  "doNotCompareMe1": "something",
-  "doNotCompareMe2": "something"
-}
-```
-</td>
-<td>
-
-```json
-{
-  "__partial": {
-    "compareMe": "something"
-  }
-}
-```
-
-</td>
-</tr>
-</table>
-
-### Example 2
-
-
-<table>
-<tr><td>Actual</td><td>Expected</td></tr>
-<tr>
-<td>
-
-```json
-{
-  "a": {
-    "tested": "123",
-    "ignored": "42"
-  },
-  "b":"abc"
-}
-```
-</td>
-<td>
-
-```json
-{
-  "a":{
-    "__partial":{
-      "tested": "123",
-      "missing": "123"
-    }
-  },
-  "b":"abc"
-}
-```
-
-</td>
-</tr>
-<tr>
-<td colspan="2">
-
-
-```diff
-Given json does not match expected one:
-  - : Missing property `missing`
-
---- expected
-+++ actual
- {
-   "a": {
--    "missing": "123",
-     "tested": "123"
-   },
-   "b": "abc"
- }
-```
-
-</td>
-</tr>
-</table>
-
+See [this documentation](doc/partial.md)
 
 ## Ignoring properties
 

@@ -32,7 +32,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
 
         public void Test2()
         {
-            Console.WriteLine($"==== {nameof(PartialExample)}.{nameof(Test1)} ==== ");
+            Console.WriteLine($"==== {nameof(PartialExample)}.{nameof(Test2)} ==== ");
 
             const string expectedJson = @"{
                 ""a"":{

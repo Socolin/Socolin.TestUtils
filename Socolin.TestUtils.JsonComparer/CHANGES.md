@@ -1,3 +1,7 @@
+## 1.12
+
+- Add new `__partialArray` to compare array. See the [documentation](doc/partial.md) for more details
+
 ## 1.11
 
 - Add new `__match` version that allow to compare string while ignoring some characters (useful for stuff like `\r\n` `\n` for test running on linux and windows)

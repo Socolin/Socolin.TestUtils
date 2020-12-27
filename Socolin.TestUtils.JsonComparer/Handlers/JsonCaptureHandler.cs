@@ -17,11 +17,13 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
     {
         private readonly Action<string, JToken> _captureValueHandler;
         private readonly IJsonObjectComparer _jsonObjectPartialComparer;
+        private readonly IPartialArrayHandler _partialArrayHandler;
 
-        public JsonSpecialHandler(Action<string, JToken> handler, IJsonObjectComparer jsonObjectPartialComparer)
+        public JsonSpecialHandler(Action<string, JToken> handler, IJsonObjectComparer jsonObjectPartialComparer, IPartialArrayHandler partialArrayHandler)
         {
             _captureValueHandler = handler;
             _jsonObjectPartialComparer = jsonObjectPartialComparer;
+            _partialArrayHandler = partialArrayHandler;
         }
 
         public (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer, JsonComparisonOptions options)
@@ -34,6 +36,9 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
 
             if (IsPartialObject(expected))
                 return HandlePartialObject(expected, actual, path, jsonComparer, options);
+
+            if (IsPartialArrayObject(expected))
+                return _partialArrayHandler.HandlePartialArrayObject(expected, actual, path, jsonComparer, options);
 
             return (false, null);
         }
@@ -189,8 +194,10 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
         {
             var jPartialObject = expected.Value<JToken>("__partial");
 
+            if (jPartialObject.Type == JTokenType.Array)
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidPartialObjectCompareError(path, expected, actual, $"Invalid `type` of __partial object. Use __partialArray to compare array")});
             if (jPartialObject.Type != JTokenType.Object)
-                return (false, new List<IJsonCompareError<JToken>> {new InvalidPartialObjectCompareError(path, expected, actual, $"Invalid `type` of __partial object. Partial comparison is only supported for JSON Object yet")});
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidPartialObjectCompareError(path, expected, actual, $"Invalid `type` of __partial object. Partial comparison is only supported for JSON Object")});
 
             if (actual.Type != jPartialObject.Type)
                 return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, jPartialObject, actual)});
@@ -204,7 +211,6 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
 
             return (true, null);
         }
-
 
         private static bool IsCaptureObject(JToken jToken)
         {
@@ -231,6 +237,15 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
             if (!(jToken is JObject expectedJObject))
                 return false;
             return expectedJObject.ContainsKey("__partial");
+        }
+
+        private static bool IsPartialArrayObject(JToken jToken)
+        {
+            if (jToken.Type != JTokenType.Object)
+                return false;
+            if (!(jToken is JObject expectedJObject))
+                return false;
+            return expectedJObject.ContainsKey("__partialArray");
         }
     }
 }

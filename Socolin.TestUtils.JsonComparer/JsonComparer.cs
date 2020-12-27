@@ -31,7 +31,7 @@ namespace Socolin.TestUtils.JsonComparer
                 new JsonObjectComparer(),
                 new JsonArrayComparer(),
                 new JsonValueComparer(),
-                new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer()),
+                new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer(), new PartialArrayHandler()),
                 new JsonDeserializerWithNiceError(useColor)
             );
         }

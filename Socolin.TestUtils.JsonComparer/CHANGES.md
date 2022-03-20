@@ -1,3 +1,7 @@
+## 1.13
+
+- Fix comparing with large int value (int64)
+
 ## 1.12
 
 - Add new `__partialArray` to compare array. See the [documentation](doc/partial.md) for more details

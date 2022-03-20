@@ -29,7 +29,7 @@ namespace Socolin.TestUtils.JsonComparer.Comparers
                         yield break;
                     break;
                 case JTokenType.Integer:
-                    if (expected.Value<int>() == actual.Value<int>())
+                    if (expected.Value<long>() == actual.Value<long>())
                         yield break;
                     break;
                 case JTokenType.Date:

@@ -24,7 +24,7 @@ namespace Socolin.TestUtils.JsonComparer
 
             var sb = new StringBuilder();
 
-            sb.AppendLine("Given json does not match expected one: ");
+            sb.AppendLine("Given json does not match expected one:");
             foreach (var error in compareErrors)
                 sb.AppendLine($"  - {error.Path}: {error.Message}");
 

@@ -57,6 +57,8 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                         finalActualArray.Add(actualElement);
                 }
 
+                // FIXME: Sort finalActualArray with same order as expectedArray
+
                 parentProperty.Value = finalActualArray;
             }
 

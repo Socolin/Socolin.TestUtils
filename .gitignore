@@ -3,3 +3,4 @@ obj/
 *.swp
 .idea/
 *.DotSettings.user
+*.feature.cs

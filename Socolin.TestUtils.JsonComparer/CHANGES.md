@@ -1,3 +1,10 @@
+## 1.14
+
+- Rework colorization:
+  - It's now possible to disable the color even when it was enabled with `NO_COLOR` (https://no-color.org/)
+  - Support customization of the colors
+  - Support colorizing the json in the diff output
+
 ## 1.13
 
 - Fix comparing with large int value (int64)

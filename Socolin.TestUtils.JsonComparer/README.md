@@ -4,6 +4,8 @@
 
 This library provides a simple way to compare two [JSON](https://www.json.org/), with an easily readable output to find what differs.
 
+![Colored example](doc/images/colored-example.png)
+
 Features:
   - Compare JSON and returns a list of errors.
   - Compare a value using a regex
@@ -11,6 +13,8 @@ Features:
   - Compare a value ignoring some fields
   - Compare partial objects
   - Capture a value
+  - Compare partial arrays
+  - Nice configurable output
 
 NuGet: https://www.nuget.org/packages/Socolin.TestUtils.JsonComparer/
 

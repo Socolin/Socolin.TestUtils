@@ -17,6 +17,7 @@
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" />
+        <PackageReference Include="Socolin.ANSITerminalColor" Version="1.2.3" />
     </ItemGroup>
 
     <ItemGroup>

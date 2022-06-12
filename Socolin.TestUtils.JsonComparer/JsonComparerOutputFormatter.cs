@@ -1,23 +1,45 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NGit.Diff;
+using Socolin.TestUtils.JsonComparer.Color;
 using Socolin.TestUtils.JsonComparer.Errors;
-using Socolin.TestUtils.JsonComparer.Utils;
 
 namespace Socolin.TestUtils.JsonComparer
 {
     public class JsonComparerOutputFormatter
     {
-        public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors, bool useColor = false)
+        [Obsolete("Use the version with `JsonComparerColorOptions` parameter instead of `useColor`")]
+        public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors, bool useColor)
         {
             return GetReadableMessage(JToken.Parse(expectedJson), JToken.Parse(actualJson), errors, useColor);
         }
 
-        public static string GetReadableMessage(JToken expectedJToken, JToken actualJToken, IEnumerable<IJsonCompareError<JToken>> errors, bool useColor = false)
+        public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors, JsonComparerColorOptions colorOptions = null)
         {
+            return GetReadableMessage(JToken.Parse(expectedJson), JToken.Parse(actualJson), errors, colorOptions ?? JsonComparerColorOptions.Default);
+        }
+
+        [Obsolete("Use the version with `colorOptions` parameter instead of `useColor`")]
+        public static string GetReadableMessage(JToken expectedJToken, JToken actualJToken, IEnumerable<IJsonCompareError<JToken>> errors, bool useColor)
+        {
+            return GetReadableMessage(expectedJToken,
+                actualJToken,
+                errors,
+                new JsonComparerColorOptions
+                {
+                    ColorizeDiff = useColor,
+                    Theme = JsonComparerColorTheme.Default,
+                });
+        }
+
+        public static string GetReadableMessage(JToken expectedJToken, JToken actualJToken, IEnumerable<IJsonCompareError<JToken>> errors, JsonComparerColorOptions colorOptions = null)
+        {
+            colorOptions ??= JsonComparerColorOptions.Default;
+
             var compareErrors = errors.ToList();
             if (compareErrors.Count == 0)
                 return "No differences found";
@@ -29,20 +51,17 @@ namespace Socolin.TestUtils.JsonComparer
                 sb.AppendLine($"  - {error.Path}: {error.Message}");
 
             sb.AppendLine();
-            if (useColor) sb.Append(AnsiConsoleColors.RED);
-            sb.AppendLine("--- expected");
-            if (useColor) sb.Append(AnsiConsoleColors.GREEN);
-            sb.AppendLine("+++ actual");
-            if (useColor) sb.Append(AnsiConsoleColors.RESET);
+            sb.AppendColoredLine("--- expected", colorOptions.ColorizeDiff, colorOptions.Theme.DiffDeletion);
+            sb.AppendColoredLine("+++ actual", colorOptions.ColorizeDiff, colorOptions.Theme.DiffAddition);
 
-            WriteUnifiedDiffBetweenJson(sb, expectedJToken, actualJToken, useColor);
+            WriteUnifiedDiffBetweenJson(sb, expectedJToken, actualJToken, colorOptions);
             sb.AppendLine();
             sb.AppendLine();
 
             return sb.ToString();
         }
 
-        private static void WriteUnifiedDiffBetweenJson(StringBuilder sb, JToken expectedJToken, JToken actualJToken, bool useColor)
+        private static void WriteUnifiedDiffBetweenJson(StringBuilder sb, JToken expectedJToken, JToken actualJToken, JsonComparerColorOptions colorOptions)
         {
             NormalizeForTextDiffJson(expectedJToken);
             NormalizeForTextDiffJson(actualJToken);
@@ -69,19 +88,16 @@ namespace Socolin.TestUtils.JsonComparer
                 {
                     while (a < difference.GetEndA())
                     {
-                        if (useColor) sb.Append(AnsiConsoleColors.RED);
-                        sb.AppendLine("-" + expectedLines[a]);
+                        sb.AppendColoredLine("-" + expectedLines[a], colorOptions.ColorizeDiff, colorOptions.Theme.DiffDeletion);
                         a++;
                     }
 
                     while (b < difference.GetEndB())
                     {
-                        if (useColor) sb.Append(AnsiConsoleColors.GREEN);
-                        sb.AppendLine("+" + actualLines[b]);
+                        sb.AppendColoredLine("+" + actualLines[b], colorOptions.ColorizeDiff, colorOptions.Theme.DiffAddition);
                         b++;
                     }
 
-                    if (useColor) sb.Append(AnsiConsoleColors.RESET);
                     i++;
                     difference = i < differences.Count ? differences[i] : null;
                 }

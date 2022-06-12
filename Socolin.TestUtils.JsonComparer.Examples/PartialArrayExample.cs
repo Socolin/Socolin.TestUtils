@@ -1,5 +1,6 @@
 using System;
 using Newtonsoft.Json.Linq;
+using Socolin.TestUtils.JsonComparer.Color;
 
 namespace Socolin.TestUtils.JsonComparer.Examples
 {
@@ -72,7 +73,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             var expected = JToken.Parse(expectedJson);
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expected, actual);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expected, actual, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expected, actual, errors, JsonComparerColorOptions.DefaultColored));
         }
 
         public void Test3()
@@ -110,7 +111,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             var expected = JToken.Parse(expectedJson);
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expected, actual);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expected, actual, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expected, actual, errors, JsonComparerColorOptions.DefaultColored));
         }
     }
 }

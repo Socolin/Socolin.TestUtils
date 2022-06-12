@@ -1,5 +1,6 @@
 using System;
 using Newtonsoft.Json.Linq;
+using Socolin.TestUtils.JsonComparer.Color;
 
 namespace Socolin.TestUtils.JsonComparer.Examples
 {
@@ -22,7 +23,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, JsonComparerColorOptions.DefaultColored));
         }
 
         public void Test2()
@@ -42,7 +43,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, JsonComparerColorOptions.DefaultColored));
         }
 
         public void Test3()
@@ -62,7 +63,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }");
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, JsonComparerColorOptions.DefaultColored));
         }
 
         public void Test4()
@@ -82,7 +83,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, JsonComparerColorOptions.DefaultColored));
         }
 
         public void Test5()
@@ -100,7 +101,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, JsonComparerColorOptions.DefaultColored));
         }
 
         public void Test6()
@@ -126,7 +127,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             var expectedJToken = JToken.Parse(expectedJson);
             var actualJToken = JToken.Parse(actualJson);
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, JsonComparerColorOptions.DefaultColored));
         }
 
         public void Test7()
@@ -145,7 +146,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }");
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, JsonComparerColorOptions.DefaultColored));
         }
 
         public void Test8()
@@ -164,7 +165,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }");
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, JsonComparerColorOptions.DefaultColored));
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using Socolin.TestUtils.JsonComparer.Color;
 using Socolin.TestUtils.JsonComparer.Exceptions;
 
 namespace Socolin.TestUtils.JsonComparer.Utils
@@ -11,6 +12,11 @@ namespace Socolin.TestUtils.JsonComparer.Utils
     {
         public static T DeserializeWithNiceErrorMessage<T>(string? json, JsonSerializerSettings? jsonSerializerSettings = null, bool useColor = false)
         {
+            return DeserializeWithNiceErrorMessage<T>(json, jsonSerializerSettings, useColor ? JsonComparerColorOptions.DefaultColored : JsonComparerColorOptions.Default);
+        }
+
+        public static T DeserializeWithNiceErrorMessage<T>(string? json, JsonSerializerSettings? jsonSerializerSettings = null, JsonComparerColorOptions? colorOptions = null)
+        {
             try
             {
                 return JsonConvert.DeserializeObject<T>(json, jsonSerializerSettings);
@@ -18,14 +24,15 @@ namespace Socolin.TestUtils.JsonComparer.Utils
             catch (JsonReaderException ex)
             {
                 var splitJson = json!.Split(new[] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
-                var jsonWithErrorMarker = BuildJsonWithErrorMarker(ex, splitJson, useColor);
+                var jsonWithErrorMarker = BuildJsonWithErrorMarker(ex, splitJson, colorOptions ?? JsonComparerColorOptions.Default);
 
                 throw new InvalidJsonException($"Invalid JSON found. At line {ex.LineNumber} at position: {ex.LinePosition}" +
-                                               $"\n\n{jsonWithErrorMarker}", ex);
+                                               $"\n\n{jsonWithErrorMarker}",
+                    ex);
             }
         }
 
-        private static StringBuilder BuildJsonWithErrorMarker(JsonReaderException ex, IReadOnlyList<string> lines, bool useColor)
+        private static StringBuilder BuildJsonWithErrorMarker(JsonReaderException ex, IReadOnlyList<string> lines, JsonComparerColorOptions colorOptions)
         {
             var jsonWithErrorMarker = new StringBuilder();
             var contextSize = 3;
@@ -41,11 +48,11 @@ namespace Socolin.TestUtils.JsonComparer.Utils
                 jsonWithErrorMarker.AppendLine(line);
                 if (i == 0)
                 {
-                    if (useColor)
-                        jsonWithErrorMarker.Append(AnsiConsoleColors.RED);
-                    jsonWithErrorMarker.AppendLine("".PadLeft(ex.LinePosition + 5) + "^-- " + ex.Message);
-                    if (useColor)
-                        jsonWithErrorMarker.Append(AnsiConsoleColors.RESET);
+                    jsonWithErrorMarker.AppendColoredLine(
+                        "".PadLeft(ex.LinePosition + 5) + "^-- " + ex.Message,
+                        colorOptions.ColorizeParseError,
+                        colorOptions.Theme.Error
+                    );
                 }
             }
 

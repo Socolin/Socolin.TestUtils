@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Socolin.TestUtils.JsonComparer.Color;
 
 namespace Socolin.TestUtils.JsonComparer.Utils
 {
@@ -17,22 +18,22 @@ namespace Socolin.TestUtils.JsonComparer.Utils
 
     public class JsonDeserializerWithNiceError : IJsonDeserializer
     {
-        private readonly bool _useColor;
+        private readonly JsonComparerColorOptions _colorOptions;
 
 
         public JsonDeserializerWithNiceError()
-            : this(false)
+            : this(JsonComparerColorOptions.Default)
         {
         }
 
-        public JsonDeserializerWithNiceError(bool useColor)
+        public JsonDeserializerWithNiceError(JsonComparerColorOptions colorOptions)
         {
-            _useColor = useColor;
+            _colorOptions = colorOptions;
         }
 
         public T Deserialize<T>(string json, JsonSerializerSettings settings)
         {
-            return JsonDeserializerErrorFormatterHelper.DeserializeWithNiceErrorMessage<T>(json, settings, _useColor);
+            return JsonDeserializerErrorFormatterHelper.DeserializeWithNiceErrorMessage<T>(json, settings, _colorOptions);
         }
     }
 }

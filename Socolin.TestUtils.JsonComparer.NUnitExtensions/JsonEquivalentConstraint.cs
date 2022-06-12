@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework.Constraints;
+using Socolin.TestUtils.JsonComparer.Color;
 using Socolin.TestUtils.JsonComparer.Utils;
 
 namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
@@ -10,7 +11,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 	{
 		private IJsonComparer _jsonComparer;
 		private JsonComparisonOptions _options;
-		private bool _useColor;
+		private JsonComparerColorOptions _colorOptions;
 
 		public JsonEquivalentConstraint(string expected)
 			: base(expected)
@@ -27,7 +28,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 			var actualJToken = actual as JToken ?? JsonDeserializerErrorFormatterHelper.DeserializeWithNiceErrorMessage<JToken>(actual as string, new JsonSerializerSettings
 			{
 				DateParseHandling = DateParseHandling.None
-			}, _useColor);
+			}, _colorOptions);
 
 			if (!(Arguments[0] is JToken expectedJToken))
 			{
@@ -36,12 +37,12 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 				expectedJToken = JsonDeserializerErrorFormatterHelper.DeserializeWithNiceErrorMessage<JToken>(Arguments[0] as string, new JsonSerializerSettings
 				{
 					DateParseHandling = DateParseHandling.None
-				}, _useColor);
+				}, _colorOptions);
 			}
 
-			var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault(useColor: _useColor);
+			var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault(colorOptions: _colorOptions);
 			var errors = jsonComparer.Compare(expectedJToken, actualJToken, _options);
-			var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, _useColor);
+			var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, _colorOptions);
 			return new JsonEquivalentConstraintResult(this, actual, errors?.Count == 0, message);
 		}
 
@@ -59,7 +60,13 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions
 
 		public JsonEquivalentConstraint WithColoredOutput(bool useColor = true)
 		{
-			_useColor = useColor;
+			_colorOptions = useColor ? JsonComparerColorOptions.DefaultColored : JsonComparerColorOptions.Default;
+			return this;
+		}
+
+		public JsonEquivalentConstraint WithColorOptions(JsonComparerColorOptions colorOptions)
+		{
+            _colorOptions = colorOptions;
 			return this;
 		}
 

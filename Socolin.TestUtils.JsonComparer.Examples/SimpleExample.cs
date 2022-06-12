@@ -1,4 +1,5 @@
 ﻿using System;
+using Socolin.TestUtils.JsonComparer.Color;
 
 namespace Socolin.TestUtils.JsonComparer.Examples
 {
@@ -17,7 +18,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             }";
             var jsonComparer = JsonComparer.GetDefault();
             var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, useColor: true));
+            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors, JsonComparerColorOptions.DefaultColored));
         }
     }
 }

@@ -79,10 +79,11 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
                 ""b"":""abc""
             }";
 
-            Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithOptions(new JsonComparisonOptions
-            {
-                IgnoreFields = (fieldPath, fieldName) => fieldName == "a"
-            }));
+            Assert.That(actualJson,
+                IsJson.EquivalentTo(expectedJson).WithOptions(new JsonComparisonOptions
+                {
+                    IgnoreFields = (fieldPath, fieldName) => fieldName == "a"
+                }));
         }
 
         [Test]

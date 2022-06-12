@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Socolin.TestUtils.JsonComparer.Color;
 using Socolin.TestUtils.JsonComparer.Comparers;
 using Socolin.TestUtils.JsonComparer.Errors;
 using Socolin.TestUtils.JsonComparer.Handlers;
@@ -25,14 +26,14 @@ namespace Socolin.TestUtils.JsonComparer
         private readonly IJsonSpecialHandler _jsonSpecialHandler;
         private readonly IJsonDeserializer _jsonDeserializer;
 
-        public static JsonComparer GetDefault(Action<string, JToken> captureHandler = null, bool useColor = false)
+        public static JsonComparer GetDefault(Action<string, JToken> captureHandler = null, bool useColor = false, JsonComparerColorOptions colorOptions = null)
         {
             return new JsonComparer(
                 new JsonObjectComparer(),
                 new JsonArrayComparer(),
                 new JsonValueComparer(),
                 new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer(), new PartialArrayHandler()),
-                new JsonDeserializerWithNiceError(useColor)
+                new JsonDeserializerWithNiceError(colorOptions ?? (useColor ? JsonComparerColorOptions.DefaultColored : JsonComparerColorOptions.Default))
             );
         }
 
@@ -106,7 +107,7 @@ namespace Socolin.TestUtils.JsonComparer
                     errors = _jsonValueComparer.Compare(expected as JValue, actual as JValue, path, options);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(actual.Type), actual.Type, "Cannot compare this type");
+                    throw new ArgumentOutOfRangeException(nameof(actual.Type), actual.Type, @"Cannot compare this type");
             }
 
             foreach (var jsonCompareError in errors)

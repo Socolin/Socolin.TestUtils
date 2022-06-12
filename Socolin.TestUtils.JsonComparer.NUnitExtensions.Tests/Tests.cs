@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using Socolin.ANSITerminalColor;
+using Socolin.TestUtils.JsonComparer.Color;
 
 namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
 {
@@ -20,6 +22,40 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
 
             Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
         }
+
+        [Test]
+        public void TestColorizeJson()
+        {
+            const string expectedJson = @"{
+                ""a"":1,
+                ""b"":""abc"",
+                ""c"":""hello"",
+                ""d"": true,
+                ""e"": 64,
+                ""f"": 42.424242,
+            }";
+            const string actualJson = @"{
+                ""a"":42,
+                ""b"":""abc"",
+                ""c"":""hello"",
+                ""d"": true,
+                ""e"": 64,
+                ""f"": 42.424242,
+            }";
+
+            Assert.That(actualJson,
+                IsJson.EquivalentTo(expectedJson).WithColorOptions(new JsonComparerColorOptions
+                {
+                    ColorizeDiff = true,
+                    ColorizeJson = true,
+                    Theme = new JsonComparerColorTheme
+                    {
+                        DiffAddition = AnsiColor.Background(TerminalRgbColor.FromHex("21541A")),
+                        DiffDeletion = AnsiColor.Background(TerminalRgbColor.FromHex("542822")),
+                    }
+                }));
+        }
+
 
         [Test]
         public void TestAssertThatNotSuccess()
@@ -100,6 +136,5 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
 
             Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
         }
-
     }
 }

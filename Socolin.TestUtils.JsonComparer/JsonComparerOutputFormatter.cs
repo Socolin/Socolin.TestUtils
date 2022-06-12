@@ -65,8 +65,20 @@ namespace Socolin.TestUtils.JsonComparer
         {
             NormalizeForTextDiffJson(expectedJToken);
             NormalizeForTextDiffJson(actualJToken);
-            var expectedJson = JsonConvert.SerializeObject(expectedJToken, Formatting.Indented).Replace("\r\n", "\n");
-            var actualJson = JsonConvert.SerializeObject(actualJToken, Formatting.Indented).Replace("\r\n", "\n");
+
+            string actualJson;
+            string expectedJson;
+            if (colorOptions.ColorizeJson)
+            {
+                expectedJson = ColorizeJsonWriter.FormatAndColorizeJson(expectedJToken, colorOptions).Replace("\r\n", "\n");
+                actualJson = ColorizeJsonWriter.FormatAndColorizeJson(actualJToken, colorOptions).Replace("\r\n", "\n");
+            }
+            else
+            {
+                expectedJson = JsonConvert.SerializeObject(expectedJToken, Formatting.Indented).Replace("\r\n", "\n");
+                actualJson = JsonConvert.SerializeObject(actualJToken, Formatting.Indented).Replace("\r\n", "\n");
+            }
+
             var expectedText = new RawText(Encoding.UTF8.GetBytes(expectedJson));
             var actualText = new RawText(Encoding.UTF8.GetBytes(actualJson));
             var diffAlgorithm = DiffAlgorithm.GetAlgorithm(DiffAlgorithm.SupportedAlgorithm.HISTOGRAM);

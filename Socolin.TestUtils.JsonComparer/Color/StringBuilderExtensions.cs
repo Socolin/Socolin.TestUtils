@@ -12,7 +12,7 @@ public static class StringBuilderExtensions
             color.ToString(sb);
         sb.AppendLine(text);
         if (doColorize)
-            AnsiColor.Reset.ToString(sb);
+            color.ToResetSequence(sb);
         return sb;
     }
 }

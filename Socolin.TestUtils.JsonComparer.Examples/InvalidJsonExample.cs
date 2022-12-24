@@ -1,4 +1,3 @@
-using System;
 using Socolin.TestUtils.JsonComparer.Exceptions;
 
 namespace Socolin.TestUtils.JsonComparer.Examples;

@@ -10,6 +10,7 @@
         <RepositoryUrl>https://github.com/Socolin/Socolin.TestUtils</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <Copyright>2022</Copyright>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>

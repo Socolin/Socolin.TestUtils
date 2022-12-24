@@ -1,13 +1,15 @@
-using System.IO;
 using System.Text;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Socolin.ANSITerminalColor;
 
 namespace Socolin.TestUtils.JsonComparer.Color;
 
+[PublicAPI]
 public class ColorizeJsonWriter : JsonTextWriter
 {
+    [PublicAPI]
     public class Theme
     {
         public AnsiColor KeywordColor { get; set; } = AnsiColor.Foreground(108, 149, 235);

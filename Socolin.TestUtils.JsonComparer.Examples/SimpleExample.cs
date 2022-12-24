@@ -1,5 +1,4 @@
-﻿using System;
-using Socolin.TestUtils.JsonComparer.Color;
+﻿using Socolin.TestUtils.JsonComparer.Color;
 
 namespace Socolin.TestUtils.JsonComparer.Examples;
 

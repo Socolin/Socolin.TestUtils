@@ -1,5 +1,4 @@
 #nullable enable
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Socolin.TestUtils.JsonComparer;

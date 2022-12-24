@@ -1,5 +1,3 @@
-using System;
-
 namespace Socolin.TestUtils.JsonComparer.Exceptions;
 
 public class InvalidJsonException : Exception

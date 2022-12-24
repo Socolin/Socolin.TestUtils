@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Socolin.TestUtils.FakeSmtp;
 
 public class FakeSmtpMail

@@ -1,4 +1,3 @@
-using System;
 using Newtonsoft.Json.Linq;
 using Socolin.TestUtils.JsonComparer.Color;
 

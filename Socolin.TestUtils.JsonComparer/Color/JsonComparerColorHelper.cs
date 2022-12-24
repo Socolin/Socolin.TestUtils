@@ -1,5 +1,4 @@
 #nullable enable
-using System;
 using Socolin.ANSITerminalColor;
 
 namespace Socolin.TestUtils.JsonComparer.Color;

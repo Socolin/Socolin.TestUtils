@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using Socolin.TestUtils.JsonComparer.Errors;
 using Socolin.TestUtils.JsonComparer.Utils;

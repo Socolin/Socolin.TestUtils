@@ -1,5 +1,3 @@
-using System;
-
 namespace Socolin.TestUtils.JsonComparer;
 
 public class JsonComparisonOptions

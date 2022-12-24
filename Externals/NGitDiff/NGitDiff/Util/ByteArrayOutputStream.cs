@@ -1,28 +1,28 @@
+// ReSharper disable All
 namespace Sharpen
 {
-	using System;
-	using System.IO;
+    using System.IO;
 
 	internal class ByteArrayOutputStream : OutputStream
 	{
 		public ByteArrayOutputStream ()
 		{
-			base.Wrapped = new MemoryStream ();
+			Wrapped = new MemoryStream ();
 		}
 
 		public ByteArrayOutputStream (int bufferSize)
 		{
-			base.Wrapped = new MemoryStream (bufferSize);
+			Wrapped = new MemoryStream (bufferSize);
 		}
 
 		public long Size ()
 		{
-			return ((MemoryStream)base.Wrapped).Length;
+			return ((MemoryStream)Wrapped).Length;
 		}
 
 		public byte[] ToByteArray ()
 		{
-			return ((MemoryStream)base.Wrapped).ToArray ();
+			return ((MemoryStream)Wrapped).ToArray ();
 		}
 		
 		public override void Close ()

@@ -30,22 +30,22 @@ namespace Sharpen
 
 		public override void Close ()
 		{
-			if (this.ist != null) {
-				this.ist.Close ();
+			if (ist != null) {
+				ist.Close ();
 			}
-			if (this.ost != null) {
-				this.ost.Close ();
+			if (ost != null) {
+				ost.Close ();
 			}
 		}
 
 		public override void Flush ()
 		{
-			this.ost.Flush ();
+			ost.Flush ();
 		}
 
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-			int res = this.ist.Read (buffer, offset, count);
+			int res = ist.Read (buffer, offset, count);
 			if (res != -1) {
 				position += res;
 				return res;
@@ -55,7 +55,7 @@ namespace Sharpen
 
 		public override int ReadByte ()
 		{
-			int res = this.ist.Read ();
+			int res = ist.Read ();
 			if (res != -1)
 				position++;
 			return res;
@@ -79,18 +79,18 @@ namespace Sharpen
 
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			this.ost.Write (buffer, offset, count);
+			ost.Write (buffer, offset, count);
 			position += count;
 		}
 
 		public override void WriteByte (byte value)
 		{
-			this.ost.Write (value);
+			ost.Write (value);
 			position++;
 		}
 
 		public override bool CanRead {
-			get { return (this.ist != null); }
+			get { return (ist != null); }
 		}
 
 		public override bool CanSeek {
@@ -98,7 +98,7 @@ namespace Sharpen
 		}
 
 		public override bool CanWrite {
-			get { return (this.ost != null); }
+			get { return (ost != null); }
 		}
 
 		public override long Length {
@@ -120,10 +120,11 @@ namespace Sharpen
 				else
 					return position;
 			}
-			set {
+			set
+			{
 				if (value == position)
 					return;
-				else if (value == markedPosition)
+				if (value == markedPosition)
 					ist.Reset ();
 				else if (ist != null && ist.CanSeek ()) {
 					ist.Position = value;

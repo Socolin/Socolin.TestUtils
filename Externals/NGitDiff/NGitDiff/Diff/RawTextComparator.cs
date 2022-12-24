@@ -42,10 +42,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using NGit.Diff;
 using NGit.Util;
-using Sharpen;
 
+// ReSharper disable All
 namespace NGit.Diff
 {
 	/// <summary>

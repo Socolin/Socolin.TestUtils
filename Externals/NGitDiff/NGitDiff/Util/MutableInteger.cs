@@ -41,9 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Util;
-using Sharpen;
-
 namespace NGit.Util
 {
 	/// <summary>A boxed integer that can be modified.</summary>

@@ -34,9 +34,6 @@ namespace Sharpen
 
 	internal class StackOverflowError : VirtualMachineError
 	{
-		public StackOverflowError ()
-		{
-		}
 	}
 
 	internal class BrokenBarrierException : Exception
@@ -129,7 +126,7 @@ namespace Sharpen
 		{
 		}
 
-		public ParseException (string msg, int errorOffset) : base(string.Format ("Msg: msg. Error Offset: {1}", msg, errorOffset))
+		public ParseException (int errorOffset) : base($"Msg: msg. Error Offset: {errorOffset}")
 		{ 
 		}
 	}

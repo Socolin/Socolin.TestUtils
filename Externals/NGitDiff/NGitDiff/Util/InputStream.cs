@@ -54,7 +54,7 @@ namespace Sharpen
 				if (BaseStream is WrappedSystemStream)
 					((WrappedSystemStream)BaseStream).OnMark (readlimit);
 				if (Wrapped != null)
-					this.mark = Wrapped.Position;
+					mark = Wrapped.Position;
 			}
 		}
 		

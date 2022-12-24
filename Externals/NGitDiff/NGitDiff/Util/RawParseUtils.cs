@@ -41,11 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Text;
-using NGit;
-using NGit.Util;
 using Sharpen;
 
 namespace NGit.Util
@@ -1012,7 +1008,7 @@ namespace NGit.Util
         ///// a string representation of the range <code>[start,end)</code>,
         ///// after decoding the region through the specified character set.
         ///// </returns>
-        public static string Decode(System.Text.Encoding cs, byte[] buffer)
+        public static string Decode(Encoding cs, byte[] buffer)
         {
             return Decode(cs, buffer, 0, buffer.Length);
         }
@@ -1035,7 +1031,7 @@ namespace NGit.Util
         ///// a string representation of the range <code>[start,end)</code>,
         ///// after decoding the region through the specified character set.
         ///// </returns>
-        public static string Decode(System.Text.Encoding cs, byte[] buffer, int start, int
+        public static string Decode(Encoding cs, byte[] buffer, int start, int
              end)
         {
             try
@@ -1074,7 +1070,7 @@ namespace NGit.Util
         ///// </returns>
         ///// <exception cref="Sharpen.CharacterCodingException">the input is not in any of the tested character sets.
         ///// 	</exception>
-        public static string DecodeNoFallback(System.Text.Encoding cs, byte[] buffer, int
+        public static string DecodeNoFallback(Encoding cs, byte[] buffer, int
              start, int end)
         {
             ByteBuffer b = ByteBuffer.Wrap(buffer, start, end - start);
@@ -1108,7 +1104,7 @@ namespace NGit.Util
             // Try the default character set. A small group of people
             // might actually use the same (or very similar) locale.
             //
-            System.Text.Encoding defcs = System.Text.Encoding.Default;
+            Encoding defcs = Encoding.Default;
             if (!defcs.Equals(cs) && !defcs.Equals(Constants.CHARSET))
             {
                 try
@@ -1141,18 +1137,18 @@ namespace NGit.Util
             StringBuilder r = new StringBuilder(end - start);
             for (int i = start; i < end; i++)
             {
-                r.Append((char)(buffer[i] & unchecked((int)(0xff))));
+                r.Append((char)(buffer[i] & 0xff));
             }
             return r.ToString();
         }
 
         ///// <exception cref="Sharpen.CharacterCodingException"></exception>
-        private static string Decode(ByteBuffer b, System.Text.Encoding charset)
+        private static string Decode(ByteBuffer b, Encoding charset)
         {
             CharsetDecoder d = Extensions.NewDecoder(charset);
             d.OnMalformedInput(CodingErrorAction.REPORT);
             d.OnUnmappableCharacter(CodingErrorAction.REPORT);
-            return d.Decode(b).ToString();
+            return d.Decode(b);
         }
 
         ///// <summary>Locate the position of the commit message body.</summary>

@@ -19,20 +19,20 @@ namespace Sharpen
 		
 		public virtual void Close ()
 		{
-			if (this.Wrapped != null) {
-				this.Wrapped.Close ();
+			if (Wrapped != null) {
+				Wrapped.Close ();
 			}
 		}
 
 		public void Dispose ()
 		{
-			this.Close ();
+			Close ();
 		}
 
 		public virtual void Flush ()
 		{
-			if (this.Wrapped != null) {
-				this.Wrapped.Flush ();
+			if (Wrapped != null) {
+				Wrapped.Flush ();
 			}
 		}
 
@@ -55,15 +55,15 @@ namespace Sharpen
 			if (Wrapped is WrappedSystemStream)
 				((WrappedSystemStream)Wrapped).OutputStream.Write (b);
 			else {
-				if (this.Wrapped == null)
+				if (Wrapped == null)
 					throw new NotImplementedException ();
-				this.Wrapped.WriteByte ((byte)b);
+				Wrapped.WriteByte ((byte)b);
 			}
 		}
 
 		public virtual void Write (byte[] b)
 		{
-			this.Write (b, 0, b.Length);
+			Write (b, 0, b.Length);
 		}
 
 		public virtual void Write (byte[] b, int offset, int len)
@@ -71,11 +71,11 @@ namespace Sharpen
 			if (Wrapped is WrappedSystemStream)
 				((WrappedSystemStream)Wrapped).OutputStream.Write (b, offset, len);
 			else {
-				if (this.Wrapped != null) {
-					this.Wrapped.Write (b, offset, len);
+				if (Wrapped != null) {
+					Wrapped.Write (b, offset, len);
 				} else {
 					for (int i = 0; i < len; i++) {
-						this.Write (b[i + offset]);
+						Write (b[i + offset]);
 					}
 				}
 			}

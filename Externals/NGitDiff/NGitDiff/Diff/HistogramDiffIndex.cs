@@ -42,8 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using NGit.Diff;
-using Sharpen;
+
 #pragma warning disable 164
 
 namespace NGit.Diff
@@ -52,14 +51,13 @@ namespace NGit.Diff
 	/// Support
 	/// <see cref="HistogramDiff">HistogramDiff</see>
 	/// by computing occurrence counts of elements.
-	/// <p>
+	///
 	/// Each element in the range being considered is put into a hash table, tracking
 	/// the number of times that distinct element appears in the sequence. Once all
 	/// elements have been inserted from sequence A, each element of sequence B is
 	/// probed in the hash table and the longest common subsequence with the lowest
 	/// occurrence count in A is used as the result.
 	/// </summary>
-	/// <?></?>
 	internal sealed class HistogramDiffIndex<S> where S:Sequence
 	{
 		private const int REC_NEXT_SHIFT = 28 + 8;
@@ -200,7 +198,7 @@ namespace NGit.Diff
 			this.cmp = cmp;
 			this.a = a;
 			this.b = b;
-			this.region = r;
+			region = r;
 			if (region.endA >= MAX_PTR)
 			{
 				throw new ArgumentException(NGitDiff.Properties.Resources.sequenceTooLargeForDiffAlgorithm);
@@ -274,7 +272,7 @@ namespace NGit.Diff
 				{
 					int sz = Math.Min(recs.Length << 1, 1 + region.GetLengthA());
 					long[] n = new long[sz];
-					System.Array.Copy(recs, 0, n, 0, recs.Length);
+					Array.Copy(recs, 0, n, 0, recs.Length);
 					recs = n;
 				}
 				recs[rIdx_1] = RecCreate(table[tIdx], ptr, 1);

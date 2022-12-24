@@ -6,10 +6,6 @@ namespace Sharpen
 
 	internal abstract class MessageDigest
 	{
-		protected MessageDigest ()
-		{
-		}
-		
 		public void Digest (byte[] buffer, int o, int len)
 		{
 			byte[] d = Digest ();
@@ -49,57 +45,57 @@ namespace Sharpen
 
 		public MessageDigest ()
 		{
-			this.Init ();
+			Init ();
 		}
 
 		public override byte[] Digest ()
 		{
-			this._stream.FlushFinalBlock ();
-			byte[] hash = this._hash.Hash;
-			this.Reset ();
+			_stream.FlushFinalBlock ();
+			byte[] hash = _hash.Hash;
+			Reset ();
 			return hash;
 		}
 
 		public void Dispose ()
 		{
-			if (this._stream != null) {
-				this._stream.Dispose ();
+			if (_stream != null) {
+				_stream.Dispose ();
 			}
-			this._stream = null;
+			_stream = null;
 		}
 
 		public override int GetDigestLength ()
 		{
-			return (this._hash.HashSize / 8);
+			return (_hash.HashSize / 8);
 		}
 
 		private void Init ()
 		{
-			this._hash = Activator.CreateInstance<TAlgorithm> ();
-			this._stream = new CryptoStream (Stream.Null, this._hash, CryptoStreamMode.Write);
+			_hash = Activator.CreateInstance<TAlgorithm> ();
+			_stream = new CryptoStream (Stream.Null, _hash, CryptoStreamMode.Write);
 		}
 
 		public override void Reset ()
 		{
-			this.Dispose ();
-			this.Init ();
+			Dispose ();
+			Init ();
 		}
 
 		public override void Update (byte[] input)
 		{
-			this._stream.Write (input, 0, input.Length);
+			_stream.Write (input, 0, input.Length);
 		}
 
 		public override void Update (byte input)
 		{
-			this._stream.WriteByte (input);
+			_stream.WriteByte (input);
 		}
 
 		public override void Update (byte[] input, int index, int count)
 		{
 			if (count < 0)
 				Console.WriteLine ("Argh!");
-			this._stream.Write (input, index, count);
+			_stream.Write (input, index, count);
 		}
 	}
 }

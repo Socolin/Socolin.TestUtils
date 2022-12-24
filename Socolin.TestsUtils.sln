@@ -13,6 +13,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests", "Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests\Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests.csproj", "{A229F00C-B69A-453F-912E-C8DC27EAB100}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Externals", "Externals", "{4777CEED-0888-40D2-9C1A-83D4C4020403}"
+	ProjectSection(SolutionItems) = preProject
+		Externals\.editorconfig = Externals\.editorconfig
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGitDiff", "Externals\NGitDiff\NGitDiff\NGitDiff.csproj", "{9179E7D7-19A3-4617-9C72-378619CE84F5}"
 EndProject

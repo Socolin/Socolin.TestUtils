@@ -41,20 +41,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
-using Sharpen;
-
 namespace NGit.Diff
 {
 	/// <summary>
 	/// Wraps two
 	/// <see cref="Sequence">Sequence</see>
 	/// instances to cache their element hash codes.
-	/// <p>
+	///
 	/// This pair wraps two sequences that contain cached hash codes for the input
 	/// sequences.
 	/// </summary>
-	/// <?></?>
 	public class HashedSequencePair<S> where S:Sequence
 	{
 		private readonly SequenceComparator<S> cmp;
@@ -75,8 +71,8 @@ namespace NGit.Diff
 		public HashedSequencePair(SequenceComparator<S> cmp, S a, S b)
 		{
 			this.cmp = cmp;
-			this.baseA = a;
-			this.baseB = b;
+			baseA = a;
+			baseB = b;
 		}
 
 		/// <returns>obtain a comparator that uses the cached hash codes.</returns>

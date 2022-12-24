@@ -41,9 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
-using Sharpen;
-
 namespace NGit.Diff
 {
 	/// <summary>
@@ -57,7 +54,6 @@ namespace NGit.Diff
 	/// <see cref="Subsequence{S}">Subsequence&lt;S&gt;</see>
 	/// .
 	/// </summary>
-	/// <?></?>
 	public sealed class SubsequenceComparator<S> : SequenceComparator<Subsequence<S>>
 		 where S:Sequence
 	{

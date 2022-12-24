@@ -42,8 +42,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using NGit.Diff;
-using Sharpen;
 
 namespace NGit.Diff
 {
@@ -61,6 +59,7 @@ namespace NGit.Diff
 	/// pattern, with concurrent invocations using the same singleton. Other
 	/// algorithms may support parameterization, in which case the caller can create
 	/// a unique instance per thread.
+	/// </p>
 	/// </summary>
 	public abstract class DiffAlgorithm
 	{
@@ -68,7 +67,7 @@ namespace NGit.Diff
 		public enum SupportedAlgorithm
 		{
 			MYERS,
-			HISTOGRAM
+			HISTOGRAM,
 		}
 
 		/// <param name="alg">
@@ -76,16 +75,16 @@ namespace NGit.Diff
 		/// returned
 		/// </param>
 		/// <returns>an implementation of the specified diff algorithm</returns>
-		public static DiffAlgorithm GetAlgorithm(DiffAlgorithm.SupportedAlgorithm alg)
+		public static DiffAlgorithm GetAlgorithm(SupportedAlgorithm alg)
 		{
 			switch (alg)
 			{
-				case DiffAlgorithm.SupportedAlgorithm.MYERS:
+				case SupportedAlgorithm.MYERS:
 				{
 					return MyersDiff<RawText>.INSTANCE;
 				}
 
-				case DiffAlgorithm.SupportedAlgorithm.HISTOGRAM:
+				case SupportedAlgorithm.HISTOGRAM:
 				{
 					return new HistogramDiff();
 				}
@@ -99,8 +98,7 @@ namespace NGit.Diff
 
 		/// <summary>Compare two sequences and identify a list of edits between them.</summary>
 		/// <remarks>Compare two sequences and identify a list of edits between them.</remarks>
-		/// <?></?>
-		/// <param name="cmp">the comparator supplying the element equivalence function.</param>
+			/// <param name="cmp">the comparator supplying the element equivalence function.</param>
 		/// <param name="a">
 		/// the first (also known as old or pre-image) sequence. Edits
 		/// returned by this algorithm will reference indexes using the
@@ -126,7 +124,7 @@ namespace NGit.Diff
 		/// 's rules. The
 		/// result list is never null.
 		/// </returns>
-		public virtual EditList Diff<S>(SequenceComparator<S> cmp, S a, S b) where 
+		public virtual EditList Diff<S>(SequenceComparator<S> cmp, S a, S b) where
 			S:Sequence
 		{
 			Edit region = cmp.ReduceCommonStartEnd(a, b, CoverEdit(a, b));
@@ -192,8 +190,7 @@ namespace NGit.Diff
 		/// <see cref="Subsequence{S}">Subsequence&lt;S&gt;</see>
 		/// s.
 		/// </remarks>
-		/// <?></?>
-		/// <param name="cmp">the comparator supplying the element equivalence function.</param>
+			/// <param name="cmp">the comparator supplying the element equivalence function.</param>
 		/// <param name="a">
 		/// the first (also known as old or pre-image) sequence. Edits
 		/// returned by this algorithm will reference indexes using the
@@ -213,7 +210,7 @@ namespace NGit.Diff
 		/// .
 		/// </param>
 		/// <returns>a modifiable edit list comparing the two sequences.</returns>
-		public abstract EditList DiffNonCommon<S>(SequenceComparator<S> cmp, S a, 
+		public abstract EditList DiffNonCommon<S>(SequenceComparator<S> cmp, S a,
 			S b) where S:Sequence;
 	}
 }

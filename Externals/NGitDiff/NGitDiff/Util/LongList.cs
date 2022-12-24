@@ -86,7 +86,7 @@ namespace NGit.Util
 		{
 			if (count <= i)
 			{
-				throw Sharpen.Extensions.CreateIndexOutOfRangeException(i);
+				throw Extensions.CreateIndexOutOfRangeException(i);
 			}
 			return entries[i];
 		}
@@ -141,7 +141,7 @@ namespace NGit.Util
 		{
 			if (count < index)
 			{
-				throw Sharpen.Extensions.CreateIndexOutOfRangeException(index);
+				throw Extensions.CreateIndexOutOfRangeException(index);
 			}
 			else
 			{

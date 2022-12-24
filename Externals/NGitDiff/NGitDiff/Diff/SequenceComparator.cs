@@ -41,9 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
-using Sharpen;
-
 namespace NGit.Diff
 {
 	/// <summary>
@@ -57,7 +54,6 @@ namespace NGit.Diff
 	/// <p>
 	/// Indexes within a sequence are zero-based.
 	/// </summary>
-	/// <?></?>
 	public abstract class SequenceComparator<S> where S:Sequence
 	{
 		/// <summary>Compare two items to determine if they are equivalent.</summary>

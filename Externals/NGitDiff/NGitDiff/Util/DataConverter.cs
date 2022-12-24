@@ -36,6 +36,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Collections;
 using System.Text;
@@ -203,7 +204,7 @@ namespace Sharpen {
 				}
 
 				if (next + group.Length > buffer.Length){
-					byte [] nb = new byte [System.Math.Max (next, 16) * 2 + group.Length];
+					byte [] nb = new byte [Math.Max (next, 16) * 2 + group.Length];
 					Array.Copy (buffer, nb, buffer.Length);
 					Array.Copy (group, 0, nb, next, group.Length);
 					next = next + group.Length;
@@ -404,15 +405,15 @@ namespace Sharpen {
 				break;
 				
 			case 'b':
-				b.Add (new byte [] { Convert.ToByte (oarg) });
+				b.Add (new[] { Convert.ToByte (oarg) });
 				break;
 
 			case 'c':
-				b.Add (new byte [] { (byte) (Convert.ToSByte (oarg)) });
+				b.Add (new[] { (byte) (Convert.ToSByte (oarg)) });
 				break;
 
 			case 'C':
-				b.Add (new byte [] { Convert.ToByte (oarg) });
+				b.Add (new[] { Convert.ToByte (oarg) });
 				break;
 
 				// Repeat acount;
@@ -449,6 +450,7 @@ namespace Sharpen {
 				bool add_null = b.description [b.i] == 'z';
 				b.i++;
 				if (b.i >= b.description.Length)
+					// ReSharper disable once NotResolvedInText
 					throw new ArgumentException ("$ description needs a type specified", "description");
 				char d = b.description [b.i];
 				Encoding e;
@@ -480,6 +482,7 @@ namespace Sharpen {
 					break;
 					
 				default:
+					// ReSharper disable once NotResolvedInText
 					throw new ArgumentException ("Invalid format for $ specifier", "description");
 				}
 				if (b.align == -1)
@@ -608,7 +611,7 @@ namespace Sharpen {
 						if (description [i] == 'c')
 							c = ((char) ((sbyte)buffer [idx]));
 						else
-							c = ((char) ((byte)buffer [idx]));
+							c = ((char) buffer [idx]);
 						
 						result.Add (c);
 						idx++;
@@ -694,7 +697,9 @@ namespace Sharpen {
 					switch (n){
 					case 1:
 						for (; k < buffer.Length && buffer [k] != 0; k++)
-							;
+						{
+						}
+
 						result.Add (e.GetChars (buffer, idx, k-idx));
 						if (k == buffer.Length)
 							idx = k;
@@ -736,8 +741,7 @@ namespace Sharpen {
 					}
 					break;
 				default:
-					throw new ArgumentException (String.Format ("invalid format specified `{0}'",
-										    description [i]));
+					throw new ArgumentException ($"invalid format specified `{description[i]}'");
 				}
 
 				if (repeat > 0){
@@ -752,7 +756,7 @@ namespace Sharpen {
 		internal void Check (byte [] dest, int destIdx, int size)
 		{
 			if (dest == null)
-				throw new ArgumentNullException ("dest");
+				throw new ArgumentNullException (nameof(dest));
 			if (destIdx < 0 || destIdx > dest.Length - size)
 				throw new ArgumentException ("destIdx");
 		}
@@ -761,7 +765,7 @@ namespace Sharpen {
 			public override double GetDouble (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 8)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -778,7 +782,7 @@ namespace Sharpen {
 			public override ulong GetUInt64 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 8)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -796,7 +800,7 @@ namespace Sharpen {
 			public override long GetInt64 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 8)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -814,7 +818,7 @@ namespace Sharpen {
 			public override float GetFloat  (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 4)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -832,7 +836,7 @@ namespace Sharpen {
 			public override int GetInt32  (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 4)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -850,7 +854,7 @@ namespace Sharpen {
 			public override uint GetUInt32 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 4)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -868,7 +872,7 @@ namespace Sharpen {
 			public override short GetInt16 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 2)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -886,7 +890,7 @@ namespace Sharpen {
 			public override ushort GetUInt16 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 2)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -935,7 +939,7 @@ namespace Sharpen {
 			{
 				Check (dest, destIdx, 4);
 				fixed (byte *target = &dest [destIdx]){
-					uint *source = (uint *) &value;
+					uint *source = &value;
 
 					*((uint *)target) = *source;
 				}
@@ -945,7 +949,7 @@ namespace Sharpen {
 			{
 				Check (dest, destIdx, 8);
 				fixed (byte *target = &dest [destIdx]){
-					long *source = (long *) &value;
+					long *source = &value;
 
 					*((long*)target) = *source;
 				}
@@ -955,7 +959,7 @@ namespace Sharpen {
 			{
 				Check (dest, destIdx, 8);
 				fixed (byte *target = &dest [destIdx]){
-					ulong *source = (ulong *) &value;
+					ulong *source = &value;
 
 					*((ulong *) target) = *source;
 				}
@@ -975,7 +979,7 @@ namespace Sharpen {
 			{
 				Check (dest, destIdx, 2);
 				fixed (byte *target = &dest [destIdx]){
-					ushort *source = (ushort *) &value;
+					ushort *source = &value;
 
 					*((ushort *)target) = *source;
 				}
@@ -986,7 +990,7 @@ namespace Sharpen {
 			public override double GetDouble (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 8)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -1004,7 +1008,7 @@ namespace Sharpen {
 			public override ulong GetUInt64 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 8)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -1022,7 +1026,7 @@ namespace Sharpen {
 			public override long GetInt64 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 8)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -1040,7 +1044,7 @@ namespace Sharpen {
 			public override float GetFloat  (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 4)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -1058,7 +1062,7 @@ namespace Sharpen {
 			public override int GetInt32  (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 4)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -1076,7 +1080,7 @@ namespace Sharpen {
 			public override uint GetUInt32 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 4)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -1094,7 +1098,7 @@ namespace Sharpen {
 			public override short GetInt16 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 2)
 					throw new ArgumentException ("index");
 				if (index < 0)
@@ -1112,7 +1116,7 @@ namespace Sharpen {
 			public override ushort GetUInt16 (byte [] data, int index)
 			{
 				if (data == null)
-					throw new ArgumentNullException ("data");
+					throw new ArgumentNullException (nameof(data));
 				if (data.Length - index < 2)
 					throw new ArgumentException ("index");
 				if (index < 0)

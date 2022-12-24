@@ -1,8 +1,7 @@
+// ReSharper disable All
 namespace Sharpen
 {
-	using System;
-
-	internal enum CodingErrorAction
+    internal enum CodingErrorAction
 	{
 		REPORT
 	}

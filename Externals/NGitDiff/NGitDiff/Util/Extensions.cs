@@ -1,23 +1,11 @@
-using System.Reflection;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using System.Collections.Specialized;
-
 namespace Sharpen
 {
     //using ICSharpCode.SharpZipLib.Zip.Compression;
 	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Globalization;
-	using System.IO;
-	using System.Runtime.CompilerServices;
-	using System.Text;
-	using System.Text.RegularExpressions;
+    using System.Collections.Generic;
+    using System.Text;
 
-	internal static class Extensions
+    internal static class Extensions
 	{
 //        private static readonly long EPOCH_TICKS;
 
@@ -105,8 +93,8 @@ namespace Sharpen
         {
             try
             {
-                byte[] bom = e.GetPreamble();
-                if (bom != null && bom.Length > 0)
+                var bom = e.GetPreamble();
+                if (bom.Length > 0)
                 {
                     if (len >= bom.Length)
                     {
@@ -330,12 +318,12 @@ namespace Sharpen
 //            return char.IsUpper (c);
 //        }
 
-        public static Sharpen.Iterator<T> Iterator<T>(ICollection<T> col)
+        public static Iterator<T> Iterator<T>(ICollection<T> col)
         {
             return new EnumeratorWrapper<T>(col, col.GetEnumerator());
         }
 
-        public static Sharpen.Iterator<T> Iterator<T>(IEnumerable<T> col)
+        public static Iterator<T> Iterator<T>(IEnumerable<T> col)
         {
             return new EnumeratorWrapper<T>(col, col.GetEnumerator());
         }

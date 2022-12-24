@@ -11,13 +11,9 @@ namespace Sharpen
 		void Remove ();
 	}
 
-    internal abstract class Iterator<T> : IEnumerator, IDisposable, IEnumerator<T>, Iterator
+    internal abstract class Iterator<T> : IEnumerator<T>, Iterator
 	{
 		private T lastValue;
-
-		protected Iterator ()
-		{
-		}
 
 		object Iterator.Next ()
 		{

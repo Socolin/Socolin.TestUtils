@@ -41,7 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
 using Sharpen;
 
 namespace NGit.Diff
@@ -54,8 +53,6 @@ namespace NGit.Diff
 	[System.Serializable]
 	public class EditList : System.Collections.Generic.List<Edit>
 	{
-        private const long serialVersionUID = 1L;
-
 		/// <summary>Construct an edit list containing a single edit.</summary>
 		/// <remarks>Construct an edit list containing a single edit.</remarks>
 		/// <param name="edit">the edit to return in the list.</param>
@@ -64,9 +61,9 @@ namespace NGit.Diff
 		/// <code>edit</code>
 		/// .
 		/// </returns>
-		public static NGit.Diff.EditList Singleton(Edit edit)
+		public static EditList Singleton(Edit edit)
 		{
-			NGit.Diff.EditList res = new NGit.Diff.EditList(1);
+			EditList res = new EditList(1);
 			Extensions.AddItem(res, edit);
 			return res;
 		}

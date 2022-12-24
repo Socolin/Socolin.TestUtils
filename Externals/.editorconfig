@@ -1,0 +1,14 @@
+[*.cs]
+indent_style = tab
+indent_size = tab
+tab_width = 4
+
+# ReSharper properties
+
+dotnet_naming_symbols.enums.applicable_kinds = enum
+dotnet_naming_rule.enums.symbols = enums
+dotnet_naming_rule.enums.style = all_upper
+dotnet_naming_rule.enums.severity = none
+
+dotnet_naming_style.all_upper.capitalization = all_upper
+dotnet_naming_style.pascal_case.capitalization = pascal_case

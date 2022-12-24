@@ -51,12 +51,8 @@ namespace NGit.Util.IO
 	{
 		/// <summary>The canonical instance.</summary>
 		/// <remarks>The canonical instance.</remarks>
-		public static readonly NGit.Util.IO.NullOutputStream INSTANCE = new NGit.Util.IO.NullOutputStream
+		public static readonly NullOutputStream INSTANCE = new NullOutputStream
 			();
-
-		public NullOutputStream()
-		{
-		}
 
 		// Do nothing, but we want to hide our constructor to prevent
 		// more than one instance from being created.

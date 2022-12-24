@@ -41,8 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
-using Sharpen;
 #pragma warning disable 693
 
 namespace NGit.Diff
@@ -60,13 +58,11 @@ namespace NGit.Diff
 	/// <see cref="SubsequenceComparator{S}">SubsequenceComparator&lt;S&gt;</see>
 	/// .
 	/// </summary>
-	/// <?></?>
 	public sealed class Subsequence<S> : Sequence where S:Sequence
 	{
 		/// <summary>Construct a subsequence around the A region/base sequence.</summary>
 		/// <remarks>Construct a subsequence around the A region/base sequence.</remarks>
-		/// <?></?>
-		/// <param name="a">the A sequence.</param>
+			/// <param name="a">the A sequence.</param>
 		/// <param name="region">
 		/// the region of
 		/// <code>a</code>
@@ -79,15 +75,14 @@ namespace NGit.Diff
 		/// <code>region</code>
 		/// .
 		/// </returns>
-		public static NGit.Diff.Subsequence<S> A<S>(S a, Edit region) where S:Sequence
+		public static Subsequence<S> A<S>(S a, Edit region) where S:Sequence
 		{
-			return new NGit.Diff.Subsequence<S>(a, region.beginA, region.endA);
+			return new Subsequence<S>(a, region.beginA, region.endA);
 		}
 
 		/// <summary>Construct a subsequence around the B region/base sequence.</summary>
 		/// <remarks>Construct a subsequence around the B region/base sequence.</remarks>
-		/// <?></?>
-		/// <param name="b">the B sequence.</param>
+			/// <param name="b">the B sequence.</param>
 		/// <param name="region">
 		/// the region of
 		/// <code>b</code>
@@ -100,22 +95,21 @@ namespace NGit.Diff
 		/// <code>region</code>
 		/// .
 		/// </returns>
-        public static NGit.Diff.Subsequence<S> B<S>(S b, Edit region) where S:Sequence
+        public static Subsequence<S> B<S>(S b, Edit region) where S:Sequence
 		{
-			return new NGit.Diff.Subsequence<S>(b, region.beginB, region.endB);
+			return new Subsequence<S>(b, region.beginB, region.endB);
 		}
 
 		/// <summary>Adjust the Edit to reflect positions in the base sequence.</summary>
 		/// <remarks>Adjust the Edit to reflect positions in the base sequence.</remarks>
-		/// <?></?>
-		/// <param name="e">
+			/// <param name="e">
 		/// edit to adjust in-place. Prior to invocation the indexes are
 		/// in terms of the two subsequences; after invocation the indexes
 		/// are in terms of the base sequences.
 		/// </param>
 		/// <param name="a">the A sequence.</param>
 		/// <param name="b">the B sequence.</param>
-		public static void ToBase<S>(Edit e, NGit.Diff.Subsequence<S> a, NGit.Diff.Subsequence
+		public static void ToBase<S>(Edit e, Subsequence<S> a, Subsequence
 			<S> b) where S:Sequence
 		{
 			e.beginA += a.begin;
@@ -126,8 +120,7 @@ namespace NGit.Diff
 
 		/// <summary>Adjust the Edits to reflect positions in the base sequence.</summary>
 		/// <remarks>Adjust the Edits to reflect positions in the base sequence.</remarks>
-		/// <?></?>
-		/// <param name="edits">
+			/// <param name="edits">
 		/// edits to adjust in-place. Prior to invocation the indexes are
 		/// in terms of the two subsequences; after invocation the indexes
 		/// are in terms of the base sequences.
@@ -139,7 +132,7 @@ namespace NGit.Diff
 		/// <code>edits</code>
 		/// (as the list was updated in-place).
 		/// </returns>
-		public static EditList ToBase<S>(EditList edits, NGit.Diff.Subsequence<S> a, NGit.Diff.Subsequence
+		public static EditList ToBase<S>(EditList edits, Subsequence<S> a, Subsequence
 			<S> b) where S:Sequence
 		{
 			foreach (Edit e in edits)
@@ -182,7 +175,7 @@ namespace NGit.Diff
 		{
 			this.@base = @base;
 			this.begin = begin;
-			this.size = end - begin;
+			size = end - begin;
 		}
 
 		public override int Size()

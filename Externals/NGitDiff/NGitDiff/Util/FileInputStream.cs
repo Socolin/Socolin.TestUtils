@@ -1,7 +1,6 @@
 namespace Sharpen
 {
-	using System;
-	using System.IO;
+    using System.IO;
 
 	internal class FileInputStream : InputStream
 	{
@@ -14,7 +13,7 @@ namespace Sharpen
 			if (!File.Exists (file)) {
 				throw new FileNotFoundException ("File not found", file);
 			}
-			base.Wrapped = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+			Wrapped = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		}
 
         //public FileChannel GetChannel ()

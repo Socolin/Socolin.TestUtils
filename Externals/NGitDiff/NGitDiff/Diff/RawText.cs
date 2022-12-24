@@ -41,7 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
 using NGit.Util;
 using Sharpen;
 
@@ -63,7 +62,7 @@ namespace NGit.Diff
 	public class RawText : Sequence
 	{
 		/// <summary>A Rawtext of length 0</summary>
-		public static readonly NGit.Diff.RawText EMPTY_TEXT = new NGit.Diff.RawText(new byte
+		public static readonly RawText EMPTY_TEXT = new RawText(new byte
 			[0]);
 
 		/// <summary>

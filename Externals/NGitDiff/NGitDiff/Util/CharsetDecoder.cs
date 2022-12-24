@@ -1,7 +1,7 @@
+// ReSharper disable All
 namespace Sharpen
 {
-	using System;
-	using System.Text;
+    using System.Text;
 
 	internal class CharsetDecoder
 	{
@@ -11,7 +11,7 @@ namespace Sharpen
 		public CharsetDecoder (Encoding enc)
 		{
 			this.enc = enc;
-			this.decoder = enc.GetDecoder ();
+			decoder = enc.GetDecoder ();
 		}
 
 		public string Decode (ByteBuffer b)

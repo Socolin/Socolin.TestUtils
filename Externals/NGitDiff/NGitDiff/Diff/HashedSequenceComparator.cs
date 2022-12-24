@@ -41,27 +41,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
-using Sharpen;
-
 namespace NGit.Diff
 {
 	/// <summary>
 	/// Wrap another comparator for use with
 	/// <see cref="HashedSequence{S}">HashedSequence&lt;S&gt;</see>
 	/// .
-	/// <p>
+	///
 	/// This comparator acts as a proxy for the real comparator, evaluating the
 	/// cached hash code before testing the underlying comparator's equality.
 	/// Comparators of this type must be used with a
 	/// <see cref="HashedSequence{S}">HashedSequence&lt;S&gt;</see>
 	/// .
-	/// <p>
+	///
 	/// To construct an instance of this type use
 	/// <see cref="HashedSequencePair{S}">HashedSequencePair&lt;S&gt;</see>
 	/// .
 	/// </summary>
-	/// <?></?>
 	public sealed class HashedSequenceComparator<S> : SequenceComparator<HashedSequence
 		<S>> where S:Sequence
 	{

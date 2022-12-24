@@ -1,7 +1,6 @@
+// ReSharper disable All
 namespace Sharpen
 {
-	using System;
-
     internal enum ByteOrder
 	{
 		BIG_ENDIAN,

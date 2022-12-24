@@ -41,9 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
-using Sharpen;
-
 namespace NGit.Diff
 {
 	/// <summary>Compares two sequences primarily based upon hash codes.</summary>
@@ -57,7 +54,6 @@ namespace NGit.Diff
 			HashedSequenceComparator<S> hc = p.GetComparator();
 			HashedSequence<S> ha = p.GetA();
 			HashedSequence<S> hb = p.GetB();
-			p = null;
 			EditList res = new EditList();
 			Edit region = new Edit(0, a.Size(), 0, b.Size());
 			DiffNonCommon(res, hc, ha, hb, region);
@@ -77,8 +73,7 @@ namespace NGit.Diff
 		/// <see cref="Subsequence{S}">Subsequence&lt;S&gt;</see>
 		/// s.
 		/// </remarks>
-		/// <?></?>
-		/// <param name="edits">result list to append the region's edits onto.</param>
+			/// <param name="edits">result list to append the region's edits onto.</param>
 		/// <param name="cmp">the comparator supplying the element equivalence function.</param>
 		/// <param name="a">
 		/// the first (also known as old or pre-image) sequence. Edits

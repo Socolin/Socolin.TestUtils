@@ -41,8 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Diff;
-using Sharpen;
 #pragma warning disable 108,114
 
 namespace NGit.Diff
@@ -51,20 +49,20 @@ namespace NGit.Diff
 	/// 	</summary>
 	/// <remarks>
 	/// A modified region detected between two versions of roughly the same content.
-	/// <p>
+	///
 	/// An edit covers the modified region only. It does not cover a common region.
-	/// <p>
+	///
 	/// Regions should be specified using 0 based notation, so add 1 to the start and
 	/// end marks for line numbers in a file.
-	/// <p>
+	///
 	/// An edit where <code>beginA == endA && beginB &lt; endB</code> is an insert edit,
 	/// that is sequence B inserted the elements in region
 	/// <code>[beginB, endB)</code> at <code>beginA</code>.
-	/// <p>
+	///
 	/// An edit where <code>beginA &lt; endA && beginB == endB</code> is a delete edit,
 	/// that is sequence B has removed the elements between
 	/// <code>[beginA, endA)</code>.
-	/// <p>
+	///
 	/// An edit where <code>beginA &lt; endA && beginB &lt; endB</code> is a replace edit,
 	/// that is sequence B has replaced the range of elements between
 	/// <code>[beginA, endA)</code> with those found in <code>[beginB, endB)</code>.
@@ -92,7 +90,8 @@ namespace NGit.Diff
 		/// <remarks>Create a new empty edit.</remarks>
 		/// <param name="as">beginA: start and end of region in sequence A; 0 based.</param>
 		/// <param name="bs">beginB: start and end of region in sequence B; 0 based.</param>
-		public Edit(int @as, int bs) : this(@as, @as, bs, bs)
+		public Edit(int @as, int bs)
+			: this(@as, @as, bs, bs)
 		{
 		}
 
@@ -111,28 +110,28 @@ namespace NGit.Diff
 		}
 
 		/// <returns>the type of this region</returns>
-		public Edit.Type GetType()
+		public Type GetType()
 		{
 			if (beginA < endA)
 			{
 				if (beginB < endB)
 				{
-					return Edit.Type.REPLACE;
+					return Type.REPLACE;
 				}
 				else
 				{
-					return Edit.Type.DELETE;
+					return Type.DELETE;
 				}
 			}
 			else
 			{
 				if (beginB < endB)
 				{
-					return Edit.Type.INSERT;
+					return Type.INSERT;
 				}
 				else
 				{
-					return Edit.Type.EMPTY;
+					return Type.EMPTY;
 				}
 			}
 		}
@@ -193,9 +192,9 @@ namespace NGit.Diff
 		/// <code>cut</code>
 		/// starts.
 		/// </returns>
-		public NGit.Diff.Edit Before(NGit.Diff.Edit cut)
+		public Edit Before(Edit cut)
 		{
-			return new NGit.Diff.Edit(beginA, cut.beginA, beginB, cut.beginB);
+			return new Edit(beginA, cut.beginA, beginB, cut.beginB);
 		}
 
 		/// <summary>Construct a new edit representing the region after cut.</summary>
@@ -212,9 +211,9 @@ namespace NGit.Diff
 		/// <code>cut</code>
 		/// ends.
 		/// </returns>
-		public NGit.Diff.Edit After(NGit.Diff.Edit cut)
+		public Edit After(Edit cut)
 		{
-			return new NGit.Diff.Edit(cut.endA, endA, cut.endB, endB);
+			return new Edit(cut.endA, endA, cut.endB, endB);
 		}
 
 		/// <summary>
@@ -251,23 +250,25 @@ namespace NGit.Diff
 
 		public override int GetHashCode()
 		{
+			// ReSharper disable twice NonReadonlyMemberInGetHashCode
 			return beginA ^ endA;
 		}
 
 		public override bool Equals(object o)
 		{
-			if (o is NGit.Diff.Edit)
+			if (o is Edit)
 			{
-				NGit.Diff.Edit e = (NGit.Diff.Edit)o;
-				return this.beginA == e.beginA && this.endA == e.endA && this.beginB == e.beginB
-					&& this.endB == e.endB;
+				Edit e = (Edit)o;
+				return beginA == e.beginA && endA == e.endA && beginB == e.beginB
+				       && endB == e.endB;
 			}
+
 			return false;
 		}
 
 		public override string ToString()
 		{
-			Edit.Type t = GetType();
+			Type t = GetType();
 			return t + "(" + beginA + "-" + endA + "," + beginB + "-" + endB + ")";
 		}
 	}

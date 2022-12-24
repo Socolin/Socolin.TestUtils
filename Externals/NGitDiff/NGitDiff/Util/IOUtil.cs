@@ -41,11 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using NGit.Util;
 using Sharpen;
 
 namespace NGit.Util
@@ -62,7 +58,7 @@ namespace NGit.Util
         ///// 	</exception>
         public static byte[] ReadFully(FilePath path)
         {
-            return IOUtil.ReadFully(path, int.MaxValue);
+            return ReadFully(path, int.MaxValue);
         }
 
         ///// <summary>Read at most limit bytes from the local file into memory as a byte array.

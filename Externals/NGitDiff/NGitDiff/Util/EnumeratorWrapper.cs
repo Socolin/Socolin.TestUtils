@@ -15,12 +15,12 @@ namespace Sharpen
 		{
 			this.e = e;
 			this.collection = collection;
-			this.more = e.MoveNext ();
+			more = e.MoveNext ();
 		}
 
 		public override bool HasNext ()
 		{
-			return this.more;
+			return more;
 		}
 
 		public override T Next ()
@@ -34,7 +34,7 @@ namespace Sharpen
 
 		public override void Remove ()
 		{
-			ICollection<T> col = this.collection as ICollection<T>;
+			ICollection<T> col = collection as ICollection<T>;
 			if (col == null) {
 				throw new NotSupportedException ();
 			}

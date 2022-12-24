@@ -1,7 +1,6 @@
+// ReSharper disable All
 namespace Sharpen
 {
-	using System;
-
     internal class ByteBuffer
 	{
 		private byte[] buffer;
@@ -15,18 +14,18 @@ namespace Sharpen
 
 		public ByteBuffer ()
 		{
-			this.c = DataConverter.BigEndian;
+			c = DataConverter.BigEndian;
 		}
 
 		private ByteBuffer (byte[] buf, int start, int len)
 		{
-			this.buffer = buf;
-			this.offset = 0;
-			this.limit = start + len;
-			this.index = start;
-			this.mark = start;
-			this.capacity = buf.Length;
-			this.c = DataConverter.BigEndian;
+			buffer = buf;
+			offset = 0;
+			limit = start + len;
+			index = start;
+			mark = start;
+			capacity = buf.Length;
+			c = DataConverter.BigEndian;
 		}
 
 		public static ByteBuffer Allocate (int size)

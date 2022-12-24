@@ -1,0 +1,5 @@
+[*.cs]
+indent_style = tab
+indent_size = tab
+tab_width = 4
+

@@ -42,7 +42,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System.Text;
-using Sharpen;
 
 namespace NGit.Util
 {

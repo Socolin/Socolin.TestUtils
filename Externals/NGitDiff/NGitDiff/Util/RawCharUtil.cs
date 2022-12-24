@@ -41,8 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using Sharpen;
-
 namespace NGit.Util
 {
 	/// <summary>
@@ -73,7 +71,7 @@ namespace NGit.Util
 		/// <returns>true if c represents a whitespace character in 8-bit US-ASCII</returns>
 		public static bool IsWhitespace(byte c)
 		{
-			return WHITESPACE[c & unchecked((int)(0xff))];
+			return WHITESPACE[c & 0xff];
 		}
 
 		/// <summary>
@@ -123,9 +121,6 @@ namespace NGit.Util
 			return start;
 		}
 
-		public RawCharUtil()
-		{
-		}
 		// This will never be called
 	}
 }

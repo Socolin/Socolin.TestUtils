@@ -1,7 +1,5 @@
 namespace Sharpen
 {
-	using System;
-
     internal class DigestOutputStream : OutputStream
 	{
 		private MessageDigest digest;
@@ -11,7 +9,7 @@ namespace Sharpen
 		public DigestOutputStream (OutputStream os, MessageDigest md)
 		{
 			this.os = os;
-			this.digest = md;
+			digest = md;
 		}
 
 		public override void Close ()

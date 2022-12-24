@@ -42,7 +42,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using NGit.Diff;
 using Sharpen;
 
 namespace NGit.Diff
@@ -50,11 +49,11 @@ namespace NGit.Diff
 	/// <summary>An extended form of Bram Cohen's patience diff algorithm.</summary>
 	/// <remarks>
 	/// An extended form of Bram Cohen's patience diff algorithm.
-	/// <p>
+	///
 	/// This implementation was derived by using the 4 rules that are outlined in
 	/// Bram Cohen's <a href="http://bramcohen.livejournal.com/73318.html">blog</a>,
 	/// and then was further extended to support low-occurrence common elements.
-	/// <p>
+	///
 	/// The basic idea of the algorithm is to create a histogram of occurrences for
 	/// each element of sequence A. Each element of sequence B is then considered in
 	/// turn. If the element also exists in sequence A, and has a lower occurrence
@@ -63,14 +62,14 @@ namespace NGit.Diff
 	/// lowest number of occurrences is chosen as a split point. The region is split
 	/// around the LCS, and the algorithm is recursively applied to the sections
 	/// before and after the LCS.
-	/// <p>
+	///
 	/// By always selecting a LCS position with the lowest occurrence count, this
 	/// algorithm behaves exactly like Bram Cohen's patience diff whenever there is a
 	/// unique common element available between the two sequences. When no unique
 	/// elements exist, the lowest occurrence element is chosen instead. This offers
 	/// more readable diffs than simply falling back on the standard Myers' O(ND)
 	/// algorithm would produce.
-	/// <p>
+	///
 	/// To prevent the algorithm from having an O(N^2) running time, an upper limit
 	/// on the number of unique elements in a histogram bucket is configured by
 	/// <see cref="SetMaxChainLength(int)">SetMaxChainLength(int)</see>
@@ -81,14 +80,14 @@ namespace NGit.Diff
 	/// 	</see>
 	/// . If no fallback algorithm is
 	/// configured, the region is emitted as a replace edit.
-	/// <p>
+	///
 	/// During scanning of sequence B, any element of A that occurs more than
 	/// <see cref="SetMaxChainLength(int)">SetMaxChainLength(int)</see>
 	/// times is never considered for an LCS match
 	/// position, even if it is common between the two sequences. This limits the
 	/// number of locations in sequence A that must be considered to find the LCS,
 	/// and helps maintain a lower running time bound.
-	/// <p>
+	///
 	/// So long as
 	/// <see cref="SetMaxChainLength(int)">SetMaxChainLength(int)</see>
 	/// is a small constant (such as 64),
@@ -100,7 +99,7 @@ namespace NGit.Diff
 	/// <see cref="MyersDiff{S}">MyersDiff&lt;S&gt;</see>
 	/// , even though its theoretical running
 	/// time is the same.
-	/// <p>
+	///
 	/// This implementation has an internal limitation that prevents it from handling
 	/// sequences with more than 268,435,456 (2^28) elements.
 	/// </remarks>
@@ -146,7 +145,7 @@ namespace NGit.Diff
 		public override void DiffNonCommon<S>(EditList edits, HashedSequenceComparator<S>
 			 cmp, HashedSequence<S> a, HashedSequence<S> b, Edit region)
 		{
-			new HistogramDiff.State<S>(this, edits, cmp, a, b).DiffReplace(region);
+			new State<S>(this, edits, cmp, a, b).DiffReplace(region);
 		}
 
 		private class State<S> where S:Sequence
@@ -173,8 +172,7 @@ namespace NGit.Diff
 
 			internal virtual void DiffReplace(Edit r)
 			{
-				Edit lcs = new HistogramDiffIndex<S>(this._enclosing.maxChainLength, this.cmp, this
-					.a, this.b, r).FindLongestCommonSequence();
+				Edit lcs = new HistogramDiffIndex<S>(_enclosing.maxChainLength, cmp, a, b, r).FindLongestCommonSequence();
 				if (lcs != null)
 				{
 					// If we were given an edit, we can prove a result here.
@@ -184,34 +182,34 @@ namespace NGit.Diff
 						// An empty edit indicates there is nothing in common.
 						// Replace the entire region.
 						//
-						Extensions.AddItem(this.edits, r);
+						Extensions.AddItem(edits, r);
 					}
 					else
 					{
-						this.Diff(r.Before(lcs));
-						this.Diff(r.After(lcs));
+						Diff(r.Before(lcs));
+						Diff(r.After(lcs));
 					}
 				}
 				else
 				{
-					if (this._enclosing.fallback is LowLevelDiffAlgorithm)
+					if (_enclosing.fallback is LowLevelDiffAlgorithm)
 					{
-						LowLevelDiffAlgorithm fb = (LowLevelDiffAlgorithm)this._enclosing.fallback;
-						fb.DiffNonCommon(this.edits, this.cmp, this.a, this.b, r);
+						LowLevelDiffAlgorithm fb = (LowLevelDiffAlgorithm)_enclosing.fallback;
+						fb.DiffNonCommon(edits, cmp, a, b, r);
 					}
 					else
 					{
-						if (this._enclosing.fallback != null)
+						if (_enclosing.fallback != null)
 						{
-							SubsequenceComparator<HashedSequence<S>> cs = this.Subcmp();
-							Subsequence<HashedSequence<S>> @as = Subsequence<S>.A(this.a, r);
-							Subsequence<HashedSequence<S>> bs = Subsequence<S>.B(this.b, r);
-							EditList res = this._enclosing.fallback.DiffNonCommon(cs, @as, bs);
-							Sharpen.Collections.AddAll(this.edits, Subsequence<S>.ToBase(res, @as, bs));
+							SubsequenceComparator<HashedSequence<S>> cs = Subcmp();
+							Subsequence<HashedSequence<S>> @as = Subsequence<S>.A(a, r);
+							Subsequence<HashedSequence<S>> bs = Subsequence<S>.B(b, r);
+							EditList res = _enclosing.fallback.DiffNonCommon(cs, @as, bs);
+							Collections.AddAll(edits, Subsequence<S>.ToBase(res, @as, bs));
 						}
 						else
 						{
-							Extensions.AddItem(this.edits, r);
+							Extensions.AddItem(edits, r);
 						}
 					}
 				}
@@ -224,13 +222,13 @@ namespace NGit.Diff
 					case Edit.Type.INSERT:
 					case Edit.Type.DELETE:
 					{
-						Extensions.AddItem(this.edits, r);
+						Extensions.AddItem(edits, r);
 						break;
 					}
 
 					case Edit.Type.REPLACE:
 					{
-						this.DiffReplace(r);
+						DiffReplace(r);
 						break;
 					}
 
@@ -244,7 +242,7 @@ namespace NGit.Diff
 
 			private SubsequenceComparator<HashedSequence<S>> Subcmp()
 			{
-				return new SubsequenceComparator<HashedSequence<S>>(this.cmp);
+				return new SubsequenceComparator<HashedSequence<S>>(cmp);
 			}
 
 			private readonly HistogramDiff _enclosing;

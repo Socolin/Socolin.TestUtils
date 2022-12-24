@@ -1,3 +1,4 @@
+// ReSharper disable All
 namespace Sharpen
 {
 	using System;

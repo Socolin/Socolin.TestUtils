@@ -42,10 +42,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using NGit.Diff;
 using NGit.Util;
 using Sharpen;
 // ReSharper disable InconsistentNaming
+// ReSharper disable All
 #pragma warning disable 693
 
 namespace NGit.Diff
@@ -108,7 +108,6 @@ namespace NGit.Diff
 	/// So the overall runtime complexity stays the same with linear space, albeit
 	/// with a larger constant factor.
 	/// </remarks>
-	/// <?></?>
 	public class MyersDiff<S> where S:Sequence
 	{
 		private sealed class _LowLevelDiffAlgorithm_114 : LowLevelDiffAlgorithm
@@ -120,7 +119,7 @@ namespace NGit.Diff
 			public override void DiffNonCommon<S>(EditList edits, HashedSequenceComparator<S>
 				 cmp, HashedSequence<S> a, HashedSequence<S> b, Edit region)
 			{
-				new NGit.Diff.MyersDiff<S>(edits, cmp, a, b, region);
+				new MyersDiff<S>(edits, cmp, a, b, region);
 			}
 		}
 
@@ -150,7 +149,7 @@ namespace NGit.Diff
 		private MyersDiff(EditList edits, HashedSequenceComparator<S> cmp, HashedSequence
 			<S> a, HashedSequence<S> b, Edit region)
 		{
-			middle = new MyersDiff<S>.MiddleEdit(this);
+			middle = new MiddleEdit(this);
 			this.edits = edits;
 			this.cmp = cmp;
 			this.a = a;
@@ -158,7 +157,7 @@ namespace NGit.Diff
 			CalculateEdits(region);
 		}
 
-		internal MyersDiff<S>.MiddleEdit middle;
+		internal MiddleEdit middle;
 
 		// TODO: use ThreadLocal for future multi-threaded operations
 		/// <summary>Entrypoint into the algorithm this class is all about.</summary>
@@ -231,10 +230,10 @@ namespace NGit.Diff
 				this.endB = endB;
 				// strip common parts on either end
 				int k = beginB - beginA;
-				this.beginA = this.forward.Snake(k, beginA);
+				this.beginA = forward.Snake(k, beginA);
 				this.beginB = k + this.beginA;
 				k = endB - endA;
-				this.endA = this.backward.Snake(k, endA);
+				this.endA = backward.Snake(k, endA);
 				this.endB = k + this.endA;
 			}
 
@@ -251,20 +250,20 @@ namespace NGit.Diff
 				this.endB = endB;
 				int minK = beginB - endA;
 				int maxK = endB - beginA;
-				this.forward.Initialize(beginB - beginA, beginA, minK, maxK);
-				this.backward.Initialize(endB - endA, endA, minK, maxK);
+				forward.Initialize(beginB - beginA, beginA, minK, maxK);
+				backward.Initialize(endB - endA, endA, minK, maxK);
 				for (int d = 1; ; d++)
 				{
-					if (this.forward.Calculate(d) || this.backward.Calculate(d))
+					if (forward.Calculate(d) || backward.Calculate(d))
 					{
-						return this.edit;
+						return edit;
 					}
 				}
 			}
 
-			internal MyersDiff<S>.MiddleEdit.EditPaths forward;
+			internal EditPaths forward;
 
-			internal MyersDiff<S>.MiddleEdit.EditPaths backward;
+			internal EditPaths backward;
 
 			protected internal int beginA;
 
@@ -300,50 +299,50 @@ namespace NGit.Diff
 				internal int GetIndex(int d, int k)
 				{
 					// TODO: remove
-					if (((d + k - this.middleK) % 2) != 0)
+					if (((d + k - middleK) % 2) != 0)
 					{
 						throw new RuntimeException(MessageFormat.Format(NGitDiff.Properties.Resources.unexpectedOddResult
-							, Sharpen.Extensions.ValueOf(d), Sharpen.Extensions.ValueOf(k), Sharpen.Extensions.ValueOf
-							(this.middleK)));
+							, Extensions.ValueOf(d), Extensions.ValueOf(k), Extensions.ValueOf
+							(middleK)));
 					}
-					return (d + k - this.middleK) / 2;
+					return (d + k - middleK) / 2;
 				}
 
 				internal int GetX(int d, int k)
 				{
 					// TODO: remove
-					if (k < this.beginK || k > this.endK)
+					if (k < beginK || k > endK)
 					{
-						throw new RuntimeException(MessageFormat.Format(NGitDiff.Properties.Resources.kNotInRange, Sharpen.Extensions.ValueOf
-							(k), Sharpen.Extensions.ValueOf(this.beginK), Sharpen.Extensions.ValueOf(this.endK
+						throw new RuntimeException(MessageFormat.Format(NGitDiff.Properties.Resources.kNotInRange, Extensions.ValueOf
+							(k), Extensions.ValueOf(beginK), Extensions.ValueOf(endK
 							)));
 					}
-					return this.x.Get(this.GetIndex(d, k));
+					return x.Get(GetIndex(d, k));
 				}
 
 				internal long GetSnake(int d, int k)
 				{
 					// TODO: remove
-					if (k < this.beginK || k > this.endK)
+					if (k < beginK || k > endK)
 					{
-						throw new RuntimeException(MessageFormat.Format(NGitDiff.Properties.Resources.kNotInRange, Sharpen.Extensions.ValueOf
-							(k), Sharpen.Extensions.ValueOf(this.beginK), Sharpen.Extensions.ValueOf(this.endK
+						throw new RuntimeException(MessageFormat.Format(NGitDiff.Properties.Resources.kNotInRange, Extensions.ValueOf
+							(k), Extensions.ValueOf(beginK), Extensions.ValueOf(endK
 							)));
 					}
-					return this.snake.Get(this.GetIndex(d, k));
+					return snake.Get(GetIndex(d, k));
 				}
 
 				private int ForceKIntoRange(int k)
 				{
-					if (k < this.minK)
+					if (k < minK)
 					{
-						return this.minK + ((k ^ this.minK) & 1);
+						return minK + ((k ^ minK) & 1);
 					}
 					else
 					{
-						if (k > this.maxK)
+						if (k > maxK)
 						{
-							return this.maxK - ((k ^ this.maxK) & 1);
+							return maxK - ((k ^ maxK) & 1);
 						}
 					}
 					return k;
@@ -353,11 +352,11 @@ namespace NGit.Diff
 				{
 					this.minK = minK;
 					this.maxK = maxK;
-					this.beginK = this.endK = this.middleK = k;
+					beginK = endK = middleK = k;
 					this.x.Clear();
 					this.x.Add(x);
-					this.snake.Clear();
-					this.snake.Add(this.NewSnake(k, x));
+					snake.Clear();
+					snake.Add(NewSnake(k, x));
 				}
 
 				internal abstract int Snake(int k, int x);
@@ -391,63 +390,63 @@ namespace NGit.Diff
 
 				internal bool MakeEdit(long snake1, long snake2)
 				{
-					int x1 = this.Snake2x(snake1);
-					int x2 = this.Snake2x(snake2);
-					int y1 = this.Snake2y(snake1);
-					int y2 = this.Snake2y(snake2);
+					int x1 = Snake2x(snake1);
+					int x2 = Snake2x(snake2);
+					int y1 = Snake2y(snake1);
+					int y2 = Snake2y(snake2);
 					if (x1 > x2 || y1 > y2)
 					{
 						x1 = x2;
 						y1 = y2;
 					}
-					this._enclosing.edit = new Edit(x1, x2, y1, y2);
+					_enclosing.edit = new Edit(x1, x2, y1, y2);
 					return true;
 				}
 
 				internal virtual bool Calculate(int d)
 				{
-					this.prevBeginK = this.beginK;
-					this.prevEndK = this.endK;
-					this.beginK = this.ForceKIntoRange(this.middleK - d);
-					this.endK = this.ForceKIntoRange(this.middleK + d);
+					prevBeginK = beginK;
+					prevEndK = endK;
+					beginK = ForceKIntoRange(middleK - d);
+					endK = ForceKIntoRange(middleK + d);
 					// TODO: handle i more efficiently
 					// TODO: walk snake(k, getX(d, k)) only once per (d, k)
 					// TODO: move end points out of the loop to avoid conditionals inside the loop
 					// go backwards so that we can avoid temp vars
-					for (int k = this.endK; k >= this.beginK; k -= 2)
+					for (int k = endK; k >= beginK; k -= 2)
 					{
 						int left = -1;
 						int right = -1;
 						long leftSnake = -1L;
 						long rightSnake = -1L;
 						// TODO: refactor into its own function
-						if (k > this.prevBeginK)
+						if (k > prevBeginK)
 						{
-							int i = this.GetIndex(d - 1, k - 1);
-							left = this.x.Get(i);
-							int end = this.Snake(k - 1, left);
-							leftSnake = left != end ? this.NewSnake(k - 1, end) : this.snake.Get(i);
-							if (this.Meets(d, k - 1, end, leftSnake))
+							int i = GetIndex(d - 1, k - 1);
+							left = x.Get(i);
+							int end = Snake(k - 1, left);
+							leftSnake = left != end ? NewSnake(k - 1, end) : snake.Get(i);
+							if (Meets(d, k - 1, end, leftSnake))
 							{
 								return true;
 							}
-							left = this.GetLeft(end);
+							left = GetLeft(end);
 						}
-						if (k < this.prevEndK)
+						if (k < prevEndK)
 						{
-							int i = this.GetIndex(d - 1, k + 1);
-							right = this.x.Get(i);
-							int end = this.Snake(k + 1, right);
-							rightSnake = right != end ? this.NewSnake(k + 1, end) : this.snake.Get(i);
-							if (this.Meets(d, k + 1, end, rightSnake))
+							int i = GetIndex(d - 1, k + 1);
+							right = x.Get(i);
+							int end = Snake(k + 1, right);
+							rightSnake = right != end ? NewSnake(k + 1, end) : snake.Get(i);
+							if (Meets(d, k + 1, end, rightSnake))
 							{
 								return true;
 							}
-							right = this.GetRight(end);
+							right = GetRight(end);
 						}
 						int newX;
 						long newSnake;
-						if (k >= this.prevEndK || (k > this.prevBeginK && this.IsBetter(left, right)))
+						if (k >= prevEndK || (k > prevBeginK && IsBetter(left, right)))
 						{
 							newX = left;
 							newSnake = leftSnake;
@@ -457,14 +456,14 @@ namespace NGit.Diff
 							newX = right;
 							newSnake = rightSnake;
 						}
-						if (this.Meets(d, k, newX, newSnake))
+						if (Meets(d, k, newX, newSnake))
 						{
 							return true;
 						}
-						this.AdjustMinMaxK(k, newX);
-						int i_1 = this.GetIndex(d, k);
-						this.x.Set(i_1, newX);
-						this.snake.Set(i_1, newSnake);
+						AdjustMinMaxK(k, newX);
+						int i_1 = GetIndex(d, k);
+						x.Set(i_1, newX);
+						snake.Set(i_1, newSnake);
 					}
 					return false;
 				}
@@ -477,14 +476,14 @@ namespace NGit.Diff
 				private readonly MiddleEdit _enclosing;
 			}
 
-			internal class ForwardEditPaths : MyersDiff<S>.MiddleEdit.EditPaths
+			internal class ForwardEditPaths : EditPaths
 			{
 				internal sealed override int Snake(int k, int x)
 				{
-					for (; x < this._enclosing.endA && k + x < this._enclosing.endB; x++)
+					for (; x < _enclosing.endA && k + x < _enclosing.endB; x++)
 					{
-						if (!this._enclosing._enclosing.cmp.Equals(this._enclosing._enclosing.a, x, this.
-							_enclosing._enclosing.b, k + x))
+						if (!_enclosing._enclosing.cmp.Equals(_enclosing._enclosing.a, x,
+                                _enclosing._enclosing.b, k + x))
 						{
 							break;
 						}
@@ -509,35 +508,35 @@ namespace NGit.Diff
 
 				internal sealed override void AdjustMinMaxK(int k, int x)
 				{
-					if (x >= this._enclosing.endA || k + x >= this._enclosing.endB)
+					if (x >= _enclosing.endA || k + x >= _enclosing.endB)
 					{
-						if (k > this._enclosing.backward.middleK)
+						if (k > _enclosing.backward.middleK)
 						{
-							this.maxK = k;
+							maxK = k;
 						}
 						else
 						{
-							this.minK = k;
+							minK = k;
 						}
 					}
 				}
 
 				internal sealed override bool Meets(int d, int k, int x, long snake)
 				{
-					if (k < this._enclosing.backward.beginK || k > this._enclosing.backward.endK)
+					if (k < _enclosing.backward.beginK || k > _enclosing.backward.endK)
 					{
 						return false;
 					}
 					// TODO: move out of loop
-					if (((d - 1 + k - this._enclosing.backward.middleK) % 2) != 0)
+					if (((d - 1 + k - _enclosing.backward.middleK) % 2) != 0)
 					{
 						return false;
 					}
-					if (x < this._enclosing.backward.GetX(d - 1, k))
+					if (x < _enclosing.backward.GetX(d - 1, k))
 					{
 						return false;
 					}
-					this.MakeEdit(snake, this._enclosing.backward.GetSnake(d - 1, k));
+					MakeEdit(snake, _enclosing.backward.GetSnake(d - 1, k));
 					return true;
 				}
 
@@ -549,14 +548,13 @@ namespace NGit.Diff
 				private readonly MiddleEdit _enclosing;
 			}
 
-			internal class BackwardEditPaths : MyersDiff<S>.MiddleEdit.EditPaths
+			internal class BackwardEditPaths : EditPaths
 			{
 				internal sealed override int Snake(int k, int x)
 				{
-					for (; x > this._enclosing.beginA && k + x > this._enclosing.beginB; x--)
+					for (; x > _enclosing.beginA && k + x > _enclosing.beginB; x--)
 					{
-						if (!this._enclosing._enclosing.cmp.Equals(this._enclosing._enclosing.a, x - 1, this
-							._enclosing._enclosing.b, k + x - 1))
+						if (!_enclosing._enclosing.cmp.Equals(_enclosing._enclosing.a, x - 1, _enclosing._enclosing.b, k + x - 1))
 						{
 							break;
 						}
@@ -581,35 +579,35 @@ namespace NGit.Diff
 
 				internal sealed override void AdjustMinMaxK(int k, int x)
 				{
-					if (x <= this._enclosing.beginA || k + x <= this._enclosing.beginB)
+					if (x <= _enclosing.beginA || k + x <= _enclosing.beginB)
 					{
-						if (k > this._enclosing.forward.middleK)
+						if (k > _enclosing.forward.middleK)
 						{
-							this.maxK = k;
+							maxK = k;
 						}
 						else
 						{
-							this.minK = k;
+							minK = k;
 						}
 					}
 				}
 
 				internal sealed override bool Meets(int d, int k, int x, long snake)
 				{
-					if (k < this._enclosing.forward.beginK || k > this._enclosing.forward.endK)
+					if (k < _enclosing.forward.beginK || k > _enclosing.forward.endK)
 					{
 						return false;
 					}
 					// TODO: move out of loop
-					if (((d + k - this._enclosing.forward.middleK) % 2) != 0)
+					if (((d + k - _enclosing.forward.middleK) % 2) != 0)
 					{
 						return false;
 					}
-					if (x > this._enclosing.forward.GetX(d, k))
+					if (x > _enclosing.forward.GetX(d, k))
 					{
 						return false;
 					}
-					this.MakeEdit(this._enclosing.forward.GetSnake(d, k), snake);
+					MakeEdit(_enclosing.forward.GetSnake(d, k), snake);
 					return true;
 				}
 
@@ -624,8 +622,8 @@ namespace NGit.Diff
 			public MiddleEdit(MyersDiff<S> _enclosing)
 			{
 				this._enclosing = _enclosing;
-				forward = new MyersDiff<S>.MiddleEdit.ForwardEditPaths(this);
-				backward = new MyersDiff<S>.MiddleEdit.BackwardEditPaths(this);
+				forward = new ForwardEditPaths(this);
+				backward = new BackwardEditPaths(this);
 			}
 
 			private readonly MyersDiff<S> _enclosing;
@@ -636,19 +634,19 @@ namespace NGit.Diff
 		{
 			if (args.Length != 2)
 			{
-				System.Console.Error.WriteLine(NGitDiff.Properties.Resources.need2Arguments);
-				System.Environment.Exit(1);
+				Console.Error.WriteLine(NGitDiff.Properties.Resources.need2Arguments);
+				Environment.Exit(1);
 			}
 			try
 			{
 				RawText a = new RawText(new FilePath(args[0]));
 				RawText b = new RawText(new FilePath(args[1]));
 				EditList r = INSTANCE.Diff(RawTextComparator.DEFAULT, a, b);
-				System.Console.Out.WriteLine(r.ToString());
+				Console.Out.WriteLine(r.ToString());
 			}
 			catch (Exception e)
 			{
-				Sharpen.Runtime.PrintStackTrace(e);
+				Runtime.PrintStackTrace(e);
 			}
 		}
 	}

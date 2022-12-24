@@ -2,23 +2,27 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Socolin.TestUtils.JsonComparer.Color;
 using Socolin.TestUtils.JsonComparer.Exceptions;
 
 namespace Socolin.TestUtils.JsonComparer.Utils
 {
+    [PublicAPI]
     public static class JsonDeserializerErrorFormatterHelper
     {
-        public static T DeserializeWithNiceErrorMessage<T>(string? json, JsonSerializerSettings? jsonSerializerSettings = null, bool useColor = false)
+        public static T? DeserializeWithNiceErrorMessage<T>(string? json, JsonSerializerSettings? jsonSerializerSettings = null, bool useColor = false)
         {
             return DeserializeWithNiceErrorMessage<T>(json, jsonSerializerSettings, useColor ? JsonComparerColorOptions.DefaultColored : JsonComparerColorOptions.Default);
         }
 
-        public static T DeserializeWithNiceErrorMessage<T>(string? json, JsonSerializerSettings? jsonSerializerSettings = null, JsonComparerColorOptions? colorOptions = null)
+        public static T? DeserializeWithNiceErrorMessage<T>(string? json, JsonSerializerSettings? jsonSerializerSettings = null, JsonComparerColorOptions? colorOptions = null)
         {
             try
             {
+                if (json == null)
+                    return default;
                 return JsonConvert.DeserializeObject<T>(json, jsonSerializerSettings);
             }
             catch (JsonReaderException ex)

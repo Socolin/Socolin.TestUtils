@@ -63,7 +63,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
             var actualJToken = JToken.Parse(actualJson);
             var errors = jsonComparer.Compare(expectedJToken, actualJToken, new JsonComparisonOptions
             {
-                IgnoreFields = (fieldPath, fieldName) => fieldName == "notInExpected"
+                IgnoreFields = (_, fieldName) => fieldName == "notInExpected"
                                                          || fieldName == "notInActual"
             });
             Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));

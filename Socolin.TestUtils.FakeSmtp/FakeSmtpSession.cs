@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace Socolin.TestUtils.FakeSmtp
 {
+    [PublicAPI]
     public class FakeSmtpSession
     {
         private enum SessionState
@@ -19,7 +21,7 @@ namespace Socolin.TestUtils.FakeSmtp
         private readonly byte[] _rawBuffer = new byte[16 * 1024];
         private readonly Socket _clientSocket;
         private string _buffer = string.Empty;
-        private SessionState State;
+        private SessionState _state;
         private string _mailData = string.Empty;
         private bool ExtendedSmtp { get; set; } = false;
         private string Login { get; set; }
@@ -105,17 +107,17 @@ namespace Socolin.TestUtils.FakeSmtp
 
         public FakeSmtpMail GetMail()
         {
-            if (State != SessionState.End)
+            if (_state != SessionState.End)
                 return null;
 
-            var mailParts = _mailData.Split(new [] {"\r\n\r\n"}, 2, StringSplitOptions.None);
+            var mailParts = _mailData.Split(new[] {"\r\n\r\n"}, 2, StringSplitOptions.None);
             var headersPart = mailParts[0];
 
             var mail = new FakeSmtpMail();
 
-            foreach (var headerData in headersPart.Split(new [] {"\r\n"}, StringSplitOptions.None))
+            foreach (var headerData in headersPart.Split(new[] {"\r\n"}, StringSplitOptions.None))
             {
-                var header = headerData.Split(new [] {':'}, 2);
+                var header = headerData.Split(new[] {':'}, 2);
                 var headerName = header[0].Trim();
                 var headerValue = header[1].Trim();
 
@@ -153,7 +155,7 @@ namespace Socolin.TestUtils.FakeSmtp
                 }
                 else
                 {
-                    output.Add((byte) input[i]);
+                    output.Add((byte)input[i]);
                     i++;
                 }
             }
@@ -165,24 +167,24 @@ namespace Socolin.TestUtils.FakeSmtp
         private bool HandleLine(string line)
         {
             Console.WriteLine(line);
-            switch (State)
+            switch (_state)
             {
                 case SessionState.Init:
                     if (line.StartsWith("HELO"))
                     {
                         SendLine(250, "some-text");
-                        State = SessionState.Headers;
+                        _state = SessionState.Headers;
                         return true;
                     }
 
                     if (line.StartsWith("EHLO"))
                     {
-                        var clientName = line.Split(new [] {' '}, 2);
+                        var clientName = line.Split(new[] {' '}, 2);
                         ExtendedSmtp = true;
                         SendLine($"250-smtp.localhost Hello {clientName}");
                         SendLine("250-SIZE 1000000");
                         SendLine("250 AUTH LOGIN PLAIN CRAM-MD5");
-                        State = SessionState.Login;
+                        _state = SessionState.Login;
                         return true;
                     }
 
@@ -190,7 +192,7 @@ namespace Socolin.TestUtils.FakeSmtp
                 case SessionState.Login:
                     if (line.StartsWith("AUTH"))
                     {
-                        var authInfo = line.Split(new [] {" "}, StringSplitOptions.None);
+                        var authInfo = line.Split(new[] {" "}, StringSplitOptions.None);
                         if (authInfo.Length == 3)
                         {
                             if (authInfo[1] == "login")
@@ -201,7 +203,7 @@ namespace Socolin.TestUtils.FakeSmtp
 
                         // FIXME: Check password
                         SendLine(235, "Ok");
-                        State = SessionState.Headers;
+                        _state = SessionState.Headers;
                         return true;
                     }
 
@@ -209,7 +211,7 @@ namespace Socolin.TestUtils.FakeSmtp
                 case SessionState.Headers:
                     if (line == "DATA")
                     {
-                        State = SessionState.Data;
+                        _state = SessionState.Data;
                         SendLine(354, "End data with <CR><LF>.<CR><LF>");
                     }
                     else
@@ -220,7 +222,7 @@ namespace Socolin.TestUtils.FakeSmtp
                     _mailData += line + "\r\n";
                     if (_mailData.EndsWith("\r\n.\r\n"))
                     {
-                        State = SessionState.End;
+                        _state = SessionState.End;
                         SendLine(250, "Ok");
                     }
 

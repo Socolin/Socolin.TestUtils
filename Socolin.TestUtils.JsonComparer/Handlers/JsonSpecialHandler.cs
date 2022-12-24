@@ -150,9 +150,9 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 return (true, null);
             }
 
-            if (jMatchObject.ContainsKey("type"))
+            if (jMatchObject.TryGetValue("type", out var jType))
             {
-                var expectedType = jMatchObject.Value<string>("type");
+                var expectedType = jType.Value<string>();
                 if (!Enum.TryParse(expectedType, true, out JTokenType type))
                     return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, $"Invalid `type`: value '{expectedType}' is not valid, see JTokenType for list of type")});
                 if (type != actual.Type)
@@ -164,11 +164,10 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 return (true, null);
             }
 
-            if (jMatchObject.ContainsKey("range"))
+            if (jMatchObject.TryGetValue("range", out var jRangeArray))
             {
                 if (actual.Type != JTokenType.Integer && actual.Type != JTokenType.Float)
                     return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
-                var jRangeArray = jMatchObject.Property("range").Value;
                 if (jRangeArray.Type != JTokenType.Array)
                     return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Invalid `range`: range should be an array of 2 number [min, max]")});
                 if (((JArray)jRangeArray).Count != 2)

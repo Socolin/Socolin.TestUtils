@@ -121,7 +121,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
 
             _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
-            captureObject.Property("parent").Value.ToObject<int>().Should().Be(42);
+            captureObject.Property("parent")!.Value.ToObject<int>().Should().Be(42);
         }
 
         [Test]
@@ -203,7 +203,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
 
             _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
-            captureObject.Property("parent").Value.ToObject<string>().Should().Be("some-regex");
+            captureObject.Property("parent")!.Value.ToObject<string>().Should().Be("some-regex");
         }
 
         [Test]
@@ -339,7 +339,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
 
             _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
-            captureObject.Property("parent").Value.ToObject<string>().Should().Be("abc");
+            captureObject.Property("parent")!.Value.ToObject<string>().Should().Be("abc");
         }
 
         [Test]
@@ -381,7 +381,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
 
             _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
-            captureObject.Property("parent").Value.ToObject<string>().Should().Be("abc");
+            captureObject.Property("parent")!.Value.ToObject<string>().Should().Be("abc");
         }
 
         [Test]
@@ -550,7 +550,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
 
             _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
 
-            captureObject.Property("parent").Value.ToObject<int>().Should().Be(42);
+            captureObject.Property("parent")!.Value.ToObject<int>().Should().Be(42);
         }
 
         [Test]

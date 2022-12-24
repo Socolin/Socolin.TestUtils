@@ -96,7 +96,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
             var actualJson = JObject.FromObject(new {parent = 42});
 
             var comparerCalled = false;
-            var jsonComparer = JsonComparer.GetDefault((s, token) => { comparerCalled = true; });
+            var jsonComparer = JsonComparer.GetDefault((_, _) => { comparerCalled = true; });
 
             Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithComparer(jsonComparer));
             Assert.That(comparerCalled, Is.True);
@@ -118,7 +118,7 @@ namespace Socolin.TestUtils.JsonComparer.NUnitExtensions.Tests
             Assert.That(actualJson,
                 IsJson.EquivalentTo(expectedJson).WithOptions(new JsonComparisonOptions
                 {
-                    IgnoreFields = (fieldPath, fieldName) => fieldName == "a"
+                    IgnoreFields = (_, fieldName) => fieldName == "a"
                 }));
         }
 

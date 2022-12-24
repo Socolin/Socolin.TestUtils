@@ -11,14 +11,18 @@ public class Tests
     [Test]
     public void TestAssertThat()
     {
-        const string expectedJson = @"{
-                ""a"":1,
-                ""b"":""abc""
-            }";
-        const string actualJson = @"{
-                ""a"":42,
-                ""b"":""abc""
-            }";
+        const string expectedJson = """
+            {
+                "a":1,
+                "b":"abc"
+            }
+            """;
+        const string actualJson = """
+            {
+                "a":42,
+                "b":"abc"
+            }
+            """;
 
         Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
     }
@@ -26,22 +30,26 @@ public class Tests
     [Test]
     public void TestColorizeJson()
     {
-        const string expectedJson = @"{
-                ""a"":1,
-                ""b"":""abc"",
-                ""c"":""hello"",
-                ""d"": true,
-                ""e"": 64,
-                ""f"": 42.424242,
-            }";
-        const string actualJson = @"{
-                ""a"":42,
-                ""b"":""abc"",
-                ""c"":""hello"",
-                ""d"": true,
-                ""e"": 64,
-                ""f"": 42.424242,
-            }";
+        const string expectedJson = """
+            {
+                "a":1,
+                "b":"abc",
+                "c":"hello",
+                "d": true,
+                "e": 64,
+                "f": 42.424242,
+            }
+            """;
+        const string actualJson = """
+            {
+                "a":42,
+                "b":"abc",
+                "c":"hello",
+                "d": true,
+                "e": 64,
+                "f": 42.424242,
+            }
+            """;
 
         Assert.That(actualJson,
             IsJson.EquivalentTo(expectedJson).WithColorOptions(new JsonComparerColorOptions
@@ -60,14 +68,18 @@ public class Tests
     [Test]
     public void TestAssertThatNotSuccess()
     {
-        const string expectedJson = @"{
-                ""a"":1,
-                ""b"":""abc""
-            }";
-        const string actualJson = @"{
-                ""a"":42,
-                ""b"":""abc""
-            }";
+        const string expectedJson = """
+            {
+                "a":1,
+                "b":"abc"
+            }
+            """;
+        const string actualJson = """
+            {
+                "a":42,
+                "b":"abc"
+            }
+            """;
 
         Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
     }
@@ -75,16 +87,20 @@ public class Tests
     [Test]
     public void TestAssertThatMatchDateWithoutParsingThem()
     {
-        const string expectedJson = @"{
-                ""date"":{
-                    ""__match"":{
-                        ""regex"": ""^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{7}Z?""
+        const string expectedJson = """
+            {
+                "date":{
+                    "__match":{
+                        "regex": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{7}Z?"
                     }
                 }
-            }";
-        const string actualJson = @"{
-    			""date"": ""2042-05-04T06:01:06.0000000Z""
-            }";
+            }
+            """;
+        const string actualJson = """
+            {
+                "date": "2042-05-04T06:01:06.0000000Z"
+            }
+            """;
 
         Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
     }
@@ -106,14 +122,18 @@ public class Tests
     [Test]
     public void TestAssertThatWithOptions()
     {
-        const string expectedJson = @"{
-                ""a"":1,
-                ""b"":""abc""
-            }";
-        const string actualJson = @"{
-                ""a"":42,
-                ""b"":""abc""
-            }";
+        const string expectedJson = """
+            {
+                "a":1,
+                "b":"abc"
+            }
+            """;
+        const string actualJson = """
+            {
+                "a":42,
+                "b":"abc"
+            }
+            """;
 
         Assert.That(actualJson,
             IsJson.EquivalentTo(expectedJson).WithOptions(new JsonComparisonOptions
@@ -125,14 +145,18 @@ public class Tests
     [Test]
     public void TestInvalidJsonColor()
     {
-        const string expectedJson = @"{
-                ""a"":1
-                ""b"":""abc""
-            }";
-        const string actualJson = @"{
-                ""a"":42,
-                ""b"":""abc""
-            }";
+        const string expectedJson = """
+            {
+                "a":1
+                "b":"abc"
+            }
+            """;
+        const string actualJson = """
+            {
+                "a":42,
+                "b":"abc"
+            }
+            """;
 
         Assert.That(actualJson, IsJson.EquivalentTo(expectedJson).WithColoredOutput());
     }

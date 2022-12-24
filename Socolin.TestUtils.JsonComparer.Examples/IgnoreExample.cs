@@ -41,22 +41,26 @@ public class IgnoreExample
     public void Test2()
     {
         Console.WriteLine("==== IgnoreExample.Test2 ==== ");
-        const string expectedJson = @"{
-                ""a"":{
-                    ""b"": ""ignore-me-12"",
-                    ""notInActual"": ""ignore-me-12"",
-                    ""c"": ""compare-me"",
+        const string expectedJson = """
+            {
+                "a":{
+                    "b": "ignore-me-12",
+                    "notInActual": "ignore-me-12",
+                    "c": "compare-me",
                 },
-                ""d"": ""compare-me""
-            }";
-        const string actualJson = @"{
-                ""a"":{
-                    ""b"": ""ignore-me-45"",
-                    ""notInExpected"": ""ignore-me-45"",
-                    ""c"": ""compare-me"",
+                "d": "compare-me"
+            }
+            """;
+        const string actualJson = """
+            {
+                "a":{
+                    "b": "ignore-me-45",
+                    "notInExpected": "ignore-me-45",
+                    "c": "compare-me",
                 },
-                ""d"": ""compare-me""
-            }";
+                "d": "compare-me"
+            }
+            """;
 
         var jsonComparer = JsonComparer.GetDefault();
         var expectedJToken = JToken.Parse(expectedJson);

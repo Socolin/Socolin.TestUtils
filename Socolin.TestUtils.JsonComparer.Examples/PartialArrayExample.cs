@@ -10,24 +10,28 @@ public class PartialArrayExample
     {
         Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test1)} ==== ");
 
-        const string expectedJson = @"{
-                ""__partialArray"":{""key"": ""id"", ""array"": [
+        const string expectedJson = """
+            {
+                "__partialArray":{"key": "id", "array": [
                     {
-                        ""id"": 42,
-                        ""name"": ""name1""
+                        "id": 42,
+                        "name": "name1"
                     }
                 ]}
-            }";
-        const string actualJson = @"[
+            }
+            """;
+        const string actualJson = """
+            [
                 {
-                    ""id"": 42,
-                    ""name"": ""name1""
+                    "id": 42,
+                    "name": "name1"
                 },
                 {
-                    ""id"": 44,
-                    ""name"": ""name2""
+                    "id": 44,
+                    "name": "name2"
                 }
-            ]";
+            ]
+            """;
 
         var jsonComparer = JsonComparer.GetDefault();
         var errors = jsonComparer.Compare(expectedJson, actualJson);
@@ -38,36 +42,40 @@ public class PartialArrayExample
     {
         Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test2)} ==== ");
 
-        const string expectedJson = @"{
-                ""field"": {
-                    ""__partialArray"":{""key"": ""id"", ""array"": [
+        const string expectedJson = """
+            {
+                "field": {
+                    "__partialArray":{"key": "id", "array": [
                         {
-                            ""id"": 30,
-                            ""name"": ""name0""
+                            "id": 30,
+                            "name": "name0"
                         },
                         {
-                            ""id"": 42,
-                            ""name"": ""name2""
+                            "id": 42,
+                            "name": "name2"
                         }
                     ]}
                 }
-            }";
-        const string actualJson = @"{
-                ""field"": [
+            }
+            """;
+        const string actualJson = """
+            {
+                "field": [
                         {
-                            ""id"": 30,
-                            ""name"": ""name0""
+                            "id": 30,
+                            "name": "name0"
                         },
                         {
-                            ""id"": 42,
-                            ""name"": ""name1""
+                            "id": 42,
+                            "name": "name1"
                         },
                         {
-                            ""id"": 44,
-                            ""name"": ""name2""
+                            "id": 44,
+                            "name": "name2"
                         }
                     ]
-                }";
+                }
+            """;
 
         var actual = JToken.Parse(actualJson);
         var expected = JToken.Parse(expectedJson);
@@ -80,32 +88,36 @@ public class PartialArrayExample
     {
         Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test3)} ==== ");
 
-        const string expectedJson = @"{
-                ""field"": {
-                    ""__partialArray"":{""key"": ""id"", ""array"": [
+        const string expectedJson = """
+            {
+                "field": {
+                    "__partialArray":{"key": "id", "array": [
                         {
-                            ""id"": 30,
-                            ""name"": ""name0""
+                            "id": 30,
+                            "name": "name0"
                         },
                         {
-                            ""id"": 42,
-                            ""name"": ""name2""
+                            "id": 42,
+                            "name": "name2"
                         }
                     ]}
                 }
-            }";
-        const string actualJson = @"{
-                ""field"": [
-                        {
-                            ""id"": 30,
-                            ""name"": ""name0""
-                        },
-                        {
-                            ""id"": 44,
-                            ""name"": ""name2""
-                        }
-                    ]
-                }";
+            }
+            """;
+        const string actualJson = """
+            {
+                "field": [
+                    {
+                        "id": 30,
+                        "name": "name0"
+                    },
+                    {
+                        "id": 44,
+                        "name": "name2"
+                    }
+                ]
+            }
+            """;
 
         var actual = JToken.Parse(actualJson);
         var expected = JToken.Parse(expectedJson);

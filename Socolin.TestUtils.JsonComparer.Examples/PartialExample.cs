@@ -9,21 +9,25 @@ public class PartialExample
     {
         Console.WriteLine($"==== {nameof(PartialExample)}.{nameof(Test1)} ==== ");
 
-        const string expectedJson = @"{
-                ""a"":{
-                    ""__partial"":{
-                        ""tested"": ""123""
+        const string expectedJson = """
+            {
+                "a":{
+                    "__partial":{
+                        "tested": "123"
                     }
                 },
-                ""b"":""abc""
-            }";
-        const string actualJson = @"{
-                ""a"": {
-                    ""tested"": ""123"",
-                    ""ignored"": ""42""
+                "b":"abc"
+            }
+            """;
+        const string actualJson = """
+            {
+                "a": {
+                    "tested": "123",
+                    "ignored": "42"
                 },
-                ""b"":""abc""
-            }";
+                "b":"abc"
+            }
+            """;
 
         var jsonComparer = JsonComparer.GetDefault();
         var errors = jsonComparer.Compare(expectedJson, actualJson);
@@ -34,22 +38,26 @@ public class PartialExample
     {
         Console.WriteLine($"==== {nameof(PartialExample)}.{nameof(Test2)} ==== ");
 
-        const string expectedJson = @"{
-                ""a"":{
-                    ""__partial"":{
-                        ""tested"": ""123"",
-                        ""missing"": ""123""
+        const string expectedJson = """
+            {
+                "a":{
+                    "__partial":{
+                        "tested": "123",
+                        "missing": "123"
                     }
                 },
-                ""b"":""abc""
-            }";
-        const string actualJson = @"{
-                ""a"": {
-                    ""tested"": ""123"",
-                    ""ignored"": ""42""
+                "b":"abc"
+            }
+            """;
+        const string actualJson = """
+            {
+                "a": {
+                    "tested": "123",
+                    "ignored": "42"
                 },
-                ""b"":""abc""
-            }";
+                "b":"abc"
+            }
+            """;
 
         var expectedJToken = JToken.Parse(expectedJson);
         var actualJToken = JToken.Parse(actualJson);

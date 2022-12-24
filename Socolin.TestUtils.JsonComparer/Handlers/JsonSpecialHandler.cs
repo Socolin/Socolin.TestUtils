@@ -67,7 +67,7 @@ public class JsonSpecialHandler : IJsonSpecialHandler
             return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "`__capture` object should not be null")});
         if (jCaptureObject.ContainsKey("type"))
             return HandleCaptureObjectWithType(expected, actual, path, jCaptureObject);
-        if (jCaptureObject.ContainsKey("regex"))
+        if (jCaptureObject.ContainsKey("regex") || jCaptureObject.ContainsKey("regexAlias"))
             return HandleCaptureObjectWithRegex(expected, actual, path, jCaptureObject);
         return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Missing `type` or `regex` field on capture object")});
     }
@@ -78,21 +78,31 @@ public class JsonSpecialHandler : IJsonSpecialHandler
         if (captureObject == null)
             return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Invalid `__capture` object")});
 
-        var regexPattern = captureObject.Regex;
-        if (regexPattern == null || string.IsNullOrEmpty(regexPattern))
-            return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Empty `regex` field on capture object")});
-
         if (actual.Type != JTokenType.String)
             return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
 
-        var regex = new Regex(regexPattern, RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        Regex? regex;
+        if (captureObject.RegexAlias != null)
+        {
+            regex = _regexAliasesContainer?.GetRegex(captureObject.RegexAlias);
+            if (regex == null)
+                throw new RegexAliasNotRegisteredException(captureObject.RegexAlias);
+        }
+        else
+        {
+            var regexPattern = captureObject.Regex;
+            if (regexPattern == null || string.IsNullOrEmpty(regexPattern))
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Empty `regex` field on capture object")});
+            regex = new Regex(regexPattern, RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        }
+
         var actualValue = actual.Value<string>();
         if (actualValue == null)
-            return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regexPattern)});
+            return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex.ToString())});
 
         var match = regex.Match(actualValue);
         if (!match.Success)
-            return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regexPattern)});
+            return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex.ToString())});
 
         if (captureObject.Name != null)
             _captureValueHandler?.Invoke(captureObject.Name, actual);

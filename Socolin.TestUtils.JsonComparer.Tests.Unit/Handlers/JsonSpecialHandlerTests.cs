@@ -157,6 +157,26 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         }
 
         [Test]
+        public void WhenHandlingCapture_UsingRegexAlias_CallAddMethod()
+        {
+            _regexAliasesContainer.AddAlias("some-alias", "abc");
+
+            var captureObject = JObject.FromObject(new {__capture = new {name = "some-capture-name", regexAlias = "some-alias"}});
+            var actualJson = JToken.Parse(@"""abc""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
+
+            using (new AssertionScope())
+            {
+                success.Should().BeTrue();
+                errors.Should().BeNull();
+            }
+
+            _handler.Received(1)
+                .Invoke("some-capture-name", Arg.Is<JValue>(value => value.Value<string>() == "abc"));
+        }
+
+        [Test]
         public void WhenHandlingCapture_UsingRegex_UseRegexCaptureGroup_AndCallAddMethodWithGroupName()
         {
             var captureObject = JObject.FromObject(new {__capture = new {regex = "(?<someCaptureName>abc)"}});

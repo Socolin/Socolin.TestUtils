@@ -2,15 +2,15 @@ using System;
 using Newtonsoft.Json.Linq;
 using Socolin.TestUtils.JsonComparer.Color;
 
-namespace Socolin.TestUtils.JsonComparer.Examples
-{
-    public class PartialArrayExample
-    {
-        public void Test1()
-        {
-            Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test1)} ==== ");
+namespace Socolin.TestUtils.JsonComparer.Examples;
 
-            const string expectedJson = @"{
+public class PartialArrayExample
+{
+    public void Test1()
+    {
+        Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test1)} ==== ");
+
+        const string expectedJson = @"{
                 ""__partialArray"":{""key"": ""id"", ""array"": [
                     {
                         ""id"": 42,
@@ -18,7 +18,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                     }
                 ]}
             }";
-            const string actualJson = @"[
+        const string actualJson = @"[
                 {
                     ""id"": 42,
                     ""name"": ""name1""
@@ -29,16 +29,16 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 }
             ]";
 
-            var jsonComparer = JsonComparer.GetDefault();
-            var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-        }
+        var jsonComparer = JsonComparer.GetDefault();
+        var errors = jsonComparer.Compare(expectedJson, actualJson);
+        Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+    }
 
-        public void Test2()
-        {
-            Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test2)} ==== ");
+    public void Test2()
+    {
+        Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test2)} ==== ");
 
-            const string expectedJson = @"{
+        const string expectedJson = @"{
                 ""field"": {
                     ""__partialArray"":{""key"": ""id"", ""array"": [
                         {
@@ -52,7 +52,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                     ]}
                 }
             }";
-            const string actualJson = @"{
+        const string actualJson = @"{
                 ""field"": [
                         {
                             ""id"": 30,
@@ -69,18 +69,18 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                     ]
                 }";
 
-            var actual = JToken.Parse(actualJson);
-            var expected = JToken.Parse(expectedJson);
-            var jsonComparer = JsonComparer.GetDefault();
-            var errors = jsonComparer.Compare(expected, actual);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expected, actual, errors, JsonComparerColorOptions.DefaultColored));
-        }
+        var actual = JToken.Parse(actualJson);
+        var expected = JToken.Parse(expectedJson);
+        var jsonComparer = JsonComparer.GetDefault();
+        var errors = jsonComparer.Compare(expected, actual);
+        Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expected, actual, errors, JsonComparerColorOptions.DefaultColored));
+    }
 
-        public void Test3()
-        {
-            Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test3)} ==== ");
+    public void Test3()
+    {
+        Console.WriteLine($"==== {nameof(PartialArrayExample)}.{nameof(Test3)} ==== ");
 
-            const string expectedJson = @"{
+        const string expectedJson = @"{
                 ""field"": {
                     ""__partialArray"":{""key"": ""id"", ""array"": [
                         {
@@ -94,7 +94,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                     ]}
                 }
             }";
-            const string actualJson = @"{
+        const string actualJson = @"{
                 ""field"": [
                         {
                             ""id"": 30,
@@ -107,11 +107,10 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                     ]
                 }";
 
-            var actual = JToken.Parse(actualJson);
-            var expected = JToken.Parse(expectedJson);
-            var jsonComparer = JsonComparer.GetDefault();
-            var errors = jsonComparer.Compare(expected, actual);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expected, actual, errors, JsonComparerColorOptions.DefaultColored));
-        }
+        var actual = JToken.Parse(actualJson);
+        var expected = JToken.Parse(expectedJson);
+        var jsonComparer = JsonComparer.GetDefault();
+        var errors = jsonComparer.Compare(expected, actual);
+        Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expected, actual, errors, JsonComparerColorOptions.DefaultColored));
     }
 }

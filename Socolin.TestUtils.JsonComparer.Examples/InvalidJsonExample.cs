@@ -1,14 +1,14 @@
 using System;
 using Socolin.TestUtils.JsonComparer.Exceptions;
 
-namespace Socolin.TestUtils.JsonComparer.Examples
+namespace Socolin.TestUtils.JsonComparer.Examples;
+
+public class InvalidJsonExample
 {
-    public class InvalidJsonExample
+    public void Test1()
     {
-        public void Test1()
-        {
-            Console.WriteLine("==== InvalidJsonExample.Test1 ==== ");
-            const string expectedJson = @"{
+        Console.WriteLine("==== InvalidJsonExample.Test1 ==== ");
+        const string expectedJson = @"{
                 ""a"":{
                     ""b"": ""some-test-1"",
                     ""d"": ""some-test-2""
@@ -16,15 +16,14 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 }
             }";
 
-            var jsonComparer = JsonComparer.GetDefault();
-            try
-            {
-                jsonComparer.Compare(expectedJson, "{}");
-            }
-            catch (InvalidJsonException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+        var jsonComparer = JsonComparer.GetDefault();
+        try
+        {
+            jsonComparer.Compare(expectedJson, "{}");
+        }
+        catch (InvalidJsonException ex)
+        {
+            Console.WriteLine(ex.Message);
         }
     }
 }

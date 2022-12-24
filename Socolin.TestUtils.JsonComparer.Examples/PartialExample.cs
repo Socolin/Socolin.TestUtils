@@ -1,15 +1,15 @@
 using System;
 using Newtonsoft.Json.Linq;
 
-namespace Socolin.TestUtils.JsonComparer.Examples
-{
-    public class PartialExample
-    {
-        public void Test1()
-        {
-            Console.WriteLine($"==== {nameof(PartialExample)}.{nameof(Test1)} ==== ");
+namespace Socolin.TestUtils.JsonComparer.Examples;
 
-            const string expectedJson = @"{
+public class PartialExample
+{
+    public void Test1()
+    {
+        Console.WriteLine($"==== {nameof(PartialExample)}.{nameof(Test1)} ==== ");
+
+        const string expectedJson = @"{
                 ""a"":{
                     ""__partial"":{
                         ""tested"": ""123""
@@ -17,7 +17,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 },
                 ""b"":""abc""
             }";
-            const string actualJson = @"{
+        const string actualJson = @"{
                 ""a"": {
                     ""tested"": ""123"",
                     ""ignored"": ""42""
@@ -25,16 +25,16 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""b"":""abc""
             }";
 
-            var jsonComparer = JsonComparer.GetDefault();
-            var errors = jsonComparer.Compare(expectedJson, actualJson);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
-        }
+        var jsonComparer = JsonComparer.GetDefault();
+        var errors = jsonComparer.Compare(expectedJson, actualJson);
+        Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors));
+    }
 
-        public void Test2()
-        {
-            Console.WriteLine($"==== {nameof(PartialExample)}.{nameof(Test2)} ==== ");
+    public void Test2()
+    {
+        Console.WriteLine($"==== {nameof(PartialExample)}.{nameof(Test2)} ==== ");
 
-            const string expectedJson = @"{
+        const string expectedJson = @"{
                 ""a"":{
                     ""__partial"":{
                         ""tested"": ""123"",
@@ -43,7 +43,7 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 },
                 ""b"":""abc""
             }";
-            const string actualJson = @"{
+        const string actualJson = @"{
                 ""a"": {
                     ""tested"": ""123"",
                     ""ignored"": ""42""
@@ -51,12 +51,11 @@ namespace Socolin.TestUtils.JsonComparer.Examples
                 ""b"":""abc""
             }";
 
-            var expectedJToken = JToken.Parse(expectedJson);
-            var actualJToken = JToken.Parse(actualJson);
+        var expectedJToken = JToken.Parse(expectedJson);
+        var actualJToken = JToken.Parse(actualJson);
 
-            var jsonComparer = JsonComparer.GetDefault();
-            var errors = jsonComparer.Compare(expectedJToken, actualJToken);
-            Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
-        }
+        var jsonComparer = JsonComparer.GetDefault();
+        var errors = jsonComparer.Compare(expectedJToken, actualJToken);
+        Console.WriteLine(JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors));
     }
 }

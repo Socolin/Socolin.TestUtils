@@ -4,89 +4,88 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace Socolin.TestUtils.FakeSmtp
+namespace Socolin.TestUtils.FakeSmtp;
+
+public interface IMailReceiver
 {
-    public interface IMailReceiver
+    List<FakeSmtpMail> Mails { get; }
+}
+
+public class FakeSmtpServer : IDisposable, IMailReceiver
+{
+    private Socket _socket;
+    public List<FakeSmtpMail> Mails { get; } = new List<FakeSmtpMail>();
+    private string Username { get; set; }
+    private string Password { get; set; }
+    private bool Running { get; set; }
+
+    public FakeSmtpServer()
     {
-        List<FakeSmtpMail> Mails { get; }
+        Username = Guid.NewGuid().ToString();
+        Password = Guid.NewGuid().ToString();
     }
 
-    public class FakeSmtpServer : IDisposable, IMailReceiver
+    public FakeSmtpConfig Start()
     {
-        private Socket _socket;
-        public List<FakeSmtpMail> Mails { get; } = new List<FakeSmtpMail>();
-        private string Username { get; set; }
-        private string Password { get; set; }
-        private bool Running { get; set; }
+        _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Unspecified);
+        _socket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+        _socket.Listen(5);
+        var listenPort = ((IPEndPoint) _socket.LocalEndPoint).Port;
 
-        public FakeSmtpServer()
+        Running = true;
+        var t = new Thread(Run);
+        t.Start();
+
+        return new FakeSmtpConfig
         {
-            Username = Guid.NewGuid().ToString();
-            Password = Guid.NewGuid().ToString();
-        }
+            Port = listenPort,
+            Host = IPAddress.Loopback,
+            Username = Username,
+            Password = Password
+        };
+    }
 
-        public FakeSmtpConfig Start()
+    public void Stop()
+    {
+        Running = false;
+        _socket?.Shutdown(SocketShutdown.Both);
+        _socket?.Close();
+    }
+
+    public void Dispose()
+    {
+        _socket?.Dispose();
+        _socket = null;
+    }
+
+    private void Run(object obj)
+    {
+        while (Running)
         {
-            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Unspecified);
-            _socket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
-            _socket.Listen(5);
-            var listenPort = ((IPEndPoint) _socket.LocalEndPoint).Port;
-
-            Running = true;
-            var t = new Thread(Run);
-            t.Start();
-
-            return new FakeSmtpConfig
+            try
             {
-                Port = listenPort,
-                Host = IPAddress.Loopback,
-                Username = Username,
-                Password = Password
-            };
-        }
-
-        public void Stop()
-        {
-            Running = false;
-            _socket?.Shutdown(SocketShutdown.Both);
-            _socket?.Close();
-        }
-
-        public void Dispose()
-        {
-            _socket?.Dispose();
-            _socket = null;
-        }
-
-        private void Run(object obj)
-        {
-            while (Running)
-            {
-                try
+                using (var clientSocket = _socket.Accept())
                 {
-                    using (var clientSocket = _socket.Accept())
+                    clientSocket.ReceiveTimeout = 200;
+                    try
                     {
-                        clientSocket.ReceiveTimeout = 200;
-                        try
-                        {
-                            var session = new FakeSmtpSession(clientSocket);
-                            session.ReceiveMail();
-                            var mail = session.GetMail();
-                            Mails.Add(mail);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                        var session = new FakeSmtpSession(clientSocket);
+                        session.ReceiveMail();
+                        var mail = session.GetMail();
+                        Mails.Add(mail);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
                 }
-                catch (SocketException)
-                {
-                    if (!Running)
-                        return;
+            }
+            catch (SocketException)
+            {
+                if (!Running)
+                    return;
 
-                    throw;
-                }
+                throw;
             }
         }
     }

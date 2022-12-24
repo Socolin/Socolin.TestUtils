@@ -3,43 +3,42 @@ using Newtonsoft.Json.Linq;
 using Socolin.TestUtils.JsonComparer.Errors;
 using Socolin.TestUtils.JsonComparer.Utils;
 
-namespace Socolin.TestUtils.JsonComparer.Comparers
+namespace Socolin.TestUtils.JsonComparer.Comparers;
+
+public class JsonObjectPartialComparer : IJsonObjectComparer
 {
-    public class JsonObjectPartialComparer : IJsonObjectComparer
+    public IEnumerable<IJsonCompareError<JToken>> Compare(JObject expected, JObject actual, IJsonComparer jsonComparer, string path = "", JsonComparisonOptions options = null)
     {
-        public IEnumerable<IJsonCompareError<JToken>> Compare(JObject expected, JObject actual, IJsonComparer jsonComparer, string path = "", JsonComparisonOptions options = null)
+        var ignoredProperties = new List<string>();
+        foreach (var actualProperty in actual.Properties())
         {
-            var ignoredProperties = new List<string>();
-            foreach (var actualProperty in actual.Properties())
+            var expectedProperty = expected.Property(actualProperty.Name);
+            if (expectedProperty == null)
             {
-                var expectedProperty = expected.Property(actualProperty.Name);
-                if (expectedProperty == null)
-                {
-                    ignoredProperties.Add(actualProperty.Name);
-                }
+                ignoredProperties.Add(actualProperty.Name);
+            }
+        }
+
+        foreach (var ignoredPropertyName in ignoredProperties)
+        {
+            actual.Remove(ignoredPropertyName);
+        }
+
+        foreach (var expectedProperty in expected.Properties())
+        {
+            var actualProperty = actual.Property(expectedProperty.Name);
+            var expectedJToken = expectedProperty.Value;
+            if (actualProperty == null)
+            {
+                yield return new MissingPropertyJsonComparerError(path, expected, actual, expectedProperty);
+                continue;
             }
 
-            foreach (var ignoredPropertyName in ignoredProperties)
+            var elementPath = JsonPathUtils.Combine(path, actualProperty.Name);
+            var errors = jsonComparer.Compare(expectedJToken, actualProperty.Value, elementPath);
+            foreach (var jsonCompareError in errors)
             {
-                actual.Remove(ignoredPropertyName);
-            }
-
-            foreach (var expectedProperty in expected.Properties())
-            {
-                var actualProperty = actual.Property(expectedProperty.Name);
-                var expectedJToken = expectedProperty.Value;
-                if (actualProperty == null)
-                {
-                    yield return new MissingPropertyJsonComparerError(path, expected, actual, expectedProperty);
-                    continue;
-                }
-
-                var elementPath = JsonPathUtils.Combine(path, actualProperty.Name);
-                var errors = jsonComparer.Compare(expectedJToken, actualProperty.Value, elementPath);
-                foreach (var jsonCompareError in errors)
-                {
-                    yield return jsonCompareError;
-                }
+                yield return jsonCompareError;
             }
         }
     }

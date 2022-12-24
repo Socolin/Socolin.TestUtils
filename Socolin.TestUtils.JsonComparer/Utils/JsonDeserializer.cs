@@ -1,39 +1,38 @@
 using Newtonsoft.Json;
 using Socolin.TestUtils.JsonComparer.Color;
 
-namespace Socolin.TestUtils.JsonComparer.Utils
+namespace Socolin.TestUtils.JsonComparer.Utils;
+
+public interface IJsonDeserializer
 {
-    public interface IJsonDeserializer
+    T Deserialize<T>(string json, JsonSerializerSettings settings);
+}
+
+public class JsonDeserializer : IJsonDeserializer
+{
+    public T Deserialize<T>(string json, JsonSerializerSettings settings)
     {
-        T Deserialize<T>(string json, JsonSerializerSettings settings);
+        return JsonConvert.DeserializeObject<T>(json, settings);
+    }
+}
+
+public class JsonDeserializerWithNiceError : IJsonDeserializer
+{
+    private readonly JsonComparerColorOptions _colorOptions;
+
+
+    public JsonDeserializerWithNiceError()
+        : this(JsonComparerColorOptions.Default)
+    {
     }
 
-    public class JsonDeserializer : IJsonDeserializer
+    public JsonDeserializerWithNiceError(JsonComparerColorOptions colorOptions)
     {
-        public T Deserialize<T>(string json, JsonSerializerSettings settings)
-        {
-            return JsonConvert.DeserializeObject<T>(json, settings);
-        }
+        _colorOptions = colorOptions;
     }
 
-    public class JsonDeserializerWithNiceError : IJsonDeserializer
+    public T Deserialize<T>(string json, JsonSerializerSettings settings)
     {
-        private readonly JsonComparerColorOptions _colorOptions;
-
-
-        public JsonDeserializerWithNiceError()
-            : this(JsonComparerColorOptions.Default)
-        {
-        }
-
-        public JsonDeserializerWithNiceError(JsonComparerColorOptions colorOptions)
-        {
-            _colorOptions = colorOptions;
-        }
-
-        public T Deserialize<T>(string json, JsonSerializerSettings settings)
-        {
-            return JsonDeserializerErrorFormatterHelper.DeserializeWithNiceErrorMessage<T>(json, settings, _colorOptions);
-        }
+        return JsonDeserializerErrorFormatterHelper.DeserializeWithNiceErrorMessage<T>(json, settings, _colorOptions);
     }
 }

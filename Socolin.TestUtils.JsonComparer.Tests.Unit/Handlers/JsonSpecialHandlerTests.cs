@@ -8,6 +8,7 @@ using NSubstitute;
 using NUnit.Framework;
 using Socolin.TestUtils.JsonComparer.Comparers;
 using Socolin.TestUtils.JsonComparer.Errors;
+using Socolin.TestUtils.JsonComparer.Exceptions;
 using Socolin.TestUtils.JsonComparer.Handlers;
 using Socolin.TestUtils.JsonComparer.Tests.Unit.Errors;
 
@@ -19,6 +20,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         private Action<string, JToken> _handler;
         private IJsonObjectComparer _partialComparer;
         private IPartialArrayHandler _partialArrayHandler;
+        private RegexAliasesContainer _regexAliasesContainer;
 
         [SetUp]
         public void SetUp()
@@ -26,8 +28,9 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             _handler = Substitute.For<Action<string, JToken>>();
             _partialComparer = Substitute.For<IJsonObjectComparer>();
             _partialArrayHandler = Substitute.For<IPartialArrayHandler>();
+            _regexAliasesContainer = new RegexAliasesContainer();
 
-            _jsonSpecialHandler = new JsonSpecialHandler(_handler, _partialComparer, _partialArrayHandler);
+            _jsonSpecialHandler = new JsonSpecialHandler(_handler, _partialComparer, _partialArrayHandler, _regexAliasesContainer);
         }
 
         [Test]
@@ -181,7 +184,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var captureObject = JObject.FromObject(new {__capture = new {regex = "(?<someCaptureName>abc)"}});
             var actualJson = JToken.Parse(@"""abc""");
 
-            var (success, errors) =  _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
 
 
             using (new AssertionScope())
@@ -206,7 +209,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         [Test]
         public void WhenHandlingMatch_AndNoParameterGiven_ReturnErrors()
         {
-            var captureObject = JObject.FromObject(new {__match = new {}});
+            var captureObject = JObject.FromObject(new {__match = new { }});
             var actualJson = JToken.Parse("42");
 
             var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
@@ -251,7 +254,6 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             }
         }
 
-
         [Test]
         public void WhenHandlingMatch_AndRegexMatches_ReturnsSuccess()
         {
@@ -263,6 +265,69 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             using (new AssertionScope())
             {
                 success.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndRegexAliasMatch_ReturnsSuccess()
+        {
+            _regexAliasesContainer.AddAlias("some-alias", "some-string");
+
+            var captureObject = JObject.FromObject(new {__match = new {regexAlias = "some-alias"}});
+            var actualJson = JToken.Parse(@"""some-string""");
+
+            var (success, _) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
+
+            using (new AssertionScope())
+            {
+                success.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndRegexAliasMatch_AndAliasDoesNotExists_Throws()
+        {
+            var captureObject = JObject.FromObject(new {__match = new {regexAlias = "some-non-registered-alias"}});
+            var actualJson = JToken.Parse(@"""some-string""");
+
+            var act = () => _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
+
+            act.Should().Throw<RegexAliasNotRegisteredException>();
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndRegexAliasMatch_AndActualValueIsNotAString_ReturnError()
+        {
+            _regexAliasesContainer.AddAlias("some-alias", "some-regex");
+
+            var captureObject = JObject.FromObject(new {__match = new {regexAlias = "some-alias"}});
+            var actualJson = JToken.Parse("42");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Should().HaveCount(1);
+                errors.First().Should().BeOfType<InvalidTypeJsonCompareError>();
+            }
+        }
+
+        [Test]
+        public void WhenHandlingMatch_AndRegexAliasMatch_ReturnsError()
+        {
+            _regexAliasesContainer.AddAlias("some-alias", "some-regex");
+            var captureObject = JObject.FromObject(new {__match = new {regexAlias = "some-alias"}});
+
+            var actualJson = JToken.Parse(@"""some-string""");
+
+            var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(captureObject, actualJson, "", null, new JsonComparisonOptions());
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Should().HaveCount(1);
+                errors.First().Should().BeOfType<RegexMismatchMatchJsonCompareError>();
             }
         }
 
@@ -344,7 +409,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             var jsonComparer = Substitute.For<IJsonComparer>();
             var partialObject = JObject.FromObject(new {__partial = new {tested = "123"}});
             var actualJson = JObject.FromObject(new {tested = "123", ignored = "456"});
-            var expectedErrors = new List<IJsonCompareError<JToken>> { new TestJsonCompareError()};
+            var expectedErrors = new List<IJsonCompareError<JToken>> {new TestJsonCompareError()};
             var jsonComparisonOptions = new JsonComparisonOptions();
 
             _partialComparer.Compare(partialObject.Value<JObject>("__partial"), actualJson, jsonComparer, "", jsonComparisonOptions)
@@ -365,7 +430,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
             // TODO: This may be handle some day, when needed
             var jsonComparer = Substitute.For<IJsonComparer>();
             var partialObject = JObject.FromObject(new {__partial = new[] {1, 2, 3}});
-            var actualJson = JArray.FromObject(new [] {1, 2, 3, 4, 5});
+            var actualJson = JArray.FromObject(new[] {1, 2, 3, 4, 5});
 
             var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer, new JsonComparisonOptions());
 
@@ -382,7 +447,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         {
             var jsonComparer = Substitute.For<IJsonComparer>();
             var partialObject = JObject.FromObject(new {__partial = new {tested = "123"}});
-            var actualJson = JArray.FromObject(new [] {1, 2, 3});
+            var actualJson = JArray.FromObject(new[] {1, 2, 3});
 
             var (success, errors) = _jsonSpecialHandler.HandleSpecialObject(partialObject, actualJson, "", jsonComparer, new JsonComparisonOptions());
 
@@ -480,7 +545,7 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         [Test]
         public void WhenHandlingMatch_WithRange_ReplaceExpectedWithActualIfItMatch()
         {
-            var captureObject = JObject.FromObject(new {parent = new {__match = new {range = new [] {40, 45}}}});
+            var captureObject = JObject.FromObject(new {parent = new {__match = new {range = new[] {40, 45}}}});
             var actualJson = JObject.FromObject(new {parent = 42});
 
             _jsonSpecialHandler.HandleSpecialObject(captureObject.Value<JObject>("parent"), actualJson.Value<JToken>("parent"), "parent", null, new JsonComparisonOptions());
@@ -514,6 +579,5 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
                 }
             }
         }
-
     }
 }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Socolin.TestUtils.JsonComparer.Errors;
 using TechTalk.SpecFlow;
@@ -28,12 +30,26 @@ public class JsonSteps
         _scenarioContext["ExpectedJson"] = json;
     }
 
+    [Given(@"the regex """"(.*)"""" has been registered as an alias with the name ""(.*)""")]
+    public void GivenTheRegexHasBeenRegisteredAsAnAliasWithTheName(string regex, string name)
+    {
+        if (!_scenarioContext.TryGetValue<RegexAliasesContainer>(out var regexAliasesContainer))
+        {
+            regexAliasesContainer = new RegexAliasesContainer();
+            _scenarioContext.Set(regexAliasesContainer);
+        }
+
+        regexAliasesContainer.AddAlias(name, regex);
+    }
+
     [When(@"comparing both JSON")]
     public void WhenComparingBothJson()
     {
-        var jsonComparer = JsonComparer.GetDefault();
-        var expectedJson = JToken.Parse(_scenarioContext.Get<string>("ExpectedJson"));
-        var actualJson = JToken.Parse(_scenarioContext.Get<string>("Json"));
+        var jsonSerializerSettings = new JsonSerializerSettings {DateParseHandling = DateParseHandling.None};
+        _scenarioContext.TryGetValue<RegexAliasesContainer>(out var regexAliasesContainer);
+        var jsonComparer = JsonComparer.GetDefault(regexAliasesContainer: regexAliasesContainer);
+        var expectedJson = JsonConvert.DeserializeObject<JToken>(_scenarioContext.Get<string>("ExpectedJson"), jsonSerializerSettings);
+        var actualJson = JsonConvert.DeserializeObject<JToken>(_scenarioContext.Get<string>("Json"), jsonSerializerSettings);
         var errors = jsonComparer.Compare(expectedJson, actualJson);
         _scenarioContext["Errors"] = errors;
         _scenarioContext["Output"] = JsonComparerOutputFormatter.GetReadableMessage(expectedJson, actualJson, errors);

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using Socolin.TestUtils.JsonComparer.Comparers;
 using Socolin.TestUtils.JsonComparer.Errors;
+using Socolin.TestUtils.JsonComparer.Exceptions;
 
 namespace Socolin.TestUtils.JsonComparer.Handlers
 {
@@ -18,12 +19,19 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
         private readonly Action<string, JToken> _captureValueHandler;
         private readonly IJsonObjectComparer _jsonObjectPartialComparer;
         private readonly IPartialArrayHandler _partialArrayHandler;
+        private readonly RegexAliasesContainer _regexAliasesContainer;
 
-        public JsonSpecialHandler(Action<string, JToken> handler, IJsonObjectComparer jsonObjectPartialComparer, IPartialArrayHandler partialArrayHandler)
+        public JsonSpecialHandler(
+            Action<string, JToken> handler,
+            IJsonObjectComparer jsonObjectPartialComparer,
+            IPartialArrayHandler partialArrayHandler,
+            RegexAliasesContainer regexAliasesContainer
+        )
         {
             _captureValueHandler = handler;
             _jsonObjectPartialComparer = jsonObjectPartialComparer;
             _partialArrayHandler = partialArrayHandler;
+            _regexAliasesContainer = regexAliasesContainer;
         }
 
         public (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer, JsonComparisonOptions options)
@@ -45,7 +53,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
 
         private (bool success, IList<IJsonCompareError<JToken>> errors) HandleCaptureObject(JToken expected, JToken actual, string path)
         {
-            var jCaptureObject = ((JObject) expected).Value<JObject>("__capture");
+            var jCaptureObject = ((JObject)expected).Value<JObject>("__capture");
             if (jCaptureObject.ContainsKey("type"))
                 return HandleCaptureObjectWithType(expected, actual, path, jCaptureObject);
             if (jCaptureObject.ContainsKey("regex"))
@@ -108,7 +116,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
 
         private (bool success, IList<IJsonCompareError<JToken>> errors) HandleMatchObject(JToken expected, JToken actual, string path)
         {
-            var jMatchObject = ((JObject) expected).Value<JObject>("__match");
+            var jMatchObject = ((JObject)expected).Value<JObject>("__match");
             if (jMatchObject.ContainsKey("regex"))
             {
                 if (actual.Type != JTokenType.String)
@@ -117,6 +125,24 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 var actualValue = actual.Value<string>();
                 if (!Regex.IsMatch(actualValue, regex, RegexOptions.CultureInvariant))
                     return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex)});
+
+                if (expected.Parent is JProperty parentProperty)
+                    parentProperty.Value = actual.DeepClone();
+
+                return (true, null);
+            }
+
+            if (jMatchObject.ContainsKey("regexAlias"))
+            {
+                if (actual.Type != JTokenType.String)
+                    return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
+                var regexAlias = jMatchObject.Value<string>("regexAlias");
+                var regex = _regexAliasesContainer.GetRegex(regexAlias);
+                if (regex == null)
+                    throw new RegexAliasNotRegisteredException(regexAlias);
+                var actualValue = actual.Value<string>();
+                if (!regex.IsMatch(actualValue))
+                    return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex.ToString())});
 
                 if (expected.Parent is JProperty parentProperty)
                     parentProperty.Value = actual.DeepClone();
@@ -145,7 +171,7 @@ namespace Socolin.TestUtils.JsonComparer.Handlers
                 var jRangeArray = jMatchObject.Property("range").Value;
                 if (jRangeArray.Type != JTokenType.Array)
                     return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Invalid `range`: range should be an array of 2 number [min, max]")});
-                if (((JArray) jRangeArray).Count != 2)
+                if (((JArray)jRangeArray).Count != 2)
                     return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Invalid `range`: range should be an array of 2 number [min, max]")});
                 var range = jRangeArray.ToObject<decimal[]>();
                 var actualValue = actual.Value<decimal>();

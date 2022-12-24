@@ -26,7 +26,41 @@
 </td></tr>
 </table>
 
+## Match a string using a regex alias
 
+First you need to register `some-alias` when creating the json comparer:
+
+```csharp
+var regexAliasesContainer = new RegexAliasesContainer();
+regexAliasesContainer.AddAlias("some-alias", "some-regex");
+JsonComparer.GetDefault(regexAliasesContainer: regexAliasesContainer)
+```
+
+
+<table>
+<tr><td>Actual</td><td>Expected</td></tr>
+<tr><td>
+
+
+```json
+{
+    "field": "some-regex"
+}
+```
+
+</td>
+<td>
+
+```json
+{
+  "field": {"__match": {
+    "regexAlias": "some-alias"
+  }}
+}
+```
+
+</td></tr>
+</table>
 
 ## Match using type
 

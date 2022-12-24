@@ -26,13 +26,18 @@ namespace Socolin.TestUtils.JsonComparer
         private readonly IJsonSpecialHandler _jsonSpecialHandler;
         private readonly IJsonDeserializer _jsonDeserializer;
 
-        public static JsonComparer GetDefault(Action<string, JToken> captureHandler = null, bool useColor = false, JsonComparerColorOptions colorOptions = null)
+        public static JsonComparer GetDefault(
+            Action<string, JToken> captureHandler = null,
+            bool useColor = false,
+            JsonComparerColorOptions colorOptions = null,
+            RegexAliasesContainer regexAliasesContainer = null
+        )
         {
             return new JsonComparer(
                 new JsonObjectComparer(),
                 new JsonArrayComparer(),
                 new JsonValueComparer(),
-                new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer(), new PartialArrayHandler()),
+                new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer(), new PartialArrayHandler(), regexAliasesContainer ?? new RegexAliasesContainer()),
                 new JsonDeserializerWithNiceError(colorOptions ?? (useColor ? JsonComparerColorOptions.DefaultColored : JsonComparerColorOptions.Default))
             );
         }
@@ -54,14 +59,16 @@ namespace Socolin.TestUtils.JsonComparer
 
         public IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson, JsonComparisonOptions options = null)
         {
-            var expected = _jsonDeserializer.Deserialize<JToken>(expectedJson, new JsonSerializerSettings
-            {
-                DateParseHandling = DateParseHandling.None
-            });
-            var actual = _jsonDeserializer.Deserialize<JToken>(actualJson, new JsonSerializerSettings
-            {
-                DateParseHandling = DateParseHandling.None
-            });
+            var expected = _jsonDeserializer.Deserialize<JToken>(expectedJson,
+                new JsonSerializerSettings
+                {
+                    DateParseHandling = DateParseHandling.None
+                });
+            var actual = _jsonDeserializer.Deserialize<JToken>(actualJson,
+                new JsonSerializerSettings
+                {
+                    DateParseHandling = DateParseHandling.None
+                });
             return Compare(expected, actual, options);
         }
 

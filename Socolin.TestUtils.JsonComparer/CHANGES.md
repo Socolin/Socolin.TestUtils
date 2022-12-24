@@ -1,3 +1,7 @@
+## 1.15
+
+- Add support for alias when comparing with regex. This reduce copy/paste of common regexes, like when checking date.
+
 ## 1.14
 
 - Rework colorization:

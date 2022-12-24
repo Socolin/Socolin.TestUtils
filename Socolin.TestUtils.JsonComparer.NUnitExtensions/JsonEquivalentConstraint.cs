@@ -42,7 +42,7 @@ public class JsonEquivalentConstraint : Constraint
         var jsonComparer = _jsonComparer ?? JsonComparer.GetDefault(colorOptions: _colorOptions);
         var errors = jsonComparer.Compare(expectedJToken, actualJToken, _options);
         var message = JsonComparerOutputFormatter.GetReadableMessage(expectedJToken, actualJToken, errors, _colorOptions);
-        return new JsonEquivalentConstraintResult(this, actual, errors?.Count == 0, message);
+        return new JsonEquivalentConstraintResult(this, actual, errors.Count == 0, message);
     }
 
     public JsonEquivalentConstraint WithComparer(IJsonComparer jsonComparer)

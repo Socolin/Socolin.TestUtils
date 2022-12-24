@@ -8,21 +8,27 @@ namespace Socolin.TestUtils.JsonComparer.Handlers;
 
 public interface IJsonSpecialHandler
 {
-    (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer, JsonComparisonOptions options);
+    (bool success, IList<IJsonCompareError<JToken>>? errors) HandleSpecialObject(
+        JToken expected,
+        JToken actual,
+        string path,
+        IJsonComparer jsonComparer,
+        JsonComparisonOptions? options
+    );
 }
 
 public class JsonSpecialHandler : IJsonSpecialHandler
 {
-    private readonly Action<string, JToken> _captureValueHandler;
+    private readonly Action<string, JToken>? _captureValueHandler;
     private readonly IJsonObjectComparer _jsonObjectPartialComparer;
     private readonly IPartialArrayHandler _partialArrayHandler;
-    private readonly RegexAliasesContainer _regexAliasesContainer;
+    private readonly RegexAliasesContainer? _regexAliasesContainer;
 
     public JsonSpecialHandler(
-        Action<string, JToken> handler,
+        Action<string, JToken>? handler,
         IJsonObjectComparer jsonObjectPartialComparer,
         IPartialArrayHandler partialArrayHandler,
-        RegexAliasesContainer regexAliasesContainer
+        RegexAliasesContainer? regexAliasesContainer
     )
     {
         _captureValueHandler = handler;
@@ -31,7 +37,13 @@ public class JsonSpecialHandler : IJsonSpecialHandler
         _regexAliasesContainer = regexAliasesContainer;
     }
 
-    public (bool success, IList<IJsonCompareError<JToken>> errors) HandleSpecialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer, JsonComparisonOptions options)
+    public (bool success, IList<IJsonCompareError<JToken>>? errors) HandleSpecialObject(
+        JToken expected,
+        JToken actual,
+        string path,
+        IJsonComparer? jsonComparer,
+        JsonComparisonOptions? options
+    )
     {
         if (IsCaptureObject(expected))
             return HandleCaptureObject(expected, actual, path);
@@ -48,9 +60,11 @@ public class JsonSpecialHandler : IJsonSpecialHandler
         return (false, null);
     }
 
-    private (bool success, IList<IJsonCompareError<JToken>> errors) HandleCaptureObject(JToken expected, JToken actual, string path)
+    private (bool success, IList<IJsonCompareError<JToken>>? errors) HandleCaptureObject(JToken expected, JToken actual, string path)
     {
         var jCaptureObject = ((JObject)expected).Value<JObject>("__capture");
+        if (jCaptureObject == null)
+            return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "`__capture` object should not be null")});
         if (jCaptureObject.ContainsKey("type"))
             return HandleCaptureObjectWithType(expected, actual, path, jCaptureObject);
         if (jCaptureObject.ContainsKey("regex"))
@@ -58,20 +72,27 @@ public class JsonSpecialHandler : IJsonSpecialHandler
         return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Missing `type` or `regex` field on capture object")});
     }
 
-    private (bool success, IList<IJsonCompareError<JToken>> errors) HandleCaptureObjectWithRegex(JToken expected, JToken actual, string path, JObject jCaptureObject)
+    private (bool success, IList<IJsonCompareError<JToken>>? errors) HandleCaptureObjectWithRegex(JToken expected, JToken actual, string path, JObject jCaptureObject)
     {
         var captureObject = jCaptureObject.ToObject<JsonCaptureObject>();
+        if (captureObject == null)
+            return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Invalid `__capture` object")});
 
-        if (string.IsNullOrEmpty(captureObject.Regex))
+        var regexPattern = captureObject.Regex;
+        if (regexPattern == null || string.IsNullOrEmpty(regexPattern))
             return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Empty `regex` field on capture object")});
 
         if (actual.Type != JTokenType.String)
             return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
 
-        var regex = new Regex(captureObject.Regex, RegexOptions.CultureInvariant | RegexOptions.Compiled);
-        var match = regex.Match(actual.Value<string>());
+        var regex = new Regex(regexPattern, RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        var actualValue = actual.Value<string>();
+        if (actualValue == null)
+            return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regexPattern)});
+
+        var match = regex.Match(actualValue);
         if (!match.Success)
-            return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, captureObject.Regex)});
+            return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regexPattern)});
 
         if (captureObject.Name != null)
             _captureValueHandler?.Invoke(captureObject.Name, actual);
@@ -90,18 +111,23 @@ public class JsonSpecialHandler : IJsonSpecialHandler
         return (true, null);
     }
 
-    private (bool success, IList<IJsonCompareError<JToken>> errors) HandleCaptureObjectWithType(JToken expected, JToken actual, string path, JObject jCaptureObject)
+    private (bool success, IList<IJsonCompareError<JToken>>? errors) HandleCaptureObjectWithType(JToken expected, JToken actual, string path, JObject jCaptureObject)
     {
         if (!jCaptureObject.ContainsKey("name"))
             return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Missing `name` field on capture object")});
 
         var captureObject = jCaptureObject.ToObject<JsonCaptureObject>();
+        if (captureObject == null)
+            return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "`__capture` object should not be null")});
 
         if (!Enum.TryParse(captureObject.Type, true, out JTokenType type))
             return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, $"Invalid `type`: value '{captureObject.Type}' is not valid, see JTokenType for list of type")});
 
         if (type != actual.Type)
             return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
+
+        if (captureObject.Name == null)
+            return (false, new List<IJsonCompareError<JToken>> {new InvalidCaptureObjectCompareError(path, expected, actual, "Invalid `name` in `__capture` object. Should not be null")});
 
         _captureValueHandler?.Invoke(captureObject.Name, actual);
 
@@ -111,17 +137,23 @@ public class JsonSpecialHandler : IJsonSpecialHandler
         return (true, null);
     }
 
-    private (bool success, IList<IJsonCompareError<JToken>> errors) HandleMatchObject(JToken expected, JToken actual, string path)
+    private (bool success, IList<IJsonCompareError<JToken>>? errors) HandleMatchObject(JToken expected, JToken actual, string path)
     {
         var jMatchObject = ((JObject)expected).Value<JObject>("__match");
+        if (jMatchObject == null)
+            return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "`__match` object should not be null")});
+
         if (jMatchObject.ContainsKey("regex"))
         {
             if (actual.Type != JTokenType.String)
                 return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
-            var regex = jMatchObject.Value<string>("regex");
+            var regexPattern = jMatchObject.Value<string>("regex");
+            if (regexPattern == null)
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "`__match.regex` should not be null")});
+
             var actualValue = actual.Value<string>();
-            if (!Regex.IsMatch(actualValue, regex, RegexOptions.CultureInvariant))
-                return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex)});
+            if (!Regex.IsMatch(actualValue!, regexPattern, RegexOptions.CultureInvariant))
+                return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regexPattern)});
 
             if (expected.Parent is JProperty parentProperty)
                 parentProperty.Value = actual.DeepClone();
@@ -129,16 +161,18 @@ public class JsonSpecialHandler : IJsonSpecialHandler
             return (true, null);
         }
 
-        if (jMatchObject.ContainsKey("regexAlias"))
+        if (jMatchObject.TryGetValue("regexAlias", out var jRegexAlias))
         {
             if (actual.Type != JTokenType.String)
                 return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
-            var regexAlias = jMatchObject.Value<string>("regexAlias");
-            var regex = _regexAliasesContainer.GetRegex(regexAlias);
+            var regexAlias = jRegexAlias.Value<string>();
+            if (regexAlias == null)
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "`__match.regexAlias` should not be null")});
+            var regex = _regexAliasesContainer?.GetRegex(regexAlias);
             if (regex == null)
                 throw new RegexAliasNotRegisteredException(regexAlias);
             var actualValue = actual.Value<string>();
-            if (!regex.IsMatch(actualValue))
+            if (!regex.IsMatch(actualValue!))
                 return (false, new List<IJsonCompareError<JToken>> {new RegexMismatchMatchJsonCompareError(path, expected, actual, regex.ToString())});
 
             if (expected.Parent is JProperty parentProperty)
@@ -167,9 +201,9 @@ public class JsonSpecialHandler : IJsonSpecialHandler
                 return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
             if (jRangeArray.Type != JTokenType.Array)
                 return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Invalid `range`: range should be an array of 2 number [min, max]")});
-            if (((JArray)jRangeArray).Count != 2)
-                return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Invalid `range`: range should be an array of 2 number [min, max]")});
             var range = jRangeArray.ToObject<decimal[]>();
+            if (range?.Length != 2)
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Invalid `range`: range should be an array of 2 number [min, max]")});
             var actualValue = actual.Value<decimal>();
             if (actualValue < range[0] || actualValue > range[1])
                 return (false, new List<IJsonCompareError<JToken>> {new ValueOutOfRangeComparerError(path, expected, actual, range)});
@@ -180,20 +214,26 @@ public class JsonSpecialHandler : IJsonSpecialHandler
             return (true, null);
         }
 
-        if (jMatchObject.ContainsKey("ignoredCharacters"))
+        if (jMatchObject.TryGetValue("ignoredCharacters", out var jIgnoredCharacters))
         {
             if (actual.Type != JTokenType.String)
                 return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, expected, actual)});
 
             var expectedValue = jMatchObject.Value<string>("value");
-            var ignoredCharacters = jMatchObject.Value<string>("ignoredCharacters");
+            if (expectedValue == null)
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "`value` field is missing on `__match` object using ignoredCharacters")});
+
+            var ignoredCharacters = jIgnoredCharacters.Value<string>();
+            if (ignoredCharacters == null)
+                return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "`ignoredCharacters` should not be null on `__match` object")});
+
             for (var i = expectedValue.Length - 1; i >= 0; i--)
             {
                 if (ignoredCharacters.Contains(expectedValue[i]))
                     expectedValue = expectedValue.Remove(i, 1);
             }
 
-            var actualValue = actual.Value<string>();
+            var actualValue = actual.Value<string>()!;
             for (var i = actualValue.Length - 1; i >= 0; i--)
             {
                 if (ignoredCharacters.Contains(actualValue[i]))
@@ -212,9 +252,17 @@ public class JsonSpecialHandler : IJsonSpecialHandler
         return (false, new List<IJsonCompareError<JToken>> {new InvalidMatchObjectJsonCompareError(path, expected, actual, "Missing `regex`, `range` or `type` field on match object")});
     }
 
-    private (bool success, IList<IJsonCompareError<JToken>> errors) HandlePartialObject(JToken expected, JToken actual, string path, IJsonComparer jsonComparer, JsonComparisonOptions options)
+    private (bool success, IList<IJsonCompareError<JToken>>? errors) HandlePartialObject(
+        JToken expected,
+        JToken actual,
+        string path,
+        IJsonComparer? jsonComparer,
+        JsonComparisonOptions? options
+    )
     {
         var jPartialObject = expected.Value<JToken>("__partial");
+        if (jPartialObject == null)
+            return (false, new List<IJsonCompareError<JToken>> {new InvalidPartialObjectCompareError(path, expected, actual, $"`__partial` object should not be null")});
 
         if (jPartialObject.Type == JTokenType.Array)
             return (false, new List<IJsonCompareError<JToken>> {new InvalidPartialObjectCompareError(path, expected, actual, $"Invalid `type` of __partial object. Use __partialArray to compare array")});
@@ -224,7 +272,7 @@ public class JsonSpecialHandler : IJsonSpecialHandler
         if (actual.Type != jPartialObject.Type)
             return (false, new List<IJsonCompareError<JToken>> {new InvalidTypeJsonCompareError(path, jPartialObject, actual)});
 
-        var errors = _jsonObjectPartialComparer.Compare(jPartialObject as JObject, actual as JObject, jsonComparer, options: options).ToList();
+        var errors = _jsonObjectPartialComparer.Compare((JObject)jPartialObject, (JObject)actual, jsonComparer, options: options).ToList();
         if (expected.Parent is JProperty parentProperty)
             parentProperty.Value = jPartialObject;
 

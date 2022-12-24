@@ -1,4 +1,5 @@
 using System.Text;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NGit.Diff;
@@ -7,6 +8,7 @@ using Socolin.TestUtils.JsonComparer.Errors;
 
 namespace Socolin.TestUtils.JsonComparer;
 
+[PublicAPI]
 public class JsonComparerOutputFormatter
 {
     [Obsolete("Use the version with `JsonComparerColorOptions` parameter instead of `useColor`")]
@@ -15,7 +17,7 @@ public class JsonComparerOutputFormatter
         return GetReadableMessage(JToken.Parse(expectedJson), JToken.Parse(actualJson), errors, useColor);
     }
 
-    public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors, JsonComparerColorOptions colorOptions = null)
+    public static string GetReadableMessage(string expectedJson, string actualJson, IEnumerable<IJsonCompareError<JToken>> errors, JsonComparerColorOptions? colorOptions = null)
     {
         return GetReadableMessage(JToken.Parse(expectedJson), JToken.Parse(actualJson), errors, colorOptions ?? JsonComparerColorOptions.Default);
     }
@@ -33,7 +35,7 @@ public class JsonComparerOutputFormatter
             });
     }
 
-    public static string GetReadableMessage(JToken expectedJToken, JToken actualJToken, IEnumerable<IJsonCompareError<JToken>> errors, JsonComparerColorOptions colorOptions = null)
+    public static string GetReadableMessage(JToken? expectedJToken, JToken? actualJToken, IEnumerable<IJsonCompareError<JToken>> errors, JsonComparerColorOptions? colorOptions = null)
     {
         colorOptions ??= JsonComparerColorOptions.Default;
 
@@ -58,7 +60,7 @@ public class JsonComparerOutputFormatter
         return sb.ToString();
     }
 
-    private static void WriteUnifiedDiffBetweenJson(StringBuilder sb, JToken expectedJToken, JToken actualJToken, JsonComparerColorOptions colorOptions)
+    private static void WriteUnifiedDiffBetweenJson(StringBuilder sb, JToken? expectedJToken, JToken? actualJToken, JsonComparerColorOptions colorOptions)
     {
         NormalizeForTextDiffJson(expectedJToken);
         NormalizeForTextDiffJson(actualJToken);
@@ -119,7 +121,7 @@ public class JsonComparerOutputFormatter
         }
     }
 
-    private static void NormalizeForTextDiffJson(JToken jToken)
+    private static void NormalizeForTextDiffJson(JToken? jToken)
     {
         if (jToken is JObject jObject)
         {

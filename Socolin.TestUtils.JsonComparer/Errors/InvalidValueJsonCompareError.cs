@@ -4,7 +4,7 @@ namespace Socolin.TestUtils.JsonComparer.Errors;
 
 public class InvalidValueJsonCompareError : JsonCompareError<JValue>
 {
-    public InvalidValueJsonCompareError(string path, JValue expectedValue, JValue actualValue)
+    public InvalidValueJsonCompareError(string path, JValue expectedValue, JValue? actualValue)
         : base(path, expectedValue, actualValue)
     {
     }

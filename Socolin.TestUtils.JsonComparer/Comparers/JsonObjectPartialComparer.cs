@@ -6,7 +6,7 @@ namespace Socolin.TestUtils.JsonComparer.Comparers;
 
 public class JsonObjectPartialComparer : IJsonObjectComparer
 {
-    public IEnumerable<IJsonCompareError<JToken>> Compare(JObject expected, JObject actual, IJsonComparer jsonComparer, string path = "", JsonComparisonOptions options = null)
+    public IEnumerable<IJsonCompareError<JToken>> Compare(JObject expected, JObject actual, IJsonComparer? jsonComparer, string path = "", JsonComparisonOptions? options = null)
     {
         var ignoredProperties = new List<string>();
         foreach (var actualProperty in actual.Properties())
@@ -34,6 +34,8 @@ public class JsonObjectPartialComparer : IJsonObjectComparer
             }
 
             var elementPath = JsonPathUtils.Combine(path, actualProperty.Name);
+            if (jsonComparer == null)
+                throw new NullReferenceException("jsonComparer is not available");
             var errors = jsonComparer.Compare(expectedJToken, actualProperty.Value, elementPath);
             foreach (var jsonCompareError in errors)
             {

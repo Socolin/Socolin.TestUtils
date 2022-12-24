@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Socolin.TestUtils.JsonComparer.Color;
 using Socolin.TestUtils.JsonComparer.Comparers;
@@ -8,11 +9,12 @@ using Socolin.TestUtils.JsonComparer.Utils;
 
 namespace Socolin.TestUtils.JsonComparer;
 
+[PublicAPI]
 public interface IJsonComparer
 {
-    IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson, JsonComparisonOptions options = null);
-    IList<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, JsonComparisonOptions options = null);
-    IEnumerable<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, string path, JsonComparisonOptions options = null);
+    IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson, JsonComparisonOptions? options = null);
+    IList<IJsonCompareError<JToken>> Compare(JToken? expected, JToken? actual, JsonComparisonOptions? options = null);
+    IEnumerable<IJsonCompareError<JToken>> Compare(JToken? expected, JToken? actual, string path, JsonComparisonOptions? options = null);
 }
 
 public class JsonComparer : IJsonComparer
@@ -24,17 +26,17 @@ public class JsonComparer : IJsonComparer
     private readonly IJsonDeserializer _jsonDeserializer;
 
     public static JsonComparer GetDefault(
-        Action<string, JToken> captureHandler = null,
+        Action<string, JToken>? captureHandler = null,
         bool useColor = false,
-        JsonComparerColorOptions colorOptions = null,
-        RegexAliasesContainer regexAliasesContainer = null
+        JsonComparerColorOptions? colorOptions = null,
+        RegexAliasesContainer? regexAliasesContainer = null
     )
     {
         return new JsonComparer(
             new JsonObjectComparer(),
             new JsonArrayComparer(),
             new JsonValueComparer(),
-            new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer(), new PartialArrayHandler(), regexAliasesContainer ?? new RegexAliasesContainer()),
+            new JsonSpecialHandler(captureHandler, new JsonObjectPartialComparer(), new PartialArrayHandler(), regexAliasesContainer),
             new JsonDeserializerWithNiceError(colorOptions ?? (useColor ? JsonComparerColorOptions.DefaultColored : JsonComparerColorOptions.Default))
         );
     }
@@ -54,7 +56,7 @@ public class JsonComparer : IJsonComparer
         _jsonDeserializer = jsonDeserializer;
     }
 
-    public IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson, JsonComparisonOptions options = null)
+    public IList<IJsonCompareError<JToken>> Compare(string expectedJson, string actualJson, JsonComparisonOptions? options = null)
     {
         var expected = _jsonDeserializer.Deserialize<JToken>(expectedJson,
             new JsonSerializerSettings
@@ -69,13 +71,25 @@ public class JsonComparer : IJsonComparer
         return Compare(expected, actual, options);
     }
 
-    public IList<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, JsonComparisonOptions options = null)
+    public IList<IJsonCompareError<JToken>> Compare(JToken? expected, JToken? actual, JsonComparisonOptions? options = null)
     {
         return Compare(expected, actual, "", options).ToList();
     }
 
-    public IEnumerable<IJsonCompareError<JToken>> Compare(JToken expected, JToken actual, string path, JsonComparisonOptions options = null)
+    public IEnumerable<IJsonCompareError<JToken>> Compare(JToken? expected, JToken? actual, string path, JsonComparisonOptions? options = null)
     {
+        if (expected == null && actual == null)
+            yield break;
+        if (expected == null)
+        {
+            yield return new InvalidTypeJsonCompareError("", expected, actual);
+            yield break;
+        }
+        if (actual == null)
+        {
+            yield return new InvalidTypeJsonCompareError("", expected, actual);
+            yield break;
+        }
         var (captureSucceeded, captureErrors) = _jsonSpecialHandler.HandleSpecialObject(expected, actual, path, this, options);
         if (captureSucceeded)
             yield break;
@@ -96,10 +110,10 @@ public class JsonComparer : IJsonComparer
         switch (actual.Type)
         {
             case JTokenType.Object:
-                errors = _jsonObjectComparer.Compare(expected as JObject, actual as JObject, this, path, options);
+                errors = _jsonObjectComparer.Compare((JObject)expected, (JObject)actual, this, path, options);
                 break;
             case JTokenType.Array:
-                errors = _jsonArrayComparer.Compare(expected as JArray, actual as JArray, this, path, options);
+                errors = _jsonArrayComparer.Compare((JArray)expected, (JArray)actual, this, path, options);
                 break;
             case JTokenType.Integer:
             case JTokenType.Float:
@@ -108,7 +122,7 @@ public class JsonComparer : IJsonComparer
             case JTokenType.Null:
             case JTokenType.Undefined:
             case JTokenType.Date:
-                errors = _jsonValueComparer.Compare(expected as JValue, actual as JValue, path, options);
+                errors = _jsonValueComparer.Compare((JValue)expected, (JValue)actual, path, options);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(actual.Type), actual.Type, @"Cannot compare this type");

@@ -9,5 +9,5 @@ public class InvalidSizeJsonCompareError : JsonCompareError<JArray>
     {
     }
 
-    public override string Message => $"Invalid array size, expected {ExpectedValue.Count} elements, but found {ActualValue.Count}";
+    public override string Message => $"Invalid array size, expected {ExpectedValue?.Count} elements, but found {ActualValue?.Count}";
 }

@@ -58,7 +58,7 @@ public class ColorizeJsonWriter : JsonTextWriter
             _textWriter.Write(_colorOptions.Theme.Json.KeywordColor.ToResetSequence());
     }
 
-    public override void WriteValue(string value)
+    public override void WriteValue(string? value)
     {
         if (JsonComparerColorHelper.ShouldColorize(_colorOptions.ColorizeJson))
             _textWriter.Write(_colorOptions.Theme.Json.StringColor.ToEscapeSequence());
@@ -125,7 +125,7 @@ public class ColorizeJsonWriter : JsonTextWriter
 
     #endregion
 
-    public static string FormatAndColorizeJson(JToken token, JsonComparerColorOptions colorOptions)
+    public static string FormatAndColorizeJson(JToken? token, JsonComparerColorOptions colorOptions)
     {
         var memoryStream = new MemoryStream();
         var writer = new ColorizeJsonWriter(new StreamWriter(memoryStream), colorOptions);

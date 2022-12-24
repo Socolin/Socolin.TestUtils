@@ -6,12 +6,12 @@ namespace Socolin.TestUtils.JsonComparer.Comparers;
 
 public interface IJsonArrayComparer
 {
-    IEnumerable<IJsonCompareError<JToken>> Compare(JArray expected, JArray actual, IJsonComparer jsonComparer, string path = "", JsonComparisonOptions options = null);
+    IEnumerable<IJsonCompareError<JToken>> Compare(JArray expected, JArray actual, IJsonComparer jsonComparer, string path = "", JsonComparisonOptions? options = null);
 }
 
 public class JsonArrayComparer : IJsonArrayComparer
 {
-    public IEnumerable<IJsonCompareError<JToken>> Compare(JArray expected, JArray actual, IJsonComparer jsonComparer, string path = "", JsonComparisonOptions options = null)
+    public IEnumerable<IJsonCompareError<JToken>> Compare(JArray expected, JArray actual, IJsonComparer jsonComparer, string path = "", JsonComparisonOptions? options = null)
     {
         if (expected.Count != actual.Count)
         {

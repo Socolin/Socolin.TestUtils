@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="LICENSES.md"/>
+        <None Remove="LICENSES.md" />
         <Content Include="LICENSES.md" PackagePath=".">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>

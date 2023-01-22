@@ -1,3 +1,7 @@
+## 1.16
+
+- Support array of string/number for `__partialArray`
+
 ## 1.15.1
 
 - Support regex alias on `__capture` too

@@ -294,12 +294,34 @@ Given json does not match expected one:
 
 ### Comparing arrays of values (int or string)
 
-**Not implemented yet** (Will do when someone need this)
+
+<table>
+<tr><td>Actual</td><td>Expected</td></tr>
+<tr>
+<td>
 
 ```json
-["a", "b", "c"]
+{
+  "array": [
+    "a",
+    "b",
+    "c"
+  ]
+}
 ```
+</td>
+<td>
 
 ```json
-[1, 2, 3]
+{
+  "array":{
+    "__partialArray": {"array": [
+      "a", "b"
+    ]}
+  }
+}
 ```
+
+</td>
+</tr>
+</table>

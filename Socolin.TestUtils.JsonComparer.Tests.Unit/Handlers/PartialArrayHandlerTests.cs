@@ -66,6 +66,35 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
         }
 
         [Test]
+        public void HandlePartialArrayObject_ArrayOfValues_ShouldNotReturnErrorWhenComparing2ArrayOfValuesAndNothingIsMissing()
+        {
+            var jsonComparer = Substitute.For<IJsonComparer>();
+            var partialObject = JObject.FromObject(new {__partialArray = new {array = new[] {1, 3}}});
+            var actualJson = JArray.FromObject(new[] {1, 2, 3, 4});
+
+            var (success, _) = _partialArrayHandler.HandlePartialArrayObject(partialObject, actualJson, "", jsonComparer, new JsonComparisonOptions());
+
+            success.Should().BeTrue();
+        }
+
+        [Test]
+        public void HandlePartialArrayObject_ArrayOfValues_ShouldReturnErrorWhenExpectedValueIsNotPresent()
+        {
+            var jsonComparer = Substitute.For<IJsonComparer>();
+            var partialObject = JObject.FromObject(new {__partialArray = new {array = new[] {1, 3}}});
+            var actualJson = JArray.FromObject(new[] {1, 2, 4});
+
+            var (success, errors) = _partialArrayHandler.HandlePartialArrayObject(partialObject, actualJson, "", jsonComparer, new JsonComparisonOptions());
+
+            using (new AssertionScope())
+            {
+                success.Should().BeFalse();
+                errors.Count.Should().Be(1);
+                errors.First().Should().BeOfType<MissingObjectInArrayComparerError>();
+            }
+        }
+
+        [Test]
         public void HandlePartialArrayObject_ShouldReturnAnErrorFromComparisonBetweenEachElement()
         {
             var fakeError = Substitute.For<IJsonCompareError<JToken>>();
@@ -102,6 +131,5 @@ namespace Socolin.TestUtils.JsonComparer.Tests.Unit.Handlers
                 parent.Value<JArray>("test").Should().HaveCount(1);
             }
         }
-
     }
 }

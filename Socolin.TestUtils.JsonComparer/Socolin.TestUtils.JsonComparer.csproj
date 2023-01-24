@@ -16,7 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" />
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="Microsoft.SourceLink.GitHub">
           <PrivateAssets>all</PrivateAssets>
